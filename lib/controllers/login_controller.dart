@@ -1,0 +1,42 @@
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:tripin/controllers/auth_controller.dart';
+
+class LoginController extends GetxController {
+  final TextEditingController emailEditingController = TextEditingController();
+  final TextEditingController pwEditingController = TextEditingController();
+  final TextEditingController pw2EditingController = TextEditingController();
+
+  final AuthController _authController = AuthController();
+
+  bool isValidEmail(String? email) {
+    final RegExp regex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return regex.hasMatch(email!);
+  }
+
+  loginWithEmail() {
+    _authController.loginWithEmail(
+      emailEditingController.text,
+      pwEditingController.text,
+    );
+  }
+
+  signUp() {
+    if (pwEditingController.text == pw2EditingController.text) {
+      _authController.signUp(
+        emailEditingController.text,
+        pwEditingController.text,
+      );
+      emailEditingController.clear();
+      pwEditingController.clear();
+      pw2EditingController.clear();
+      return;
+    }
+    print('회원가입 실패. 두 개의 비밀번호 다름');
+  }
+
+  logOut() {
+    _authController.logOut();
+  }
+}
