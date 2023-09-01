@@ -20,6 +20,8 @@ class LoginController extends GetxController {
       emailEditingController.text,
       pwEditingController.text,
     );
+    print(emailEditingController.text);
+    print(pwEditingController.text);
   }
 
   signUp() {
@@ -28,9 +30,6 @@ class LoginController extends GetxController {
         emailEditingController.text,
         pwEditingController.text,
       );
-      emailEditingController.clear();
-      pwEditingController.clear();
-      pw2EditingController.clear();
       return;
     }
     print('회원가입 실패. 두 개의 비밀번호 다름');

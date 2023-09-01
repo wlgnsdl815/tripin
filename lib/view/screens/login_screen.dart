@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/view/screens/sign_up_screen.dart';
 
@@ -13,6 +14,7 @@ class LoginScreen extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    final _authController = Get.find<AuthController>();
     return Scaffold(
       body: Center(
         child: Form(
@@ -38,11 +40,12 @@ class LoginScreen extends GetView<LoginController> {
                   }
                   return null;
                 },
-                controller: controller.pw2EditingController,
+                controller: controller.pwEditingController,
               ),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    controller.loginWithEmail();
                     print('로그인 성공');
                     return;
                   }
@@ -51,7 +54,9 @@ class LoginScreen extends GetView<LoginController> {
                 child: Text('이메일로 로그인'),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _authController.signInWithGoogle();
+                },
                 child: Text('구글 아이디로 로그인'),
               ),
               TextButton(
