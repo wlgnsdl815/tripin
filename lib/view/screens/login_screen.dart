@@ -59,6 +59,12 @@ class LoginScreen extends GetView<LoginController> {
                 },
                 child: Text('구글 아이디로 로그인'),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  _authController.loginWithKakao();
+                },
+                child: Text('카카오 아이디로 로그인'),
+              ),
               TextButton(
                 onPressed: () {
                   Get.to(() => SignUpScreen());
