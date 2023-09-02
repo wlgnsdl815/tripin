@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "533192897485",
+    "project_id": "sfac-tripin",
+    "storage_bucket": "sfac-tripin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533192897485:android:1421030b0c24c9c6baca84",
+        "android_client_info": {
+          "package_name": "com.example.tripin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "533192897485-4b1polu0pm1882u39552dco5d8kg2a9q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRnDh7yxfyPcUEhJdRyCEZgzPgobEZRys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "533192897485-4b1polu0pm1882u39552dco5d8kg2a9q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "533192897485-glemtq1g2d123g2kqond62e2o4f2qc0q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tripin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
