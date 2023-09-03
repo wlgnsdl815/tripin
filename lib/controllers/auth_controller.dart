@@ -27,6 +27,13 @@ class AuthController extends GetxController {
       email: email,
       password: password,
     );
+  }
+
+  signUp(String email, String password, String nickName) async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
     // FirebaseAuth에서 받은 유저를 Firebase Storage에 올리는 건 나중에 수정
     await FirebaseFirestore.instance
@@ -35,14 +42,9 @@ class AuthController extends GetxController {
         .set({
       'uid': FirebaseAuth.instance.currentUser!.uid,
       'email': email,
+      'nickName': nickName,
+      'imgUrl': '',
     });
-  }
-
-  signUp(String email, String password) async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
   }
 
   logOut() async {
@@ -73,6 +75,7 @@ class AuthController extends GetxController {
       'email': user.email,
       'uid': user.uid,
       'nickName': user.displayName,
+      'imgUrl': user.photoURL ?? '',
     });
 
     // Once signed in, return the UserCredential

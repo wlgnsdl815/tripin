@@ -6,6 +6,7 @@ class LoginController extends GetxController {
   final TextEditingController emailEditingController = TextEditingController();
   final TextEditingController pwEditingController = TextEditingController();
   final TextEditingController pw2EditingController = TextEditingController();
+  final TextEditingController nickNameController = TextEditingController();
 
   final AuthController _authController = AuthController();
 
@@ -29,6 +30,7 @@ class LoginController extends GetxController {
       _authController.signUp(
         emailEditingController.text,
         pwEditingController.text,
+        nickNameController.text,
       );
       return;
     }
