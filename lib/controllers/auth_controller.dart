@@ -84,8 +84,8 @@ class AuthController extends GetxController {
   loginWithKakao() async {
     // 카카오 로그인 구현 예제
 
-// 카카오톡 실행 가능 여부 확인
-// 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+    // 카카오톡 실행 가능 여부 확인
+    // 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
     if (await kakao.isKakaoTalkInstalled()) {
       try {
         await kakao.UserApi.instance.loginWithKakaoTalk();
