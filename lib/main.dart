@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/firebase_options.dart';
 import 'package:tripin/utils/api_keys_env.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder(() {
         Get.put(AuthController());
         Get.lazyPut(() => LoginController(), fenix: true);
+        Get.lazyPut(() => HomeController(), fenix: true);
       }),
       getPages: AppRoutes.routes,
       initialRoute: AppScreens.login,

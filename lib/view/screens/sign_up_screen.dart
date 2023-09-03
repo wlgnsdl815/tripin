@@ -26,6 +26,9 @@ class SignUpScreen extends GetView<LoginController> {
                   }
                   return null;
                 },
+                decoration: InputDecoration(
+                  hintText: '이메일',
+                ),
                 controller: controller.emailEditingController,
               ),
               SizedBox(height: 20),
@@ -37,18 +40,25 @@ class SignUpScreen extends GetView<LoginController> {
                   }
                   return null;
                 },
+                decoration: InputDecoration(
+                  hintText: '비밀번호',
+                ),
                 controller: controller.pwEditingController,
               ),
               SizedBox(height: 20),
               TextFormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (controller.pwEditingController.text != value) {
-                    return '비밀번호가 다릅니다.';
-                  }
-                  return null;
-                },
+                decoration: InputDecoration(
+                  hintText: '비밀번호 확인',
+                ),
                 controller: controller.pw2EditingController,
+              ),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: InputDecoration(
+                  hintText: '닉네임',
+                ),
+                controller: controller.nickNameController,
               ),
               ElevatedButton(
                 onPressed: () {
