@@ -36,9 +36,7 @@ android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
-    manifestPlaceholders = [
-            KAKAO_NATIVE_KEY: properties.getProperty("kakao.native.key")
-        ]
+    
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -63,6 +61,10 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+
+        manifestPlaceholders = [
+            KAKAO_NATIVE_KEY: properties.getProperty("kakao.native.key")
+        ]
     }
 
     buildTypes {
