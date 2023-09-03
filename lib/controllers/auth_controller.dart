@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:tripin/utils/app_screens.dart';
+import 'package:tripin/view/screens/friend_screen.dart';
 
 class AuthController extends GetxController {
   final Rxn<User> _user = Rxn<User>();
@@ -13,7 +14,7 @@ class AuthController extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        Get.offAllNamed(AppScreens.home);
+        Get.offAllNamed(FriendScreen.route);
 
         _user.value = user;
         // print(FirebaseAuth.instance.currentUser);
@@ -23,6 +24,8 @@ class AuthController extends GetxController {
       Get.offAllNamed(AppScreens.login);
     });
   }
+
+ User? get user => _user.value;
 
   loginWithEmail(String email, String password) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
