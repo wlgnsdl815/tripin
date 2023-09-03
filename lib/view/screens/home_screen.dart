@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
 
-import 'edit_profile_screen.dart';
-
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
