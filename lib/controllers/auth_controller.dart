@@ -4,7 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:tripin/model/user_model.dart';
+import 'package:tripin/service/db_service.dart';
 import 'package:tripin/utils/app_screens.dart';
+
+import 'home_controller.dart';
 
 class AuthController extends GetxController {
   final Rxn<User> _user = Rxn<User>();
@@ -29,6 +33,8 @@ class AuthController extends GetxController {
       email: email,
       password: password,
     );
+
+    Get.find<HomeController>().getUserInfo();
   }
 
   signUp(String email, String password, String nickName) async {
@@ -37,16 +43,16 @@ class AuthController extends GetxController {
       password: password,
     );
 
-    // FirebaseAuth에서 받은 유저를 Firebase Storage에 올리는 건 나중에 수정
-    await FirebaseFirestore.instance
-        .collection('user')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .set({
-      'uid': FirebaseAuth.instance.currentUser!.uid,
-      'email': email,
-      'nickName': nickName,
-      'imgUrl': '',
-    });
+    UserModel userModel = UserModel(
+      uid: FirebaseAuth.instance.currentUser!.uid,
+      email: email,
+      nickName: nickName,
+      imgUrl: ''
+    );
+
+    await DBService().saveUserInfo(userModel);
+
+    Get.find<HomeController>().getUserInfo();
   }
 
   logOut() async {
@@ -72,13 +78,16 @@ class AuthController extends GetxController {
 
     final user = userCredential.user;
 
-    // 구글 아이디를 FireStore에 올리는 것도 나중에 수정
-    await FirebaseFirestore.instance.collection('user').doc(user!.uid).set({
-      'email': user.email,
-      'uid': user.uid,
-      'nickName': user.displayName,
-      'imgUrl': user.photoURL ?? '',
-    });
+    UserModel userModel = UserModel(
+      uid: user!.uid,
+      email: user.email!,
+      nickName: user.displayName!,
+      imgUrl: user.photoURL ?? ''
+    );
+
+    await DBService().saveUserInfo(userModel);
+
+    Get.find<HomeController>().getUserInfo();
 
     // Once signed in, return the UserCredential
     return userCredential;
