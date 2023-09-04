@@ -1,9 +1,11 @@
+import 'package:get/get.dart';
 
 class UserModel {
-  String uid;     // uid
-  String email;   // 이메일
-  String nickName;  // 이름
-  String imgUrl;   // 사진
+  String uid; // uid
+  String email; // 이메일
+  String nickName; // 이름
+  String imgUrl; // 사진
+  RxBool isSelected = false.obs;
 
   UserModel({
     required this.uid,

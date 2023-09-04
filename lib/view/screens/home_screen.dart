@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
+import 'package:tripin/view/screens/chat/chat_screen.dart';
+import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 
 import 'edit_profile_screen.dart';
 
@@ -28,22 +30,25 @@ class HomeScreen extends GetView<HomeController> {
               width: Get.width * 0.5,
               height: Get.width * 0.5,
               child: Image.network(
-                controller.userInfo.value?.imgUrl.isEmpty ?? true
-                  ? 'http://picsum.photos/100/100'
-                  : controller.userInfo.value!.imgUrl
-              ),
+                  controller.userInfo.value?.imgUrl.isEmpty ?? true
+                      ? 'http://picsum.photos/100/100'
+                      : controller.userInfo.value!.imgUrl),
             ),
           ),
-          Obx(() => Text(
-            controller.userInfo.value != null
+          Obx(() => Text(controller.userInfo.value != null
               ? controller.userInfo.value!.nickName
-              : 'null'
-          )),
+              : 'null')),
           ElevatedButton(
             onPressed: () {
               Get.to(() => EditProfileScreen());
             },
             child: Text('프로필 수정'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.to(() => SelectFriendsScreen());
+            },
+            child: Text('채팅방만들기'),
           ),
         ],
       ),

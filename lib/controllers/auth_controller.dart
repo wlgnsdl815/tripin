@@ -4,14 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/service/kakao_service.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
-
 import 'package:tripin/utils/app_screens.dart';
-import 'package:tripin/view/screens/friend_screen.dart';
-
-import 'home_controller.dart';
 
 class AuthController extends GetxController {
   final Rxn<User> _user = Rxn<User>();
@@ -21,7 +18,7 @@ class AuthController extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        Get.offAllNamed(FriendScreen.route);
+        Get.offAllNamed(AppScreens.home);
 
         _user.value = user;
         // print(FirebaseAuth.instance.currentUser);
@@ -62,6 +59,8 @@ class AuthController extends GetxController {
 
   logOut() async {
     await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
+    await kakao.UserApi.instance.logout();
   }
 
   Future<UserCredential> signInWithGoogle() async {
