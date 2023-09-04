@@ -50,9 +50,7 @@ class HomeScreen extends GetView<HomeController> {
           ),
           ElevatedButton(
             onPressed: () async {
-              String newRoomId =
-                  await _selectFriendsController.createChatRoom();
-              Get.to(() => SelectFriendsScreen(newRoomId));
+              Get.to(() => SelectFriendsScreen());
             },
             child: Text('채팅방 만들기'),
           ),

@@ -27,6 +27,7 @@ class SelectFriendsController extends GetxController {
   }
 
   Future<String> createChatRoom() async {
+    print('채팅방 생성');
     final firestoreInstance = FirebaseFirestore.instance;
 
     ChatRoom newRoom = ChatRoom(
