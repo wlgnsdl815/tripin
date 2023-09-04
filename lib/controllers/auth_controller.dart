@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -31,7 +32,7 @@ class AuthController extends GetxController {
     });
   }
 
- User? get user => _user.value;
+  User? get user => _user.value;
 
   loginWithEmail(String email, String password) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -49,11 +50,10 @@ class AuthController extends GetxController {
     );
 
     UserModel userModel = UserModel(
-      uid: FirebaseAuth.instance.currentUser!.uid,
-      email: email,
-      nickName: nickName,
-      imgUrl: ''
-    );
+        uid: FirebaseAuth.instance.currentUser!.uid,
+        email: email,
+        nickName: nickName,
+        imgUrl: '');
 
     await DBService().saveUserInfo(userModel);
 
@@ -84,11 +84,10 @@ class AuthController extends GetxController {
     final user = userCredential.user;
 
     UserModel userModel = UserModel(
-      uid: user!.uid,
-      email: user.email!,
-      nickName: user.displayName!,
-      imgUrl: user.photoURL ?? ''
-    );
+        uid: user!.uid,
+        email: user.email!,
+        nickName: user.displayName!,
+        imgUrl: user.photoURL ?? '');
 
     await DBService().saveUserInfo(userModel);
 
