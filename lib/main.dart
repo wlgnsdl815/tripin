@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/edit_profile_controller.dart';
+import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/firebase_options.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         Get.lazyPut(() => LoginController(), fenix: true);
         Get.lazyPut(() => HomeController(), fenix: true);
         Get.lazyPut(() => EditProfileController(), fenix: true);
+        Get.lazyPut(() => FriendController(), fenix: true);
       }),
       getPages: AppRoutes.routes,
       initialRoute: AppScreens.login,
