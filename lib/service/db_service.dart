@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,10 +11,11 @@ class DBService {
 
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  final userInfoRef = FirebaseFirestore.instance.collection('user')
-    .withConverter(
-      fromFirestore: (snapshot, _) => UserModel.fromMap(snapshot.data()!),
-      toFirestore: (user, _) => user.toMap());
+  final userInfoRef = FirebaseFirestore.instance
+      .collection('user')
+      .withConverter(
+          fromFirestore: (snapshot, _) => UserModel.fromMap(snapshot.data()!),
+          toFirestore: (user, _) => user.toMap());
 
   // uid로 유저 정보 가져오기
   Future getUserInfoById(String uid) async {

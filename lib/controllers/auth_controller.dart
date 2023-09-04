@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:tripin/service/kakao_service.dart';
 import 'package:tripin/utils/app_screens.dart';
 
 class AuthController extends GetxController {
   final Rxn<User> _user = Rxn<User>();
+
   @override
   void onInit() {
     super.onInit();
@@ -85,37 +87,80 @@ class AuthController extends GetxController {
   }
 
   loginWithKakao() async {
-    // 카카오 로그인 구현 예제
-
-    // 카카오톡 실행 가능 여부 확인
-    // 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
     if (await kakao.isKakaoTalkInstalled()) {
-      try {
-        await kakao.UserApi.instance.loginWithKakaoTalk();
-        print('카카오톡으로 로그인 성공');
-      } catch (error) {
-        print('카카오톡으로 로그인 실패 $error');
-
-        // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
-        // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
-        if (error is PlatformException && error.code == 'CANCELED') {
-          return;
-        }
-        // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
-        try {
-          await kakao.UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
-        } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
-        }
+      bool success = await tryLoginWithKakaoTalk();
+      if (!success) {
+        await tryLoginWithKakaoAccount();
       }
     } else {
-      try {
-        await kakao.UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
-      } catch (error) {
-        print('카카오계정으로 로그인 실패 $error');
-      }
+      await tryLoginWithKakaoAccount();
     }
+  }
+
+  Future<bool> tryLoginWithKakaoTalk() async {
+    try {
+      await kakao.UserApi.instance.loginWithKakaoTalk();
+      print('카카오톡으로 로그인 성공');
+      await processLogin();
+      return true;
+    } catch (error) {
+      print('카카오톡으로 로그인 실패 $error');
+      if (error is PlatformException && error.code == 'CANCELED') {
+        return false;
+      }
+      return false;
+    }
+  }
+
+  Future<bool> tryLoginWithKakaoAccount() async {
+    try {
+      await kakao.UserApi.instance.loginWithKakaoAccount();
+      print('카카오계정으로 로그인 성공');
+      await processLogin();
+      return true;
+    } catch (error) {
+      print('카카오계정으로 로그인 실패 $error');
+      return false;
+    }
+  }
+
+  processLogin() async {
+    // 카카오 로그인 후 사용자 정보를 받아옴
+    kakao.User kakaoUser = await kakao.UserApi.instance.me();
+
+    print(kakaoUser.id);
+    print(kakaoUser.kakaoAccount!.email);
+
+    // 사용자 정보를 기반으로 서버에서 커스텀 토큰을 받아옴
+    KakaoService kakaoService = KakaoService();
+    String customToken = await kakaoService.createCustomToken({
+      'kakaoId': '${kakaoUser.id}',
+      'kakaoEmail': '${kakaoUser.kakaoAccount?.email}',
+      'kakaoPhotoURL': '${kakaoUser.kakaoAccount?.profile?.profileImageUrl}',
+      'kakaoNickName': '${kakaoUser.kakaoAccount?.profile?.nickname}'
+      // ... 다른 필요한 정보
+    });
+    print("서버로 부터 받은 토큰: $customToken");
+
+    // customToken을 사용하여 Firebase Authentication에 사용자 등록
+    try {
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCustomToken(customToken);
+      await userCredential.user!.reload(); // 사용자 정보 갱신
+      print("파이어베이스 로그인 후: ${FirebaseAuth.instance.currentUser}");
+    } catch (error) {
+      print("커스텀 토큰으로 파베에 등록에러: $error");
+    }
+
+    // Firestore에 사용자 정보 저장
+    await FirebaseFirestore.instance
+        .collection('user')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      'uid': FirebaseAuth.instance.currentUser!.uid,
+      'email': kakaoUser.kakaoAccount?.email,
+      'nickName': kakaoUser.kakaoAccount?.profile?.nickname,
+      'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
+    });
   }
 }
