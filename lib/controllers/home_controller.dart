@@ -3,8 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:tripin/model/chat_room_model.dart';
-
 import '../model/user_model.dart';
 import '../service/db_service.dart';
 

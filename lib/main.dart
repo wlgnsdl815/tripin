@@ -6,6 +6,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
+import 'package:tripin/controllers/chat/chat_list.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/edit_profile_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         Get.lazyPut(() => FriendController(), fenix: true);
         Get.lazyPut(() => SelectFriendsController(), fenix: true);
         Get.lazyPut(() => ChatController(), fenix: true);
+        Get.lazyPut(() => ChatListController(), fenix: true);
       }),
       getPages: AppRoutes.routes,
       initialRoute: AppScreens.login,

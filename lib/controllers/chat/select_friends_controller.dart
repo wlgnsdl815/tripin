@@ -26,7 +26,7 @@ class SelectFriendsController extends GetxController {
     print(usersData[0].nickName);
   }
 
-  createChatRoom() async {
+  Future<String> createChatRoom() async {
     final firestoreInstance = FirebaseFirestore.instance;
 
     ChatRoom newRoom = ChatRoom(
@@ -45,7 +45,7 @@ class SelectFriendsController extends GetxController {
       'roomId': docRef.id,
     });
 
-    roomId.value = docRef.id;
+    return roomId.value = docRef.id;
   }
 
   @override

@@ -47,7 +47,7 @@ class ChatController extends GetxController {
     Query dbRef = _initFirebase()
         .ref()
         .child('chatRooms')
-        .child('${_selectFriendsController.roomId.value}')
+        .child(roomId)
         .child('messages');
 
     return dbRef.onValue.map((event) {

@@ -6,7 +6,9 @@ import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
 
 class ChatScreen extends GetView<ChatController> {
-  const ChatScreen({
+  final String roomId;
+  const ChatScreen(
+    this.roomId, {
     super.key,
   });
 
@@ -19,9 +21,7 @@ class ChatScreen extends GetView<ChatController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Obx(
-          () => Text(selectFriendsController.roomId.value),
-        ),
+        title: Text(roomId),
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.blue,
@@ -52,7 +52,7 @@ class ChatScreen extends GetView<ChatController> {
         ),
       ),
       body: StreamBuilder<Map<dynamic, dynamic>>(
-        stream: controller.getMessage(selectFriendsController.roomId.value),
+        stream: controller.getMessage(roomId),
         builder: (context, snapshot) {
           print(snapshot.data);
           if (!snapshot.hasData || snapshot.data == null) {

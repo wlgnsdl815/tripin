@@ -4,7 +4,8 @@ import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
-  const SelectFriendsScreen({super.key});
+  final String newRoomId;
+  const SelectFriendsScreen(this.newRoomId, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +54,9 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await controller.createChatRoom();
+              String roomId = await controller.createChatRoom();
               Get.to(
-                () => ChatScreen(),
+                () => ChatScreen(roomId),
               );
             },
             child: Text('채팅방 생성'),

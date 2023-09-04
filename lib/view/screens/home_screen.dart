@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
+import 'package:tripin/view/screens/chat/chat_list_screen.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
 import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 
@@ -15,6 +17,8 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     final _authController = Get.find<AuthController>();
+    final SelectFriendsController _selectFriendsController =
+        Get.find<SelectFriendsController>();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -46,9 +50,17 @@ class HomeScreen extends GetView<HomeController> {
           ),
           ElevatedButton(
             onPressed: () async {
-              Get.to(() => SelectFriendsScreen());
+              String newRoomId =
+                  await _selectFriendsController.createChatRoom();
+              Get.to(() => SelectFriendsScreen(newRoomId));
             },
-            child: Text('채팅방만들기'),
+            child: Text('채팅방 만들기'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.to(() => ChatListScreen());
+            },
+            child: Text('채팅방 목록'),
           ),
         ],
       ),
