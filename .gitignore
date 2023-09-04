@@ -48,3 +48,5 @@ app.*.map.json
 
 # exclude the API key from version control
 api_keys_env.g.dart
+
+sfac-tripin-firebase-adminsdk-kanz8-2cd2c446bc.json

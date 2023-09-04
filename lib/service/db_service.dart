@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +10,7 @@ class DBService {
   DBService({this.uid});
 
   final FirebaseFirestore db = FirebaseFirestore.instance;
+
 
   final userRef = FirebaseFirestore.instance.collection('user')
     .withConverter(
