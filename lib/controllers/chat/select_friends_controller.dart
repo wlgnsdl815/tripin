@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
 
 class SelectFriendsController extends GetxController {
   RxList<UserModel> userData = <UserModel>[].obs;
-  RxList<String> participants = <String>[].obs;
+  RxList<String> participants =
+      <String>[FirebaseAuth.instance.currentUser!.uid].obs;
   RxString roomId = ''.obs;
+  final HomeController homeController = Get.find<HomeController>();
 
   getUsers() async {
     final tempUsersData = [];
@@ -23,11 +27,13 @@ class SelectFriendsController extends GetxController {
         .toList();
     userData.assignAll(usersData);
 
-    print(usersData[0].nickName);
+    print('파베에 등록된 유저 리스트: ${usersData}');
   }
 
   Future<String> createChatRoom() async {
     print('채팅방 생성');
+    print('현재 유저: ${homeController.userInfo.value!.uid}');
+    print('참가자: $participants');
     final firestoreInstance = FirebaseFirestore.instance;
 
     ChatRoom newRoom = ChatRoom(

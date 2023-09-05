@@ -19,12 +19,11 @@ class ChatController extends GetxController {
   }
 
   // 메시지 전송 메서드
-  void sendMessage(String senderId, String text) async {
+  void sendMessage(String senderId, String text, String roomId) async {
     print('sendMessage 메서드 호출됨');
 
     // 데이터베이스 참조를 가져옴
-    final ref = _initFirebase()
-        .ref("chatRooms/${_selectFriendsController.roomId.value}/messages");
+    final ref = _initFirebase().ref("chatRooms/$roomId/messages");
 
     // 새 메시지 객체 생성
     ChatMessage newMessage = ChatMessage(

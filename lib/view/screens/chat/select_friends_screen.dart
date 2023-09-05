@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
@@ -22,6 +23,10 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                 shrinkWrap: true,
                 itemCount: controller.userData.length,
                 itemBuilder: (context, index) {
+                  if (controller.userData[index].uid ==
+                      FirebaseAuth.instance.currentUser!.uid) {
+                    return SizedBox();
+                  }
                   return ListTile(
                     title: Text(controller.userData[index].nickName),
                     leading: CircleAvatar(),

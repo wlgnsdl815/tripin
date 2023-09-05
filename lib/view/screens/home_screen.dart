@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/view/screens/chat/chat_list_screen.dart';
-import 'package:tripin/view/screens/chat/chat_screen.dart';
+
 import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 
 import 'edit_profile_screen.dart';
@@ -17,8 +19,7 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     final _authController = Get.find<AuthController>();
-    final SelectFriendsController _selectFriendsController =
-        Get.find<SelectFriendsController>();
+    Get.find<SelectFriendsController>();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

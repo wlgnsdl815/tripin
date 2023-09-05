@@ -12,7 +12,7 @@ class HomeController extends GetxController {
 
   // 유저 정보 가져오기
   Future getUserInfo() async {
-    print(FirebaseAuth.instance.currentUser!.uid);
+    print('유저 uid가져 옵니다: ${FirebaseAuth.instance.currentUser!.uid}');
     await Future.delayed(Duration(seconds: 1));
     UserModel res = await DBService()
         .getUserInfoById(FirebaseAuth.instance.currentUser!.uid);

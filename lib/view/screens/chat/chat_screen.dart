@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
-import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
 
@@ -15,10 +15,6 @@ class ChatScreen extends GetView<ChatController> {
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find<HomeController>();
-    final SelectFriendsController selectFriendsController =
-        Get.find<SelectFriendsController>();
-    print(selectFriendsController.roomId.value);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(roomId),
@@ -43,6 +39,7 @@ class ChatScreen extends GetView<ChatController> {
                   controller.sendMessage(
                     homeController.userInfo.value!.nickName,
                     controller.messageController.text,
+                    roomId,
                   );
                 },
                 icon: Icon(Icons.send),
@@ -54,7 +51,6 @@ class ChatScreen extends GetView<ChatController> {
       body: StreamBuilder<Map<dynamic, dynamic>>(
         stream: controller.getMessage(roomId),
         builder: (context, snapshot) {
-          print(snapshot.data);
           if (!snapshot.hasData || snapshot.data == null) {
             return Center(child: Text('대화를 시작해보세요.'));
           }
@@ -79,8 +75,40 @@ class ChatScreen extends GetView<ChatController> {
             return ListView.builder(
               itemCount: messageList.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(messageList[index].text),
+                // 메세지들을 하나씩 담아주고
+                final message = messageList[index];
+                // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
+                final isMe = message.sender ==
+                    FirebaseAuth.instance.currentUser!.displayName;
+                print(message.sender);
+                return Container(
+                  margin: EdgeInsets.all(8),
+                  child: Align(
+                    alignment: isMe ? Alignment.topRight : Alignment.topLeft,
+                    child: Column(
+                      crossAxisAlignment: isMe
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          message.sender,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: isMe ? Colors.blue : Colors.grey[200],
+                          ),
+                          child: Text(
+                            message.text,
+                            style: TextStyle(
+                              color: isMe ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             );
