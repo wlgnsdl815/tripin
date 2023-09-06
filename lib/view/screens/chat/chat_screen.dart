@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
+import 'package:tripin/view/screens/chat/map_screen.dart';
 
 class ChatScreen extends GetView<ChatController> {
   final String roomId;
@@ -16,14 +17,15 @@ class ChatScreen extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController _controller = ScrollController();
     final HomeController homeController = Get.find<HomeController>();
     return Scaffold(
       appBar: AppBar(
         title: Text(roomId),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.to(() => MapScreen());
+            },
             icon: Icon(Icons.map),
           ),
         ],

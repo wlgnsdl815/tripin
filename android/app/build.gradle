@@ -63,7 +63,8 @@ android {
         multiDexEnabled true
 
         manifestPlaceholders = [
-            KAKAO_NATIVE_KEY: properties.getProperty("kakao.native.key")
+            KAKAO_NATIVE_KEY: properties.getProperty('kakao.native.key'),
+            NAVER_MAP_CLIENT_ID: properties.getProperty('naver.map.clientId')
         ]
     }
 
