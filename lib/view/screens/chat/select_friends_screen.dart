@@ -60,7 +60,9 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
             onPressed: () async {
               String roomId = await controller.createChatRoom();
               Get.to(
-                () => ChatScreen(roomId),
+                () => ChatScreen(
+                  roomId: roomId,
+                ),
               );
             },
             child: Text('채팅방 생성'),

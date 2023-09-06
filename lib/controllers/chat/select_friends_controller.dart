@@ -38,7 +38,7 @@ class SelectFriendsController extends GetxController {
 
     ChatRoom newRoom = ChatRoom(
       roomId: '', // 초기에는 빈 문자열 또는 null을 할당
-      lastMessage: "Hello",
+      lastMessage: '',
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       participants: participants.toList(), // ObxList를 List로 변환하여 저장
     );

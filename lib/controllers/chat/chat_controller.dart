@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart' as cf;
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,8 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   final SelectFriendsController _selectFriendsController =
       Get.find<SelectFriendsController>();
+  final functions = FirebaseFunctions.instance;
+  final ScrollController scrollController = ScrollController();
 
   // Firebase 초기화 메서드
   FirebaseDatabase _initFirebase() {
@@ -19,8 +23,28 @@ class ChatController extends GetxController {
   }
 
   // 메시지 전송 메서드
-  void sendMessage(String senderId, String text, String roomId) async {
+  void sendMessage(
+      String sender, String text, String roomId, String senderUid) async {
     print('sendMessage 메서드 호출됨');
+    // 채팅방의 모든 참여자 가져오기
+    List<String> participants = _selectFriendsController.participants;
+
+    Map<String, bool> initialReadUser = {};
+    for (String userId in participants) {
+      print('읽은 유저(채팅 보낸 사람 uid): $initialReadUser');
+      // 보낸 사용자는 true, 나머지는 false
+      initialReadUser[userId] = userId == senderUid;
+      print('모든 참가자: ${_selectFriendsController.participants}');
+    }
+
+    // 서버의 시간을 활용하는 방법 functions의 index.js에서 정의하고 사용
+    // 혹시 나중에 요금의 압박이 있다면 그냥 DateTime.now로 바꾸는 것 고려
+    final result = await functions.httpsCallable('addTimestamp').call();
+    cf.Timestamp timestamp =
+        cf.Timestamp(result.data['_seconds'], result.data['_nanoseconds']);
+    DateTime dateTime = timestamp.toDate();
+
+    print('메세지 보낸시각(서버 타임): $dateTime');
 
     // 데이터베이스 참조를 가져옴
     final ref = _initFirebase().ref("chatRooms/$roomId/messages");
@@ -28,16 +52,26 @@ class ChatController extends GetxController {
     // 새 메시지 객체 생성
     ChatMessage newMessage = ChatMessage(
       messageId: '',
-      sender: senderId,
+      sender: sender,
       text: text,
-      timestamp: DateTime.now().millisecondsSinceEpoch,
+      timestamp: dateTime.millisecondsSinceEpoch,
+      isRead: initialReadUser,
     );
 
     DatabaseReference newMessageRef = ref.push();
     newMessage.messageId = newMessageRef.key!;
     await newMessageRef.set(newMessage.toMap());
+    print(newMessage.text);
+    await cf.FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .update({
+      'lastMessage': newMessage.text,
+    });
 
-    print('메세지 전송 성공: ${newMessageRef.path}');
+    messageController.clear();
+
+    print('메세지 전송 성공: ${newMessageRef.path}, ${newMessage.toMap()}');
   }
 
   // 메시지 스트림 가져오기
@@ -53,7 +87,7 @@ class ChatController extends GetxController {
       if (event.snapshot.value == null) {
         return {};
       }
-      messageController.clear();
+
       // 반환된 맵을 캐스팅
       return deepCastMap(event.snapshot.value as Map?);
     });
@@ -72,5 +106,31 @@ class ChatController extends GetxController {
         }
       },
     );
+  }
+
+  // 유저가 읽었는지 확인
+  void updateIsRead(String roomId, String userId) async {
+    // 쿼리 참조를 가져옴
+    DatabaseReference dbRef = _initFirebase()
+        .ref()
+        .child('chatRooms')
+        .child(roomId)
+        .child('messages');
+
+    dbRef.once().then((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        // 데이터를 안전하게 Map으로 변환
+        Map<String, dynamic>? messages = Map.from(event.snapshot.value as Map);
+
+        if (messages != null) {
+          for (String key in messages.keys) {
+            if (messages[key]['isRead'] != null &&
+                !messages[key]['isRead'][userId]) {
+              dbRef.child(key).child('isRead').update({userId: true});
+            }
+          }
+        }
+      }
+    });
   }
 }
