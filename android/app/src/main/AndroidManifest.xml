@@ -48,5 +48,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            <!-- 네이버 맵 설정 -->
+        <meta-data
+           android:name="com.naver.maps.map.CLIENT_ID"
+           android:value="${NAVER_MAP_CLIENT_ID}" />
     </application>
 </manifest>

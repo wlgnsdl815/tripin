@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:tripin/controllers/auth_controller.dart';
@@ -23,9 +24,15 @@ void main() async {
   );
 
   KakaoSdk.init(
-    nativeAppKey: '${Env.kakaoNativeKey}',
-    javaScriptAppKey: '${Env.kakaoJSKey}',
+    nativeAppKey: Env.kakaoNativeKey,
+    javaScriptAppKey: Env.kakaoJSKey,
   );
+
+  await NaverMapSdk.instance.initialize(
+      clientId: Env.naverMapClientId,
+      onAuthFailed: (ex) {
+        print("********* 네이버맵 인증오류 : $ex *********");
+      });
 
   runApp(const MyApp());
 }
