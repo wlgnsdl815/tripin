@@ -10,6 +10,7 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require('firebase-admin');
+const functions = require('firebase-functions');
 // const auth = require('firebase-auth');
 
 // 키 경로설정
@@ -18,6 +19,8 @@ var serviceAccount = require("./sfac-tripin-firebase-adminsdk-kanz8-2cd2c446bc.j
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
+exports.addTimestamp = functions.https.onCall((data, context) => {return admin.firestore.Timestamp.now();})
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
