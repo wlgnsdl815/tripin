@@ -7,6 +7,7 @@ import 'package:tripin/controllers/edit_profile_controller.dart';
 
 class EditProfileScreen extends GetView<EditProfileController> {
   const EditProfileScreen({Key? key}) : super(key: key);
+  // static const route = '/editProfile';
 
   @override
   Widget build(BuildContext context) {
