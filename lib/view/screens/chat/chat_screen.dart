@@ -103,12 +103,44 @@ class ChatScreen extends GetView<ChatController> {
                   final message = messageList[index];
                   // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
                   final isMe = message.sender ==
-                      FirebaseAuth.instance.currentUser!.displayName;
-                  print(message.sender);
+                      homeController.userInfo.value!.nickName;
+                  print('sender => ${message.sender}');
                   // database에 있는 timestamp를 변환
                   DateTime dateTime =
                       DateTime.fromMillisecondsSinceEpoch(message.timestamp);
                   String formattedTime = DateFormat('HH:mm').format(dateTime);
+
+                  final currentChatDate = dateTime;
+                  final currentSender = message.sender;
+                  final minutes = currentChatDate.minute + currentChatDate.hour * 60;
+
+                  bool cutMinutes = (
+                      index == 0 ||
+                          minutes != DateTime.fromMillisecondsSinceEpoch(messageList[index - 1].timestamp).minute
+                              + DateTime.fromMillisecondsSinceEpoch(messageList[index - 1].timestamp).hour * 60
+                  );
+
+                  bool showUserName = (
+                      index == 0 ||
+                          currentSender != messageList[index - 1].sender ||
+                          cutMinutes
+                  );
+                  bool showTime = false;
+
+                  if (index == messageList.length - 1) {
+                    showTime = true;
+                  } else {
+                    final nextChat = messageList[index + 1];
+                    final nextChatDate = DateTime.fromMillisecondsSinceEpoch(nextChat.timestamp);
+                    final nextSender = nextChat.sender;
+                    final nextMinutes =
+                        nextChatDate.minute + nextChatDate.hour * 60;
+
+                    if (minutes != nextMinutes ||
+                        currentSender != nextSender) {
+                      showTime = true;
+                    }
+                  }
 
                   return Container(
                     margin: EdgeInsets.all(8),
@@ -119,14 +151,14 @@ class ChatScreen extends GetView<ChatController> {
                             ? CrossAxisAlignment.end
                             : CrossAxisAlignment.start,
                         children: [
-                          Text(message.sender),
+                          if(showUserName) Text(message.sender),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: isMe
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: [
-                              if (isMe) Text(formattedTime),
+                              if (isMe && showTime) Text(formattedTime),
                               Flexible(
                                 child: Container(
                                   padding: EdgeInsets.all(12),
@@ -145,7 +177,7 @@ class ChatScreen extends GetView<ChatController> {
                                   ),
                                 ),
                               ),
-                              if (!isMe) Text(formattedTime),
+                              if (!isMe && showTime) Text(formattedTime),
                             ],
                           ),
                         ],
