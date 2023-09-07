@@ -1,32 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
-import 'package:tripin/controllers/chat/select_friends_controller.dart';
-import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/view/screens/chat/chat_list_screen.dart';
-
 import 'package:tripin/view/screens/chat/select_friends_screen.dart';
+import 'package:tripin/view/screens/friend_screen.dart';
 
 import 'edit_profile_screen.dart';
 
-class HomeScreen extends GetView<HomeController> {
+class HomeScreen extends GetView<AuthController> {
   const HomeScreen({super.key});
 
   static const route = '/home';
 
   @override
   Widget build(BuildContext context) {
-    final _authController = Get.find<AuthController>();
-    Get.find<SelectFriendsController>();
+    print('Home: ${controller.userInfo}');
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
             onPressed: () {
-              _authController.logOut();
+              controller.logOut();
             },
             child: Text('로그아웃'),
           ),
@@ -60,6 +55,12 @@ class HomeScreen extends GetView<HomeController> {
               Get.to(() => ChatListScreen());
             },
             child: Text('채팅방 목록'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.to(() => FriendScreen());
+            },
+            child: Text('친구 목록'),
           ),
         ],
       ),

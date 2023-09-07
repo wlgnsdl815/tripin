@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
-import 'package:tripin/controllers/home_controller.dart';
+
 import 'package:tripin/view/page/find_friend_page.dart';
 
 class FriendScreen extends GetView<FriendController> {
@@ -75,15 +75,20 @@ class FriendScreen extends GetView<FriendController> {
                           ),
                         ),
                       ),
-                      Text(
-                        // Get.find<AuthController>().user!.displayName ?? '',
-                        Get.find<HomeController>().userInfo.value!.nickName,
-
-                        // controller.fr
-                        //iendUser.value?.email ?? '사용자 이메일 없음'
-                        // Get.find<AuthController>().user.email
-                        // controller
-                        //     .editProfileController.nickNameController.text,
+                      Obx(
+                        () => Text(
+                            // Get.find<AuthController>().user!.displayName ?? '',
+                            Get.find<AuthController>()
+                                    .userInfo
+                                    .value
+                                    ?.nickName ??
+                                '로딩중...'
+                            // controller.fr
+                            //iendUser.value?.email ?? '사용자 이메일 없음'
+                            // Get.find<AuthController>().user.email
+                            // controller
+                            //     .editProfileController.nickNameController.text,
+                            ),
                       ),
                     ],
                   ),

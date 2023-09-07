@@ -4,43 +4,48 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
-import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/service/kakao_service.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
 import 'package:tripin/utils/app_screens.dart';
-import 'package:tripin/view/screens/friend_screen.dart';
-
 
 class AuthController extends GetxController {
-  final Rxn<User> _user = Rxn<User>();
+  final Rxn<User> _user = Rxn<User>(); // FirebasAuth에 등록된 유저 정보
+  Rxn<UserModel> userInfo = Rxn(); // Firebase Store에 등록된 로그인한 유저 정보
 
   @override
   void onInit() {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        // Get.offAllNamed(FriendScreen.route);
         Get.offAllNamed(AppScreens.home);
-
         _user.value = user;
-        // print(FirebaseAuth.instance.currentUser);
-        // print(_user.value);
-        return;
+        loadUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
+      } else {
+        Get.offAllNamed(AppScreens.login);
       }
-      Get.offAllNamed(AppScreens.login);
     });
   }
 
   User? get user => _user.value;
+
+  // 사용자 정보 로드 함수
+  Future<void> loadUserInfo(String uid) async {
+    try {
+      UserModel? res = await DBService().getUserInfoById(uid);
+      if (res != null) {
+        userInfo(res);
+      }
+    } catch (error) {
+      print("유저 정보 로딩 중 에러: $error");
+    }
+  }
 
   loginWithEmail(String email, String password) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-
-    Get.find<HomeController>().getUserInfo();
   }
 
   signUp(String email, String password, String nickName) async {
@@ -50,19 +55,20 @@ class AuthController extends GetxController {
     );
 
     UserModel userModel = UserModel(
-        uid: FirebaseAuth.instance.currentUser!.uid,
-        email: email,
-        nickName: nickName,
-        imgUrl: '');
+      uid: FirebaseAuth.instance.currentUser!.uid,
+      email: email,
+      nickName: nickName,
+      imgUrl: '',
+      isSelected: false,
+      message: '',
+    );
 
     await DBService().saveUserInfo(userModel);
 
-        await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(userModel.uid)
         .set(userModel.toMap());
-
-    Get.find<HomeController>().getUserInfo();
   }
 
   logOut() async {
@@ -91,16 +97,17 @@ class AuthController extends GetxController {
     final user = userCredential.user;
 
     UserModel userModel = UserModel(
-        uid: user!.uid,
-        email: user.email!,
-        nickName: user.displayName!,
-        imgUrl: user.photoURL ?? '');
+      uid: user!.uid,
+      email: user.email!,
+      nickName: user.displayName!,
+      imgUrl: user.photoURL ?? '',
+      isSelected: false,
+      message: '',
+    );
 
     await DBService().saveUserInfo(userModel);
 
-    Get.find<HomeController>().getUserInfo();
-
-    // Once signed in, return the UserCredential
+    // 로그인하면, UserCredential을 리턴한다
     return userCredential;
   }
 
@@ -179,6 +186,8 @@ class AuthController extends GetxController {
       'email': kakaoUser.kakaoAccount?.email,
       'nickName': kakaoUser.kakaoAccount?.profile?.nickname,
       'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
+      'isSelected': false,
+      'message': '',
     });
   }
 

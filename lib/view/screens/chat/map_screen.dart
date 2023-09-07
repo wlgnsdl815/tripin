@@ -21,7 +21,13 @@ class MapScreen extends GetView<MapScreenController> {
       body: Stack(
         children: [
           NaverMap(
-            options: const NaverMapViewOptions(),
+            options: const NaverMapViewOptions(
+                // initialCameraPosition: NCameraPosition(
+                //     target: NLatLng(latitude, longitude),
+                //     zoom: 10,
+                //     bearing: 0,
+                //     tilt: 0,),
+                ),
             onMapReady: (controller) {
               print("네이버 맵 로딩됨!");
             },

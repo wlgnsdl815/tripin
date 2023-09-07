@@ -1,9 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
-import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
 import 'package:tripin/view/screens/chat/map_screen.dart';
 
@@ -17,7 +16,7 @@ class ChatScreen extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find<HomeController>();
+    final AuthController _authController = Get.find<AuthController>();
     return Scaffold(
       appBar: AppBar(
         title: Text(roomId),
@@ -48,10 +47,10 @@ class ChatScreen extends GetView<ChatController> {
               IconButton(
                 onPressed: () {
                   controller.sendMessage(
-                    homeController.userInfo.value!.nickName,
+                    _authController.userInfo.value!.nickName,
                     controller.messageController.text,
                     roomId,
-                    homeController.userInfo.value!.uid,
+                    _authController.userInfo.value!.uid,
                   );
                 },
                 icon: Icon(Icons.send),
@@ -102,8 +101,8 @@ class ChatScreen extends GetView<ChatController> {
                   // 메세지들을 하나씩 담아주고
                   final message = messageList[index];
                   // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
-                  final isMe =
-                      message.sender == homeController.userInfo.value!.nickName;
+                  final isMe = message.sender ==
+                      _authController.userInfo.value!.nickName;
                   print('sender => ${message.sender}');
                   // database에 있는 timestamp를 변환
                   DateTime dateTime =

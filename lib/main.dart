@@ -10,7 +10,6 @@ import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/edit_profile_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
-import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/firebase_options.dart';
@@ -47,7 +46,6 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder(() {
         Get.put(AuthController());
         Get.lazyPut(() => LoginController(), fenix: true);
-        Get.lazyPut(() => HomeController(), fenix: true);
         Get.lazyPut(() => EditProfileController(), fenix: true);
         Get.lazyPut(() => FriendController(), fenix: true);
         Get.lazyPut(() => SelectFriendsController(), fenix: true);

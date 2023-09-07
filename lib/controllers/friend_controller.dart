@@ -22,8 +22,8 @@ class FriendController extends GetxController {
   final AuthController authController = Get.find<AuthController>();
   TextEditingController searchController = TextEditingController();
   TextEditingController textEditingController = TextEditingController();
-  final EditProfileController editProfileController =
-      Get.find<EditProfileController>();// Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
+  final EditProfileController editProfileController = Get.find<
+      EditProfileController>(); // Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
 
   Future<UserModel?> searchUserByEmail(String email) async {
     try {
@@ -41,11 +41,11 @@ class FriendController extends GetxController {
         print('일치하는 사용자를 찾을 수 없습니다. 이메일: $email');
         friendUser.value = null;
       }
-      update(); 
+      update();
     } catch (error) {
       print('검색 오류 발생: $error');
       friendUser.value = null;
-      update(); 
+      update();
     }
   }
 
@@ -100,8 +100,7 @@ class FriendController extends GetxController {
           itemCount: 1,
           itemBuilder: (context, builder) {
             return ElevatedButton(
-              onPressed: () {
-              },
+              onPressed: () {},
               child: Text(userEmail),
             );
           },
@@ -109,31 +108,30 @@ class FriendController extends GetxController {
       },
     );
   }
-  void showUserList(String userEmail) async{
-        final nickNameToSearch = searchController.text;
+
+  void showUserList(String userEmail) async {
+    final nickNameToSearch = searchController.text;
 
     final friendUser = await searchUserByEmail(nickNameToSearch);
     ListView.builder(
-      itemBuilder: (context, builder){
-        return 
-        Row(
+      itemBuilder: (context, builder) {
+        return Row(
           children: [
             AspectRatio(
-                    aspectRatio: 1 / 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(37),
-                            color: Colors.grey),
-                      ),
-                    ),
-                  ),
+              aspectRatio: 1 / 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(37),
+                      color: Colors.grey),
+                ),
+              ),
+            ),
             Text(friendUser!.email)
           ],
         );
-      } );
-      
-    }
-  
+      },
+    );
+  }
 }
