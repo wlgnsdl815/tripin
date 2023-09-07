@@ -11,13 +11,23 @@ class HomeController extends GetxController {
   final firestoreInstance = FirebaseFirestore.instance;
 
   // 유저 정보 가져오기
-  Future getUserInfo() async {
-    print('유저 uid가져 옵니다: ${FirebaseAuth.instance.currentUser!.uid}');
-    await Future.delayed(Duration(seconds: 1));
-    UserModel res = await DBService()
-        .getUserInfoById(FirebaseAuth.instance.currentUser!.uid);
+  // Future getUserInfo() async {
+  //   print('유저 uid가져 옵니다: ${FirebaseAuth.instance.currentUser!.uid}');
+  //   await Future.delayed(Duration(seconds: 1));
+  //   UserModel res = await DBService()
+  //       .getUserInfoById(FirebaseAuth.instance.currentUser!.uid);
+  //   userInfo(res);
+  // }
+
+  Future<void> getUserInfo() async {
+  print('유저 uid 가져옵니다: ${FirebaseAuth.instance.currentUser!.uid}');
+  await Future.delayed(Duration(seconds: 1));
+  UserModel? res = await DBService()
+      .getUserInfoById(FirebaseAuth.instance.currentUser!.uid);
+  if (res != null) {
     userInfo(res);
   }
+}
 
   @override
   void onInit() async {

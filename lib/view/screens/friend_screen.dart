@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/view/page/find_friend_page.dart';
 
 class FriendScreen extends GetView<FriendController> {
@@ -50,7 +51,7 @@ class FriendScreen extends GetView<FriendController> {
                             future: Get.find<AuthController>()
                                 .getUserProfilePhotoUrl(),
                             builder: (context, snapshot) {
-                             if (snapshot.hasError) {
+                              if (snapshot.hasError) {
                                 return Text('오류 발생: ${snapshot.error}');
                               } else if (!snapshot.hasData ||
                                   snapshot.data == null) {
@@ -62,8 +63,7 @@ class FriendScreen extends GetView<FriendController> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(37),
+                                        borderRadius: BorderRadius.circular(37),
                                         color: Colors.grey,
                                       ),
                                       child: Image.network(snapshot.data!),
@@ -76,7 +76,9 @@ class FriendScreen extends GetView<FriendController> {
                         ),
                       ),
                       Text(
-                        Get.find<AuthController>().user!.displayName ?? '',
+                        // Get.find<AuthController>().user!.displayName ?? '',
+                        Get.find<HomeController>().userInfo.value!.nickName,
+
                         // controller.fr
                         //iendUser.value?.email ?? '사용자 이메일 없음'
                         // Get.find<AuthController>().user.email
