@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
-
 import 'package:tripin/controllers/edit_profile_controller.dart';
 import 'package:tripin/model/user_model.dart';
 

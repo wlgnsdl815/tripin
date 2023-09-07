@@ -39,7 +39,7 @@ class EditProfileController extends GetxController {
     userInfo.value!.nickName = nickNameController.text;
     await DBService().saveUserInfo(userInfo.value!);
 
-    await Get.find<AuthController>().loadUserInfo(userInfo.value!.uid);
+    await Get.find<AuthController>().getUserInfo(userInfo.value!.uid);
 
     Get.offAll(() => HomeScreen());
   }
