@@ -4,33 +4,37 @@ import 'dart:convert';
 import 'package:tripin/model/user_model.dart';
 
 class Friend {
-  UserModel imgUrl;
+   String imgUrl;
   UserModel nickName;
+  String email;
   String status;
   
   Friend({
     required this.imgUrl,
     required this.nickName,
+    required this.email,
     required this.status,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'imgUrl': imgUrl.toMap(),
+      'imgUrl': imgUrl,
       'nickName': nickName.toMap(),
+      'email': email,
       'status': status,
     };
   }
 
-  factory Friend.fromMap(Map<String, dynamic> map) {
-    return Friend(
-      imgUrl: UserModel.fromMap(map['imgUrl'] as Map<String,dynamic>),
-      nickName: UserModel.fromMap(map['nickName'] as Map<String,dynamic>),
-      status: map['status'] as String,
-    );
-  }
+factory Friend.fromJson(Map<String, dynamic> source) {
+
+  return Friend(
+    imgUrl: source['imgUrl'] as String,
+    nickName: UserModel.fromMap(source['nickName'] as Map<String, dynamic>),
+    email: source['email'] as String,
+    status: source['status'] as String,
+  );
+}
 
   String toJson() => json.encode(toMap());
 
-  factory Friend.fromJson(String source) => Friend.fromMap(json.decode(source) as Map<String, dynamic>);
 }
