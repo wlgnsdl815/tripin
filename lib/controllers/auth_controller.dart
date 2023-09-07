@@ -9,10 +9,8 @@ import 'package:tripin/service/kakao_service.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
 import 'package:tripin/utils/app_screens.dart';
-import 'package:tripin/view/screens/edit_profile_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 
-import 'home_controller.dart';
 
 class AuthController extends GetxController {
   final Rxn<User> _user = Rxn<User>();
@@ -22,6 +20,7 @@ class AuthController extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
+        // Get.offAllNamed(FriendScreen.route);
         Get.offAllNamed(AppScreens.home);
 
         _user.value = user;
@@ -57,6 +56,11 @@ class AuthController extends GetxController {
         imgUrl: '');
 
     await DBService().saveUserInfo(userModel);
+
+        await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel.uid)
+        .set(userModel.toMap());
 
     Get.find<HomeController>().getUserInfo();
   }
@@ -178,12 +182,12 @@ class AuthController extends GetxController {
     });
   }
 
-  // Future<String?> getUserProfilePhotoUrl() async {
-  //   final user = FirebaseAuth.instance.currentUser;
-  //   if (user != null) {
-  //     await user.reload(); // 사용자 정보 업데이트
-  //     await user.getIdToken(); // 사용자 토큰 업데이트
-  //     return user.photoURL;
-  //   }
-  // }
+  Future<String?> getUserProfilePhotoUrl() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.reload(); // 사용자 정보 업데이트
+      await user.getIdToken(); // 사용자 토큰 업데이트
+      return user.photoURL;
+    }
+  }
 }

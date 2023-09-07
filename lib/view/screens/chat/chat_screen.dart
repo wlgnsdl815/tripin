@@ -102,8 +102,8 @@ class ChatScreen extends GetView<ChatController> {
                   // 메세지들을 하나씩 담아주고
                   final message = messageList[index];
                   // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
-                  final isMe = message.sender ==
-                      FirebaseAuth.instance.currentUser!.displayName;
+                  final isMe =
+                      message.sender == homeController.userInfo.value!.nickName;
                   print(message.sender);
                   // database에 있는 timestamp를 변환
                   DateTime dateTime =

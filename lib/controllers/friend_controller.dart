@@ -16,13 +16,14 @@ import 'package:tripin/model/user_model.dart';
 // }
 
 class FriendController extends GetxController {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Rxn<UserModel> friendUser = Rxn<UserModel>(null);
   Rx<User> get user => Get.find<AuthController>().user!.obs;
   final AuthController authController = Get.find<AuthController>();
   TextEditingController searchController = TextEditingController();
   TextEditingController textEditingController = TextEditingController();
   final EditProfileController editProfileController =
-      Get.find<EditProfileController>();
-// Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
+      Get.find<EditProfileController>();// Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
 
   Future<UserModel?> searchUserByEmail(String email) async {
     try {
