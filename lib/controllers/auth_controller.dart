@@ -20,8 +20,8 @@ class AuthController extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        // Get.offAllNamed(FriendScreen.route);
-        Get.offAllNamed(AppScreens.home);
+        Get.offAllNamed(FriendScreen.route);
+        // Get.offAllNamed(AppScreens.home);
 
         _user.value = user;
         // print(FirebaseAuth.instance.currentUser);

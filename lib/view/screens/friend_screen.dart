@@ -75,15 +75,17 @@ class FriendScreen extends GetView<FriendController> {
                           ),
                         ),
                       ),
-                      Text(
-                        // Get.find<AuthController>().user!.displayName ?? '',
-                        Get.find<HomeController>().userInfo.value!.nickName,
-
-                        // controller.fr
-                        //iendUser.value?.email ?? '사용자 이메일 없음'
-                        // Get.find<AuthController>().user.email
-                        // controller
-                        //     .editProfileController.nickNameController.text,
+                      Obx(
+                        ()=> Text(
+                          // Get.find<AuthController>().user!.displayName ?? '',
+                          Get.find<HomeController>().userInfo.value!.nickName,
+                      
+                          // controller.fr
+                          //iendUser.value?.email ?? '사용자 이메일 없음'
+                          // Get.find<AuthController>().user.email
+                          // controller
+                          //     .editProfileController.nickNameController.text,
+                        ),
                       ),
                     ],
                   ),
