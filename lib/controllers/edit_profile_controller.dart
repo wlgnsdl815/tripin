@@ -13,6 +13,7 @@ import '../service/db_service.dart';
 class EditProfileController extends GetxController {
   Rxn<UserModel> userInfo = Get.find<AuthController>().userInfo; // 로그인한 유저 정보
   TextEditingController nickNameController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
   Rxn<File> selectedImage = Rxn();
 
   // 이미지 선택
@@ -37,6 +38,7 @@ class EditProfileController extends GetxController {
     }
 
     userInfo.value!.nickName = nickNameController.text;
+    userInfo.value!.message = messageController.text;
     await DBService().saveUserInfo(userInfo.value!);
 
     await Get.find<AuthController>().getUserInfo(userInfo.value!.uid);

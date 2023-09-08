@@ -40,6 +40,7 @@ class DBService {
       await userRef.doc(user.uid).update({
         'nickName': user.nickName,
         'imgUrl': user.imgUrl,
+        'message': user.message,
       });
     } else {
       // 문서가 존재하지 않으면 생성

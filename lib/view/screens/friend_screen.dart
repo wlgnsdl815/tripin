@@ -92,14 +92,26 @@ class FriendScreen extends GetView<FriendController> {
                       ),
                     ],
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 3,
-                    height: MediaQuery.of(context).size.height / 18,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(80),
-                            bottom: Radius.circular(80)),
-                        border: Border.all(color: Colors.black)),
+                  Obx(
+                    () => Container(
+                      width: MediaQuery.of(context).size.width / 3,
+                      height: MediaQuery.of(context).size.height / 18,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(80),
+                              bottom: Radius.circular(80)),
+                          border: Border.all(color: Colors.black)
+                      ),
+                      child: Center(
+                        child: Text(
+                            Get.find<AuthController>()
+                              .userInfo
+                              .value
+                              ?.message ??
+                              '로딩중...'
+                        ),
+                      ),
+                    ),
                   )
                 ],
               ),
