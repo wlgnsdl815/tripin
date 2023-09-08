@@ -23,7 +23,11 @@ class ChatScreen extends GetView<ChatController> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(() => MapScreen());
+              Get.to(
+                () => MapScreen(
+                  roomId: roomId,
+                ),
+              );
             },
             icon: Icon(Icons.map),
           ),

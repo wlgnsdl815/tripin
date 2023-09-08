@@ -25,6 +25,8 @@ class ChatListScreen extends GetView<ChatListController> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
+                controller.setRoomId(controller.chatList[index]['roomId']);
+                print(controller.roomId);
                 Get.to(
                   () => ChatScreen(
                     roomId: controller.chatList[index]['roomId'],
