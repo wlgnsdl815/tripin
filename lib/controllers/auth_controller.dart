@@ -20,7 +20,7 @@ class AuthController extends GetxController {
       if (user != null) {
         Get.offAllNamed(AppScreens.home);
         _user.value = user;
-        getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
+        getUserInfo(user.uid);
       } else {
         Get.offAllNamed(AppScreens.login);
       }
@@ -29,7 +29,7 @@ class AuthController extends GetxController {
 
   User? get user => _user.value;
 
-  // 사용자 정보 로드 함수
+
   Future<void> getUserInfo(String uid) async {
     try {
       UserModel? res = await DBService().getUserInfoById(uid);
