@@ -9,6 +9,7 @@ class ChatListController extends GetxController {
 
   setRoomId(String id) {
     roomId.value = id;
+    print('setRoomId: ${roomId.value}');
   }
 
   getChatList() async {

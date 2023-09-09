@@ -5,12 +5,14 @@ class MarkerModel {
   final NLatLng position; // 마커의 위치
   final String title; // 마커의 타이틀
   final String description; // 마커에 대한 추가 설명
+  final int order; // 마커 순서
 
   MarkerModel({
     required this.id,
     required this.position,
     required this.title,
     required this.description,
+    required this.order,
   });
 
   // Firestore 문서를 모델 객체로 변환
@@ -20,6 +22,7 @@ class MarkerModel {
       position: NLatLng(map['latitude'], map['longitude']),
       title: map['title'],
       description: map['description'],
+      order: map['order'] ?? 0,
     );
   }
 
@@ -31,6 +34,7 @@ class MarkerModel {
       'longitude': position.longitude,
       'title': title,
       'description': description,
+      'order': order,
     };
   }
 }

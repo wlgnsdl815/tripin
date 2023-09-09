@@ -5,30 +5,39 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/model/marker_model.dart';
+import 'package:tripin/model/plan_model.dart';
 
 class MapScreenController extends GetxController {
+  // roomId가 많이 쓰여서 멤버 변수로 만들었다.
+  final String roomId;
+  MapScreenController() : roomId = Get.find<ChatListController>().roomId.value;
+
   RxBool hasPermission = false.obs;
-  RxDouble _containerHeight = 50.0.obs;
-  RxBool isDropDownTap = false.obs;
+
+  // 캘린더 때문에 추가한 변수. 후에 필요없으면 삭제
+  // RxDouble _containerHeight = 50.0.obs;
+  // RxBool isDropDownTap = false.obs;
+
   Rx<NLatLng> myPosition = NLatLng(37.5665, 126.9780).obs;
   RxBool isLocationLoaded = false.obs;
   TextEditingController placeTextController = TextEditingController();
   TextEditingController descriptionTextController = TextEditingController();
   RxList<MarkerModel> markerList = <MarkerModel>[].obs;
   RxList<NMarker> nMarkerList = <NMarker>[].obs;
-
-  final ChatListController _chatListController = Get.find<ChatListController>();
-
-  get containerHeight => _containerHeight;
+  RxBool isMarkerTapped = false.obs;
+  RxList<DateTime> dateRange = <DateTime>[].obs;
+  RxList<int> timeStamps = <int>[].obs;
+  // get containerHeight => _containerHeight;
 
   @override
   void onInit() async {
     super.onInit();
     await getMyLocation();
+    print('roomId: $roomId');
     // Firestore 스냅샷 구독
     FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(_chatListController.roomId.value)
+        .doc(roomId)
         .collection('markers')
         .snapshots()
         .listen((snapshot) {
@@ -41,21 +50,25 @@ class MapScreenController extends GetxController {
         .map((doc) => MarkerModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
 
-    markerList.value = markers;
+    // 마커를 order순으로 정렬
+    markerList.value =
+        markerList.value = markers..sort((a, b) => a.order.compareTo(b.order));
+
     nMarkerList.value = markerList.value
         .map((markerModel) =>
             NMarker(id: markerModel.id, position: markerModel.position))
         .toList();
   }
 
-  setContainerHeight(double height) {
-    isDropDownTap.value = !isDropDownTap.value;
-    if (isDropDownTap.value == true) {
-      _containerHeight.value = height;
-      return;
-    }
-    _containerHeight.value = 50.0;
-  }
+  // 캘린더 넣는다고 추가한 부분인데 필요없을 듯
+  // setContainerHeight(double height) {
+  //   isDropDownTap.value = !isDropDownTap.value;
+  //   if (isDropDownTap.value == true) {
+  //     _containerHeight.value = height;
+  //     return;
+  //   }
+  //   _containerHeight.value = 50.0;
+  // }
 
   Future<Position> getMyLocation() async {
     // 위치 서비스가 활성화되어 있는지 확인
@@ -89,7 +102,7 @@ class MapScreenController extends GetxController {
   }
 
   // 마커를 파이어베이스에 추가
-  addMarkers({required NLatLng position, required String roomId}) async {
+  addMarkers({required NLatLng position}) async {
     // 참조를 가져와서 markerId를 자동생성 가능하게 함
     final DocumentReference ref = FirebaseFirestore.instance
         .collection('chatRooms')
@@ -102,6 +115,7 @@ class MapScreenController extends GetxController {
       position: position,
       title: placeTextController.text,
       description: descriptionTextController.text,
+      order: markerList.length + 1,
     );
 
     await ref.set(newMarker.toMap());
@@ -113,12 +127,13 @@ class MapScreenController extends GetxController {
   }
 
   // 파이어베이스에서 마커를 가져와서 markerList에 담아주고 NMarker 객체로 변환해서 리스트에 다시 담아준다.
-  getMarkers({required String roomId}) async {
-    print('roomId: ${_chatListController.roomId.value}');
+  getMarkers() async {
+    print('roomId: $roomId');
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(roomId)
         .collection('markers')
+        .orderBy('order') //order 순서로 정렬
         .get();
 
     List<MarkerModel> markers = querySnapshot.docs
@@ -134,5 +149,92 @@ class MapScreenController extends GetxController {
         .toList();
 
     print('Firestore에서 가져온 마커 리스트: ${nMarkerList.value}');
+  }
+
+  Future<void> deleteMarker({
+    required String markerId,
+    required int order,
+    required String roomId,
+  }) async {
+    // 1. 특정 마커 삭제
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .collection('markers')
+        .doc(markerId)
+        .delete();
+
+    // 2. order 값 갱신
+    final snapshot = await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .collection('markers')
+        .where('order', isGreaterThan: order)
+        .get();
+
+    for (var doc in snapshot.docs) {
+      await doc.reference.update({'order': doc.data()['order'] - 1});
+    }
+  }
+
+  void showInfoWindow(List<NMarker> _nMarkerList) {
+    for (int i = 0; i < _nMarkerList.length; i++) {
+      final infoText = markerList[i].title;
+
+      final infoWindow =
+          NInfoWindow.onMarker(id: _nMarkerList[i].info.id, text: infoText);
+
+      _nMarkerList[i].openInfoWindow(infoWindow);
+    }
+  }
+
+  void addArrowheadPath(
+      NaverMapController mapController, List<NMarker> _nMarkerList) {
+    List<NLatLng> coords =
+        _nMarkerList.map((marker) => marker.position).toList();
+
+    NArrowheadPathOverlay pathOverlay = NArrowheadPathOverlay(
+        id: 'pathOverlay',
+        coords: coords,
+        color: Colors.yellow,
+        outlineWidth: 1.0,
+        outlineColor: Colors.yellow);
+
+    mapController.addOverlay(pathOverlay);
+  }
+
+  List<DateTime> getDatesBetween(DateTime start, DateTime end) {
+    dateRange.clear();
+
+    for (int i = 0; i <= end.difference(start).inDays; i++) {
+      dateRange.add(start.add(Duration(days: i)));
+    }
+
+    print('날짜 리스트: $dateRange');
+
+    // 사용하기 쉬운 타임스탬프로 변환
+    List<int> _timestamps =
+        dateRange.map((date) => date.millisecondsSinceEpoch).toList();
+
+    timeStamps.value = _timestamps;
+    print(timeStamps.value);
+
+    return dateRange;
+  }
+
+  addPlanToFireStore() async {
+    PlanModel newPlan = PlanModel(
+      dateTimestamps: timeStamps.value,
+      city: '부산',
+      markers: [],
+    );
+    FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .collection('plan')
+        .doc(roomId)
+        .set(
+          newPlan.toMap(),
+        );
   }
 }

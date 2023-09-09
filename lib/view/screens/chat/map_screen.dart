@@ -13,6 +13,7 @@ class MapScreen extends GetView<MapScreenController> {
   @override
   Widget build(BuildContext context) {
     final List<NMarker> _nMarkerList = controller.nMarkerList;
+
     if (!controller.hasPermission.value) {
       controller.hasPermission;
       print('Position: ${controller.myPosition.value}');
@@ -27,98 +28,136 @@ class MapScreen extends GetView<MapScreenController> {
       ),
       body: Stack(
         children: [
-          Obx(() {
-            // 내 위치를 받아올 때까지 기다린다.
-            // 위치를 받을 수 없고 마커가 없으면 로딩 중 표시
-            if (!controller.isLocationLoaded.value &&
-                controller.nMarkerList.isEmpty) {
-              return Center(child: CircularProgressIndicator()); // 로딩 중 표시
-            }
-            return NaverMap(
-              key: ValueKey(controller.nMarkerList.length),
-              onMapTapped: (point, latLng) {
-                Get.defaultDialog(
-                  title: '마커 생성하기',
-                  content: Column(
-                    children: [
-                      TextField(
-                        controller: controller.placeTextController,
-                        decoration: InputDecoration(
-                          hintText: '장소',
+          Obx(
+            () {
+              // 내 위치를 받아올 때까지 기다린다.
+              // 위치를 받을 수 없고 마커가 없으면 로딩 중 표시
+              if (!controller.isLocationLoaded.value &&
+                  controller.nMarkerList.isEmpty) {
+                return Center(child: CircularProgressIndicator()); // 로딩 중 표시
+              }
+              return NaverMap(
+                key: ValueKey(controller.nMarkerList.length),
+                onMapTapped: (point, latLng) {
+                  Get.defaultDialog(
+                    title: '마커 생성하기',
+                    content: Column(
+                      children: [
+                        TextField(
+                          controller: controller.placeTextController,
+                          decoration: InputDecoration(
+                            hintText: '장소',
+                          ),
                         ),
-                      ),
-                      TextField(
-                        controller: controller.descriptionTextController,
-                        decoration: InputDecoration(
-                          hintText: '메모',
+                        TextField(
+                          controller: controller.descriptionTextController,
+                          decoration: InputDecoration(
+                            hintText: '메모',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    cancel: ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: Text('취소'),
+                    ),
+                    confirm: ElevatedButton(
+                      onPressed: () {
+                        controller.addMarkers(position: latLng);
+                      },
+                      child: Text('생성'),
+                    ),
+                  );
+                  print(latLng);
+                },
+                options: NaverMapViewOptions(
+                  initialCameraPosition: NCameraPosition(
+                    target: controller.myPosition.value,
+                    zoom: 15,
+                    bearing: 0,
+                    tilt: 0,
                   ),
-                  cancel: ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: Text('취소'),
-                  ),
-                  confirm: ElevatedButton(
-                    onPressed: () {
-                      controller.addMarkers(position: latLng, roomId: roomId);
-                    },
-                    child: Text('생성'),
-                  ),
-                );
-                print(latLng);
-              },
-              options: NaverMapViewOptions(
-                initialCameraPosition: NCameraPosition(
-                  target: controller.myPosition.value,
-                  zoom: 15,
-                  bearing: 0,
-                  tilt: 0,
                 ),
+                onMapReady: (NMapController) async {
+                  final locationOverlay =
+                      await NMapController.getLocationOverlay();
+                  NMapController.addOverlayAll(_nMarkerList.toSet());
+
+                  print(controller.markerList);
+                  print(_nMarkerList);
+                  print("네이버 맵 로딩됨!");
+                  controller.showInfoWindow(_nMarkerList); // 정보창 표시
+                  controller.addArrowheadPath(
+                      NMapController, _nMarkerList); // 경로 표시
+                  for (var marker in _nMarkerList) {
+                    marker.setOnTapListener((NMarker tappedMarker) {
+                      print("Tapped marker with id: ${tappedMarker.info.id}");
+                      _showBottomSheet(_nMarkerList);
+                      tappedMarker.setIconTintColor(Color(0xFF4D80EE));
+                    });
+                  }
+                },
+              );
+            },
+          ),
+          Column(
+            children: [
+              SFDatePicker(
+                type: SFCalendarType.range,
+                todayMark: true,
+                getSelectedDate: (start, end, selectedDateList, selectedOne) {
+                  print('$start, $end, $selectedDateList, $selectedOne');
+                  print(start?.day ?? DateTime.now().day);
+                  controller.getDatesBetween(
+                    start ?? DateTime.now(),
+                    end ?? DateTime.now(),
+                  );
+                },
               ),
-              onMapReady: (NMapController) {
-                NMapController.addOverlayAll(_nMarkerList.toSet());
-                print(controller.markerList);
-                print(_nMarkerList);
-                print("네이버 맵 로딩됨!");
-                for (int i = 0; i < _nMarkerList.length; i++) {
-                  final infoText =
-                      "${controller.markerList[i].title}${controller.markerList[i].description}";
+              SFComboBox(
+                status: SFComboBoxStatus.searchSelect,
+                menus: [
+                  SFSelectMenu(title: '서울'),
+                  SFSelectMenu(title: '부산'),
+                  SFSelectMenu(title: '대구'),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-                  final infoWindow = NInfoWindow.onMarker(
-                      id: _nMarkerList[i].info.id, text: infoText);
-
-                  _nMarkerList[i].openInfoWindow(infoWindow);
-                }
+  void _showBottomSheet(List<NMarker> nMarkerList) {
+    Get.bottomSheet(
+      Stack(
+        children: [
+          // GestureDetector가 스택의 전체를 차지하게 해서
+          // DraggableScrollableSheet 외부 영역을 탭하면 닫히게 한다.
+          // 이걸 추가하지 않으면 DraggableScrollableSheet에서 ScrollController를 사용하기 때문에 닫히지 않음
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {
+                Get.back();
               },
-              onSymbolTapped: (symbolInfo) {
-                print(symbolInfo);
-              },
-            );
-          }),
-          Positioned(
-            child: SFDatePicker(
-              type: SFCalendarType.range,
-              initialDay: DateTime.now(),
             ),
           ),
           DraggableScrollableSheet(
-            initialChildSize: 0.1, // 처음에는 화면의 10% 크기로 표시
-            minChildSize: 0.1, // 최소 크기는 화면의 10%
-            maxChildSize: 0.8,
-            // 아래는 스크롤이 끝까지 될지 말지 정하는 파라미터
-            snapSizes: [0.1, 0.8],
+            initialChildSize: 0.6, // 초기 크기를 60%로 설정
+            maxChildSize: 1, // 최대 크기를 90%로 설정
             snap: true,
-
+            snapSizes: [0.6, 1],
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
+                height: MediaQuery.of(context).size.height *
+                    0.6, // 바텀시트 최소 크기를 맞춰야한다.
                 color: Colors.white,
                 child: ListView.builder(
-                  physics: ClampingScrollPhysics(),
                   controller: scrollController,
-                  itemCount: 25,
+                  itemCount: nMarkerList.length + 1,
                   itemBuilder: (BuildContext context, int index) {
                     if (index == 0) {
                       return Padding(
@@ -156,6 +195,8 @@ class MapScreen extends GetView<MapScreenController> {
           ),
         ],
       ),
+      isDismissible: true,
+      isScrollControlled: true, // 전체화면 바텀시트 가능
     );
   }
 }
