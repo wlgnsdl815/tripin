@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/friend_controller.dart';
+import 'package:tripin/view/screens/friend_screen.dart';
 
 class FindFriendPage extends GetView<FriendController> {
   const FindFriendPage({super.key});
@@ -49,28 +50,38 @@ class FindFriendPage extends GetView<FriendController> {
                   if (friendUser != null) {
                     return Row(
                       children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height/10,
-                        child: AspectRatio(
-                          aspectRatio: 1 / 1,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              child: Image.network(friendUser.imgUrl), 
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Colors.grey),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 10,
+                          child: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                clipBehavior: Clip.antiAlias,
+                                child: Image.network(
+                                  friendUser.imgUrl,
+                                  fit: BoxFit.fill,
+                                ),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.grey),
+                              ),
                             ),
                           ),
                         ),
-                      ),
                         TextButton(
                           onPressed: () {
                             Get.back();
+                            controller.addFriend(friendUser);
+                            // Get.toNamed(FriendScreen.route,
+                            //     );
                             controller.searchController.clear();
                             controller.clearSearchResults();
                           },
-                          child: Text(friendUser.email, style: TextStyle(color: Colors.black),),
+                          child: Text(
+                            friendUser.email,
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                         SizedBox(height: 16),
                       ],

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:tripin/controllers/home_controller.dart';
+import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
 
@@ -10,7 +10,7 @@ class SelectFriendsController extends GetxController {
   RxList<String> participants =
       <String>[FirebaseAuth.instance.currentUser!.uid].obs;
   RxString roomId = ''.obs;
-  final HomeController homeController = Get.find<HomeController>();
+  final AuthController _authController = Get.find<AuthController>();
 
   getUsers() async {
     final tempUsersData = [];
@@ -32,7 +32,7 @@ class SelectFriendsController extends GetxController {
 
   Future<String> createChatRoom() async {
     print('채팅방 생성');
-    print('현재 유저: ${homeController.userInfo.value!.uid}');
+    print('현재 유저: ${_authController.userInfo.value!.uid}');
     print('참가자: $participants');
     final firestoreInstance = FirebaseFirestore.instance;
 

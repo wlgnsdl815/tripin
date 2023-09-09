@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
-import 'package:tripin/controllers/home_controller.dart';
+
 import 'package:tripin/view/page/find_friend_page.dart';
 
 class FriendScreen extends GetView<FriendController> {
@@ -12,6 +12,7 @@ class FriendScreen extends GetView<FriendController> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -23,7 +24,7 @@ class FriendScreen extends GetView<FriendController> {
           Icon(Icons.group_add_sharp),
           TextButton(
               onPressed: () {
-                Get.toNamed(FindFriendPage.route);
+                Get.toNamed(FindFriendPage.route,);
               },
               child: Text(
                 '친구 추가',
@@ -36,7 +37,7 @@ class FriendScreen extends GetView<FriendController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height / 9,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -62,11 +63,19 @@ class FriendScreen extends GetView<FriendController> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
+                                      clipBehavior: Clip.antiAlias,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(37),
+                                        borderRadius: BorderRadius.circular(20),
                                         color: Colors.grey,
                                       ),
-                                      child: Image.network(snapshot.data!),
+                                      child: Image.network(
+                                        Get.find<AuthController>()
+                                                .userInfo
+                                                .value
+                                                ?.imgUrl ??
+                                            '로딩중...',
+                                        fit: BoxFit.fill,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -76,15 +85,9 @@ class FriendScreen extends GetView<FriendController> {
                         ),
                       ),
                       Obx(
-                        ()=> Text(
-                          // Get.find<AuthController>().user!.displayName ?? '',
-                          Get.find<HomeController>().userInfo.value!.nickName,
-                      
-                          // controller.fr
-                          //iendUser.value?.email ?? '사용자 이메일 없음'
-                          // Get.find<AuthController>().user.email
-                          // controller
-                          //     .editProfileController.nickNameController.text,
+                        () => Text(
+                          Get.find<AuthController>().userInfo.value?.nickName ??
+                              '로딩중...',
                         ),
                       ),
                     ],
@@ -107,10 +110,44 @@ class FriendScreen extends GetView<FriendController> {
               endIndent: 20,
             ),
             Text('친구'),
+            Obx(
+              ()=> Expanded(
+                child: ListView.builder(
+                  itemCount: controller.friends.length,
+                  itemBuilder: (context, index) {
+                    final friend = controller.friends[index];
+                    return ListTile(
+                      leading: AspectRatio(
+                        aspectRatio: 1 / 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.grey,
+                            ),
+                            child: Image.network(
+                              friend.imgUrl,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                      title: Text(friend.nickName),
+                      // title:  Text('$selectedText'),
+                    );
+                  },
+                ),
+              ),
+            ),
+
             ElevatedButton(
               onPressed: () => Get.find<AuthController>().logOut(),
               child: Text('로그아웃'),
-            )
+            ),
+            SizedBox(height: 20),
+            // 선택한 텍스트를 표시하는 부분
           ],
         ),
       ),
