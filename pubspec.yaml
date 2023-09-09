@@ -44,6 +44,7 @@ dependencies:
   get: ^4.6.5
   google_sign_in: any
   image_picker: any
+  shared_preferences: ^2.2.1
   intl: ^0.18.1
   kakao_flutter_sdk_user: ^1.4.1
   sfac_design_flutter: ^1.0.0+1

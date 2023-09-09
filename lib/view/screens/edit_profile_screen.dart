@@ -27,6 +27,13 @@ class EditProfileScreen extends GetView<EditProfileController> {
             ),
             controller: controller.nickNameController,
           ),
+          TextFormField(
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            decoration: InputDecoration(
+              hintText: '닉네임',
+            ),
+            controller: controller.messageController,
+          ),
           GestureDetector(
             onTap: controller.selectProfileImage,
             child: Stack(

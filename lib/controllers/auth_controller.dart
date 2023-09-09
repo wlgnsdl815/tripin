@@ -29,7 +29,7 @@ class AuthController extends GetxController {
 
   User? get user => _user.value;
 
-  // 사용자 정보 로드 함수
+
   Future<void> getUserInfo(String uid) async {
     try {
       UserModel? res = await DBService().getUserInfoById(uid);

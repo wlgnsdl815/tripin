@@ -37,7 +37,10 @@ class HomeScreen extends GetView<AuthController> {
           ),
           Obx(() => Text(controller.userInfo.value != null
               ? controller.userInfo.value!.nickName
-              : 'null')),
+              : '이름: null')),
+          Obx(() => Text(controller.userInfo.value != null
+              ? controller.userInfo.value!.message
+              : '메세지: null')),
           ElevatedButton(
             onPressed: () {
               Get.to(() => EditProfileScreen());

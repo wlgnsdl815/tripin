@@ -33,36 +33,6 @@ class ChatScreen extends GetView<ChatController> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.blue,
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.add),
-              ),
-              Expanded(
-                child: TextField(
-                  controller: controller.messageController,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  controller.sendMessage(
-                    _authController.userInfo.value!.nickName,
-                    controller.messageController.text,
-                    roomId,
-                    _authController.userInfo.value!.uid,
-                  );
-                },
-                icon: Icon(Icons.send),
-              ),
-            ],
-          ),
-        ),
-      ),
       body: StreamBuilder<Map<dynamic, dynamic>>(
         stream: controller.getMessage(roomId),
         builder: (context, snapshot) {
@@ -97,101 +67,136 @@ class ChatScreen extends GetView<ChatController> {
               }
             });
 
-            return SafeArea(
-              child: ListView.builder(
-                controller: controller.scrollController,
-                itemCount: messageList.length,
-                itemBuilder: (context, index) {
-                  // 메세지들을 하나씩 담아주고
-                  final message = messageList[index];
-                  // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
-                  final isMe = message.sender ==
-                      _authController.userInfo.value!.nickName;
-                  print('sender => ${message.sender}');
-                  // database에 있는 timestamp를 변환
-                  DateTime dateTime =
-                      DateTime.fromMillisecondsSinceEpoch(message.timestamp);
-                  String formattedTime = DateFormat('HH:mm').format(dateTime);
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    controller: controller.scrollController,
+                    itemCount: messageList.length,
+                    itemBuilder: (context, index) {
+                      // 메세지들을 하나씩 담아주고
+                      final message = messageList[index];
+                      // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
+                      final isMe = message.sender ==
+                          _authController.userInfo.value!.nickName;
+                      print('sender => ${message.sender}');
+                      // database에 있는 timestamp를 변환
+                      DateTime dateTime =
+                          DateTime.fromMillisecondsSinceEpoch(message.timestamp);
+                      String formattedTime = DateFormat('HH:mm').format(dateTime);
 
-                  final currentChatDate = dateTime;
-                  final currentSender = message.sender;
-                  final minutes =
-                      currentChatDate.minute + currentChatDate.hour * 60;
+                      final currentChatDate = dateTime;
+                      final currentSender = message.sender;
+                      final minutes =
+                          currentChatDate.minute + currentChatDate.hour * 60;
 
-                  bool cutMinutes = (index == 0 ||
-                      minutes !=
-                          DateTime.fromMillisecondsSinceEpoch(
-                                      messageList[index - 1].timestamp)
-                                  .minute +
+                      bool cutMinutes = (index == 0 ||
+                          minutes !=
                               DateTime.fromMillisecondsSinceEpoch(
                                           messageList[index - 1].timestamp)
-                                      .hour *
-                                  60);
+                                      .minute +
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                              messageList[index - 1].timestamp)
+                                          .hour *
+                                      60);
 
-                  bool showUserName = (index == 0 ||
-                      currentSender != messageList[index - 1].sender ||
-                      cutMinutes);
-                  bool showTime = false;
+                      bool showUserName = (index == 0 ||
+                          currentSender != messageList[index - 1].sender ||
+                          cutMinutes);
+                      bool showTime = false;
 
-                  if (index == messageList.length - 1) {
-                    showTime = true;
-                  } else {
-                    final nextChat = messageList[index + 1];
-                    final nextChatDate =
-                        DateTime.fromMillisecondsSinceEpoch(nextChat.timestamp);
-                    final nextSender = nextChat.sender;
-                    final nextMinutes =
-                        nextChatDate.minute + nextChatDate.hour * 60;
+                      if (index == messageList.length - 1) {
+                        showTime = true;
+                      } else {
+                        final nextChat = messageList[index + 1];
+                        final nextChatDate =
+                            DateTime.fromMillisecondsSinceEpoch(nextChat.timestamp);
+                        final nextSender = nextChat.sender;
+                        final nextMinutes =
+                            nextChatDate.minute + nextChatDate.hour * 60;
 
-                    if (minutes != nextMinutes || currentSender != nextSender) {
-                      showTime = true;
-                    }
-                  }
+                        if (minutes != nextMinutes || currentSender != nextSender) {
+                          showTime = true;
+                        }
+                      }
 
-                  return Container(
-                    margin: EdgeInsets.all(8),
-                    child: Align(
-                      alignment: isMe ? Alignment.topRight : Alignment.topLeft,
-                      child: Column(
-                        crossAxisAlignment: isMe
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          if (showUserName) Text(message.sender),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: isMe
-                                ? MainAxisAlignment.end
-                                : MainAxisAlignment.start,
+                      return Container(
+                        margin: EdgeInsets.all(8),
+                        child: Align(
+                          alignment: isMe ? Alignment.topRight : Alignment.topLeft,
+                          child: Column(
+                            crossAxisAlignment: isMe
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
                             children: [
-                              if (isMe && showTime) Text(formattedTime),
-                              Flexible(
-                                child: Container(
-                                  padding: EdgeInsets.all(12),
-                                  margin: EdgeInsets.symmetric(horizontal: 8.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color:
-                                        isMe ? Colors.blue : Colors.grey[200],
-                                  ),
-                                  child: Text(
-                                    message.text,
-                                    style: TextStyle(
-                                      color: isMe ? Colors.white : Colors.black,
+                              if (showUserName) Text(message.sender),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: isMe
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
+                                children: [
+                                  if (isMe && showTime) Text(formattedTime),
+                                  Flexible(
+                                    child: Container(
+                                      padding: EdgeInsets.all(12),
+                                      margin: EdgeInsets.symmetric(horizontal: 8.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color:
+                                            isMe ? Colors.blue : Colors.grey[200],
+                                      ),
+                                      child: Text(
+                                        message.text,
+                                        style: TextStyle(
+                                          color: isMe ? Colors.white : Colors.black,
+                                        ),
+                                        maxLines: null,
+                                      ),
                                     ),
-                                    maxLines: null,
                                   ),
-                                ),
+                                  if (!isMe && showTime) Text(formattedTime),
+                                ],
                               ),
-                              if (!isMe && showTime) Text(formattedTime),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                BottomAppBar(
+                  color: Colors.blue,
+                  elevation: 0,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.add),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: controller.messageController,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            controller.sendMessage(
+                              _authController.userInfo.value!.nickName,
+                              controller.messageController.text,
+                              roomId,
+                              _authController.userInfo.value!.uid,
+                            );
+                          },
+                          icon: Icon(Icons.send),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             );
           } else {
             throw Exception();

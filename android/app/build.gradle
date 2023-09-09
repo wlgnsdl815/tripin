@@ -95,5 +95,3 @@ dependencies {
     implementation "com.android.support:multidex:1.0.3"
     implementation "com.kakao.sdk:v2-user:2.15.0"
 }
-
-manifestPlaceholders = [ KAKAO_NATIVE_KEY: properties.getProperty('kakao.native.key'), NAVER_MAP_CLIENT_ID: properties.getProperty('naver.map.clientId') ]
