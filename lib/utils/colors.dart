@@ -5,7 +5,7 @@ abstract class PlatformColors {
   static Color primary = const Color(0xff4D80FF);
   static Color primaryLight = const Color(0xff6FA0FE);
   static Color secondary = const Color(0xffFFD951);
-  static Color negative = const Color(0xffFF7272);
+  static Color negative = const Color(0xffFF5252);
 
   static Color title = const Color(0xff323232);
   static Color subtitle = const Color(0xff585858);
