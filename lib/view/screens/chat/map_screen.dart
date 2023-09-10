@@ -116,13 +116,69 @@ class MapScreen extends GetView<MapScreenController> {
                   );
                 },
               ),
-              SFComboBox(
-                status: SFComboBoxStatus.searchSelect,
-                menus: [
-                  SFSelectMenu(title: '서울'),
-                  SFSelectMenu(title: '부산'),
-                  SFSelectMenu(title: '대구'),
-                ],
+              Container(
+                color: Colors.white,
+                child: ExpansionTile(
+                  backgroundColor: Colors.white,
+                  title: Text('도시선택'),
+                  children: [
+                    Container(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Table(
+                          border: TableBorder.all(),
+                          children: List.generate(
+                            6,
+                            (row) {
+                              return TableRow(
+                                children: List.generate(3, (column) {
+                                  int index = row * 3 + column;
+                                  return Obx(
+                                    () => GestureDetector(
+                                      onTap: () {
+                                        controller.selectedCity.value =
+                                            cities[index];
+                                        controller.addPlanToFireStore();
+                                        print(
+                                            '터치: ${controller.selectedCity.value}');
+                                        Get.back();
+                                      },
+                                      child: Container(
+                                        color: controller.selectedCity.value ==
+                                                cities[index]
+                                            ? Colors.amber
+                                            : Colors.transparent,
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Center(
+                                          child: Text(
+                                            cities[index],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    Obx(() {
+                      if (controller.timeStamps.isNotEmpty &&
+                          controller.selectedCity.value != '') {
+                        return ElevatedButton(
+                          onPressed: () {},
+                          child: Text('완료'),
+                        );
+                      } else {
+                        return SizedBox
+                            .shrink(); // 조건이 맞지 않을 때는 아무 것도 보이지 않게 처리
+                      }
+                    })
+                  ],
+                ),
               ),
             ],
           ),
@@ -200,3 +256,24 @@ class MapScreen extends GetView<MapScreenController> {
     );
   }
 }
+
+final List<String> cities = [
+  '서울',
+  '경기',
+  '인천',
+  '강원',
+  '강릉',
+  '대구',
+  '경주',
+  '부산',
+  '울산',
+  '경남',
+  '경북',
+  '광주',
+  '대전',
+  '충남',
+  '충북',
+  '전남',
+  '전북',
+  '제주',
+];

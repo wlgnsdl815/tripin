@@ -13,11 +13,6 @@ class MapScreenController extends GetxController {
   MapScreenController() : roomId = Get.find<ChatListController>().roomId.value;
 
   RxBool hasPermission = false.obs;
-
-  // 캘린더 때문에 추가한 변수. 후에 필요없으면 삭제
-  // RxDouble _containerHeight = 50.0.obs;
-  // RxBool isDropDownTap = false.obs;
-
   Rx<NLatLng> myPosition = NLatLng(37.5665, 126.9780).obs;
   RxBool isLocationLoaded = false.obs;
   TextEditingController placeTextController = TextEditingController();
@@ -27,7 +22,7 @@ class MapScreenController extends GetxController {
   RxBool isMarkerTapped = false.obs;
   RxList<DateTime> dateRange = <DateTime>[].obs;
   RxList<int> timeStamps = <int>[].obs;
-  // get containerHeight => _containerHeight;
+  RxString selectedCity = ''.obs;
 
   @override
   void onInit() async {
@@ -59,16 +54,6 @@ class MapScreenController extends GetxController {
             NMarker(id: markerModel.id, position: markerModel.position))
         .toList();
   }
-
-  // 캘린더 넣는다고 추가한 부분인데 필요없을 듯
-  // setContainerHeight(double height) {
-  //   isDropDownTap.value = !isDropDownTap.value;
-  //   if (isDropDownTap.value == true) {
-  //     _containerHeight.value = height;
-  //     return;
-  //   }
-  //   _containerHeight.value = 50.0;
-  // }
 
   Future<Position> getMyLocation() async {
     // 위치 서비스가 활성화되어 있는지 확인
@@ -225,10 +210,10 @@ class MapScreenController extends GetxController {
   addPlanToFireStore() async {
     PlanModel newPlan = PlanModel(
       dateTimestamps: timeStamps.value,
-      city: '부산',
-      markers: [],
+      city: selectedCity.value,
+      markers: markerList,
     );
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(roomId)
         .collection('plan')
