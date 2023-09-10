@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
@@ -17,9 +16,10 @@ class LoginScreen extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LoginController());
     final _formKey = GlobalKey<FormState>();
     final _authController = Get.find<AuthController>();
-    print(controller.emailEditingController.text);
+
     return Scaffold(
       body: Center(
         child: Form(
@@ -47,17 +47,16 @@ class LoginScreen extends GetView<LoginController> {
                   ),
                 ),
                 CustomFormField(
-                  hintText: '이메일을 입력하세요',
-                  hintStyle: TextStyle(color: PlatformColors.subtitle4),
-                  validator: (value) {
-                    if (!controller.isValidEmail(value)) {
-                      return '*이메일 형식을 확인해주세요';
-                    }
-                    return null;
-                  },
-                  controller: controller.emailEditingController,
-                  onChanged: (v) => controller.email = v,
-                ),
+                    hintText: '이메일을 입력하세요',
+                    hintStyle: TextStyle(color: PlatformColors.subtitle4),
+                    validator: (value) {
+                      if (!controller.isValidEmail(value)) {
+                        return '*이메일 형식을 확인해주세요';
+                      }
+                      return null;
+                    },
+                    controller: controller.emailEditingController,
+                    onChanged: (v) => controller.email = v),
                 CustomFormField(
                   obscureText: true,
                   hintText: '비밀번호를 입력하세요',
