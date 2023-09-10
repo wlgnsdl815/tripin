@@ -10,7 +10,7 @@ class CustomFormField extends StatefulWidget {
     this.obscureText = false,
     this.hintText,
     this.hintStyle,
-    required this.validator,
+    this.validator,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -29,6 +29,22 @@ class _CustomFormFieldState extends State<CustomFormField> {
     return TextFormField(
       obscureText: widget.obscureText,
       decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: PlatformColors.subtitle4),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: PlatformColors.primary),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: PlatformColors.negative),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(width: 1, color: PlatformColors.negative),
+          borderRadius: BorderRadius.circular(8),
+        ),
         hintText: widget.hintText,
         hintStyle:
             widget.hintStyle ?? TextStyle(color: PlatformColors.subtitle4),
