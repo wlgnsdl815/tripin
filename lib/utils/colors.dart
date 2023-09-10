@@ -2,18 +2,18 @@
 import 'package:flutter/painting.dart';
 
 abstract class PlatformColors {
-  static Color primary = const Color(0xff4D80FF);
-  static Color primaryLight = const Color(0xff6FA0FE);
-  static Color secondary = const Color(0xffFFD951);
-  static Color negative = const Color(0xffFF5252);
+  static const Color primary = Color(0xff4D80FF);
+  static const Color primaryLight = Color(0xff6FA0FE);
+  static const Color secondary = Color(0xffFFD951);
+  static const Color negative = Color(0xffFF5252);
 
-  static Color title = const Color(0xff323232);
-  static Color subtitle = const Color(0xff585858);
-  static Color subtitle2 = const Color(0xff7B7B7B);
-  static Color subtitle3 = const Color(0xff9A9A9A);
-  static Color subtitle4 = const Color(0xffA6A6A6);
-  static Color subtitle5 = const Color(0xffB3B3B3);
-  static Color subtitle6 = const Color(0xffCDCDCD);
-  static Color subtitle7 = const Color(0xffEAEAEA);
-  static Color subtitle8 = const Color(0xffF9F9F9);
+  static const Color title = Color(0xff323232);
+  static const Color subtitle = Color(0xff585858);
+  static const Color subtitle2 = Color(0xff7B7B7B);
+  static const Color subtitle3 = Color(0xff9A9A9A);
+  static const Color subtitle4 = Color(0xffA6A6A6);
+  static const Color subtitle5 = Color(0xffB3B3B3);
+  static const Color subtitle6 = Color(0xffCDCDCD);
+  static const Color subtitle7 = Color(0xffEAEAEA);
+  static const Color subtitle8 = Color(0xffF9F9F9);
 }

@@ -9,6 +9,8 @@ import 'package:tripin/view/screens/sign_up_screen.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_formfield.dart';
 
+import 'find_pw_screen.dart';
+
 class LoginScreen extends GetView<LoginController> {
   const LoginScreen({super.key});
 
@@ -76,7 +78,7 @@ class LoginScreen extends GetView<LoginController> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          print('비밀번호 찾기');
+                          Get.to(() => FindPwScreen());
                         },
                         child: Text(
                           '비밀번호 찾기',
