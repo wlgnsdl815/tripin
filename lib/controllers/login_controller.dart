@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
@@ -7,6 +8,7 @@ class LoginController extends GetxController {
   final TextEditingController pwEditingController = TextEditingController();
   final TextEditingController pw2EditingController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
+  final TextEditingController pwFindEmailController = TextEditingController();
   final RxString _email = ''.obs;
 
   final AuthController _authController = AuthController();
@@ -37,6 +39,11 @@ class LoginController extends GetxController {
       return;
     }
     print('회원가입 실패. 두 개의 비밀번호 다름');
+  }
+
+  // 비밀번호 찾기
+  Future<void> passwordFind() async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: pwFindEmailController.text);
   }
 
   logOut() {

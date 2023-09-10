@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:tripin/controllers/auth_controller.dart';
@@ -42,22 +43,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      theme: ThemeData(
-        fontFamily: "Pretendard"
+    return ScreenUtilInit(
+      designSize: const Size(360, 800),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => GetMaterialApp(
+        theme: ThemeData(
+          fontFamily: "Pretendard"
+        ),
+        initialBinding: BindingsBuilder(() {
+          Get.put(AuthController());
+          Get.lazyPut(() => LoginController(), fenix: true);
+          Get.lazyPut(() => EditProfileController(), fenix: true);
+          Get.lazyPut(() => FriendController(), fenix: true);
+          Get.lazyPut(() => SelectFriendsController(), fenix: true);
+          Get.lazyPut(() => ChatController(), fenix: true);
+          Get.lazyPut(() => ChatListController(), fenix: true);
+          Get.lazyPut(() => MapScreenController(), fenix: true);
+        }),
+        getPages: AppRoutes.routes,
+        initialRoute: AppScreens.login,
       ),
-      initialBinding: BindingsBuilder(() {
-        Get.put(AuthController());
-        Get.lazyPut(() => LoginController(), fenix: true);
-        Get.lazyPut(() => EditProfileController(), fenix: true);
-        Get.lazyPut(() => FriendController(), fenix: true);
-        Get.lazyPut(() => SelectFriendsController(), fenix: true);
-        Get.lazyPut(() => ChatController(), fenix: true);
-        Get.lazyPut(() => ChatListController(), fenix: true);
-        Get.lazyPut(() => MapScreenController(), fenix: true);
-      }),
-      getPages: AppRoutes.routes,
-      initialRoute: AppScreens.login,
     );
   }
 }

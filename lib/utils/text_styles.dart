@@ -11,10 +11,10 @@ class AppTextStyle {
   static const light = TextStyle(fontFamily: 'Pretendard', fontWeight: FontWeight.w300);
 
   // header
-  static TextStyle header1({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 24.sp, color: color);
-  static TextStyle header2({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 20.sp, color: color);
-  static TextStyle header3({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 18.sp, color: color);
-  static TextStyle header4({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 15.sp, color: color);
+  static TextStyle header24({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 24.sp, color: color);
+  static TextStyle header20({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 20.sp, color: color);
+  static TextStyle header18({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 18.sp, color: color);
+  static TextStyle header15({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 15.sp, color: color);
 
   // body
   static TextStyle body18B({Color color = PlatformColors.title}) => semiBold.copyWith(fontSize: 18.sp, color: color);
