@@ -6,12 +6,12 @@ class CustomButton extends StatefulWidget {
     Key? key,
     required this.onTap,
     required this.text,
-    this.backgrondColor,
+    this.backgroundColor,
     this.textStyle,
   }) : super(key: key);
 
   final VoidCallback onTap;
-  final Color? backgrondColor;
+  final Color? backgroundColor;
   final TextStyle? textStyle;
   final String text;
 
@@ -27,7 +27,7 @@ class _CustomButtonState extends State<CustomButton> {
         padding: EdgeInsets.symmetric(
           vertical: 16,
         ),
-        backgroundColor: PlatformColors.primary,
+        backgroundColor: widget.backgroundColor ?? PlatformColors.primary,
       ),
       onPressed: widget.onTap,
       child: Text(

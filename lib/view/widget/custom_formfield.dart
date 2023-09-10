@@ -11,6 +11,7 @@ class CustomFormField extends StatefulWidget {
     this.hintText,
     this.hintStyle,
     this.validator,
+    this.onChanged,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -18,7 +19,7 @@ class CustomFormField extends StatefulWidget {
   final String? hintText;
   final TextStyle? hintStyle;
   final String? Function(String?)? validator;
-
+  final Function(String)? onChanged;
   @override
   State<CustomFormField> createState() => _CustomFormFieldState();
 }
@@ -52,6 +53,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: widget.validator,
       controller: widget.controller,
+      onChanged: widget.onChanged,
     );
   }
 }
