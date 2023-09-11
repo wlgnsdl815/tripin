@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
@@ -48,33 +49,60 @@ class LoginScreen extends GetView<LoginController> {
                     ),
                   ),
                 ),
-                CustomFormField(
-                    hintText: '이메일을 입력하세요',
-                    hintStyle: TextStyle(color: PlatformColors.subtitle4),
-                    validator: (value) {
-                      if (!controller.isValidEmail(value)) {
-                        return '*이메일 형식을 확인해주세요';
-                      }
-                      return null;
-                    },
-                    controller: controller.emailEditingController,
-                    onChanged: (v) => controller.email = v),
-                CustomFormField(
-                  obscureText: true,
-                  hintText: '비밀번호를 입력하세요',
-                  hintStyle: TextStyle(color: PlatformColors.subtitle4),
-                  validator: (value) {
-                    if (value!.length < 8) {
-                      return '*비밀번호를 정확하게 입력해주세요';
-                    }
-                    return null;
-                  },
-                  controller: controller.pwEditingController,
+                Obx(
+                  () => Column(
+                    children: [
+                      CustomFormField(
+                        hintText: '이메일을 입력하세요',
+                        hintStyle: TextStyle(color: PlatformColors.subtitle4),
+                        isValid: controller.isValidEmail(controller.email),
+                        validText: '이메일 주소',
+                        invalidText: '이메일 형식을 확인해주세요.',
+                        controller: controller.emailEditingController,
+                        onChanged: (v) {
+                          controller.email = v;
+                        },
+                        icon: controller.email.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () {
+                                  controller.email = '';
+                                  controller.emailEditingController.clear();
+                                },
+                                child: CircleAvatar(
+                                  child: Icon(Icons.close_rounded),
+                                ),
+                              )
+                            : null,
+                      ),
+                      CustomFormField(
+                        obscureText: true,
+                        hintText: '비밀번호를 입력하세요',
+                        hintStyle: TextStyle(color: PlatformColors.subtitle4),
+                        controller: controller.pwEditingController,
+                        isValid: controller.pw.length > 8,
+                        validText: '비밀번호',
+                        invalidText: '비밀번호는 8자 이상을 입력해주세요.',
+                        onChanged: (v) => controller.pw = v,
+                        icon: controller.pw.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () {
+                                  controller.pw = '';
+                                  controller.pwEditingController.clear();
+                                },
+                                child: CircleAvatar(
+                                  child: Icon(Icons.close_rounded),
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextButton(
                         onPressed: () {
@@ -86,6 +114,11 @@ class LoginScreen extends GetView<LoginController> {
                             color: PlatformColors.subtitle4,
                           ),
                         ),
+                      ),
+                      Container(
+                        color: PlatformColors.subtitle4,
+                        width: 1,
+                        height: 12,
                       ),
                       TextButton(
                         onPressed: () {
@@ -104,7 +137,6 @@ class LoginScreen extends GetView<LoginController> {
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
                           controller.loginWithEmail();
-                          print('로그인 성공');
                           return;
                         }
                         print('로그인 실패');
@@ -116,8 +148,8 @@ class LoginScreen extends GetView<LoginController> {
                     children: [
                       Expanded(
                         child: Divider(
-                          height: 1, // 가로 선의 높이
-                          color: PlatformColors.subtitle5, // 가로 선의 색상
+                          height: 1,
+                          color: PlatformColors.subtitle5,
                         ),
                       ),
                       Padding(
