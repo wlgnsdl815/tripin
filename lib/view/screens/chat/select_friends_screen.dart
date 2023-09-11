@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
 
@@ -9,6 +10,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
 
   @override
   Widget build(BuildContext context) {
+    final _chatListController = Get.find<ChatListController>();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -59,6 +61,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
           ElevatedButton(
             onPressed: () async {
               String roomId = await controller.createChatRoom();
+              _chatListController.setRoomId(roomId);
               Get.to(
                 () => ChatScreen(
                   roomId: roomId,

@@ -23,7 +23,11 @@ class ChatScreen extends GetView<ChatController> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(() => MapScreen());
+              Get.to(
+                () => MapScreen(
+                  roomId: roomId,
+                ),
+              );
             },
             icon: Icon(Icons.map),
           ),
@@ -72,14 +76,16 @@ class ChatScreen extends GetView<ChatController> {
                     itemBuilder: (context, index) {
                       // 메세지들을 하나씩 담아주고
                       final message = messageList[index];
+
                       // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
                       final isMe = message.sender ==
                           _authController.userInfo.value!.nickName;
                       print('sender => ${message.sender}');
                       // database에 있는 timestamp를 변환
-                      DateTime dateTime =
-                          DateTime.fromMillisecondsSinceEpoch(message.timestamp);
-                      String formattedTime = DateFormat('HH:mm').format(dateTime);
+                      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                          message.timestamp);
+                      String formattedTime =
+                          DateFormat('HH:mm').format(dateTime);
 
                       final currentChatDate = dateTime;
                       final currentSender = message.sender;
@@ -106,12 +112,14 @@ class ChatScreen extends GetView<ChatController> {
                       } else {
                         final nextChat = messageList[index + 1];
                         final nextChatDate =
-                            DateTime.fromMillisecondsSinceEpoch(nextChat.timestamp);
+                            DateTime.fromMillisecondsSinceEpoch(
+                                nextChat.timestamp);
                         final nextSender = nextChat.sender;
                         final nextMinutes =
                             nextChatDate.minute + nextChatDate.hour * 60;
 
-                        if (minutes != nextMinutes || currentSender != nextSender) {
+                        if (minutes != nextMinutes ||
+                            currentSender != nextSender) {
                           showTime = true;
                         }
                       }
@@ -119,7 +127,8 @@ class ChatScreen extends GetView<ChatController> {
                       return Container(
                         margin: EdgeInsets.all(8),
                         child: Align(
-                          alignment: isMe ? Alignment.topRight : Alignment.topLeft,
+                          alignment:
+                              isMe ? Alignment.topRight : Alignment.topLeft,
                           child: Column(
                             crossAxisAlignment: isMe
                                 ? CrossAxisAlignment.end
@@ -136,16 +145,20 @@ class ChatScreen extends GetView<ChatController> {
                                   Flexible(
                                     child: Container(
                                       padding: EdgeInsets.all(12),
-                                      margin: EdgeInsets.symmetric(horizontal: 8.0),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 8.0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(15),
-                                        color:
-                                            isMe ? Colors.blue : Colors.grey[200],
+                                        color: isMe
+                                            ? Colors.blue
+                                            : Colors.grey[200],
                                       ),
                                       child: Text(
                                         message.text,
                                         style: TextStyle(
-                                          color: isMe ? Colors.white : Colors.black,
+                                          color: isMe
+                                              ? Colors.white
+                                              : Colors.black,
                                         ),
                                         maxLines: null,
                                       ),

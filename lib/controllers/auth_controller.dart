@@ -18,9 +18,9 @@ class AuthController extends GetxController {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        Get.offAllNamed(AppScreens.home);
         _user.value = user;
-        getUserInfo(user.uid);
+        getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
+        Get.offAllNamed(AppScreens.home);
       } else {
         Get.offAllNamed(AppScreens.login);
       }
@@ -34,6 +34,7 @@ class AuthController extends GetxController {
       UserModel? res = await DBService().getUserInfoById(uid);
       if (res != null) {
         userInfo(res);
+        print('userInfo.value: ${userInfo.value}');
       }
     } catch (error) {
       print("유저 정보 로딩 중 에러: $error");
@@ -48,13 +49,12 @@ class AuthController extends GetxController {
   }
 
   signUp(String email, String password, String nickName) async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    UserCredential userCredential = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
+    User? newUser = userCredential.user;
 
     UserModel userModel = UserModel(
-      uid: FirebaseAuth.instance.currentUser!.uid,
+      uid: newUser!.uid, // 이 부분을 수정
       email: email,
       nickName: nickName,
       imgUrl: '',
@@ -180,7 +180,7 @@ class AuthController extends GetxController {
 
     // Firestore에 사용자 정보 저장
     await FirebaseFirestore.instance
-        .collection('user')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
       'uid': FirebaseAuth.instance.currentUser!.uid,
