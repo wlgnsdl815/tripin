@@ -30,9 +30,9 @@ class HomeScreen extends GetView<AuthController> {
               width: Get.width * 0.5,
               height: Get.width * 0.5,
               child: Image.network(
-                  controller.userInfo.value?.imgUrl.isEmpty ?? true
-                      ? 'http://picsum.photos/100/100'
-                      : controller.userInfo.value!.imgUrl),
+                controller.userInfo.value?.imgUrl.isEmpty ?? true
+                  ? 'http://picsum.photos/100/100'
+                  : controller.userInfo.value!.imgUrl),
             ),
           ),
           Obx(() => Text(controller.userInfo.value != null

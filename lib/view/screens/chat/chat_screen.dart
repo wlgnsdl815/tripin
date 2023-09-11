@@ -1,10 +1,16 @@
+import 'dart:developer';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
+import 'package:tripin/service/db_service.dart';
 import 'package:tripin/view/screens/chat/map_screen.dart';
+
+import '../../../model/user_model.dart';
 
 class ChatScreen extends GetView<ChatController> {
   final String roomId;
@@ -46,12 +52,14 @@ class ChatScreen extends GetView<ChatController> {
 
           if (snapshot.data is Map<dynamic, dynamic>) {
             Map<dynamic, dynamic> messages = snapshot.data!;
-            var messageList = messages.entries
-                .map((e) => ChatMessage.fromMap(e.value))
-                .toList();
+            // var messageList = messages.entries
+            //     .map((e) => ChatMessage.fromMap(e.value))
+            //     .toList();
 
-            // timestamp 속성을 기준으로 메시지 리스트 정렬
-            messageList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+            controller.readMessage(messages, messages.entries);
+            
+            // // timestamp 속성을 기준으로 메시지 리스트 정렬
+            // messageList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (controller.scrollController.hasClients) {
@@ -66,101 +74,121 @@ class ChatScreen extends GetView<ChatController> {
             return Column(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    controller: controller.scrollController,
-                    itemCount: messageList.length,
-                    itemBuilder: (context, index) {
-                      // 메세지들을 하나씩 담아주고
-                      final message = messageList[index];
-                      // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
-                      final isMe = message.sender ==
-                          _authController.userInfo.value!.nickName;
-                      print('sender => ${message.sender}');
-                      // database에 있는 timestamp를 변환
-                      DateTime dateTime =
-                          DateTime.fromMillisecondsSinceEpoch(message.timestamp);
-                      String formattedTime = DateFormat('HH:mm').format(dateTime);
+                  child: Obx(
+                    () => ListView.builder(
+                      controller: controller.scrollController,
+                      itemCount: controller.messageList.length,
+                      itemBuilder: (context, index) {
+                        // 메세지들을 하나씩 담아주고
+                        final message = controller.messageList[index];
+                        // 그 메세지의 발신자가 현재 로그인한 유저의 이름과 같은지 검사
+                        final isMe = message.sender!.uid ==
+                            _authController.userInfo.value!.uid;
+                        print('sender => ${message.sender}');
+                        // database에 있는 timestamp를 변환
+                        DateTime dateTime =
+                            DateTime.fromMillisecondsSinceEpoch(message.timestamp);
+                        String formattedTime = DateFormat('HH:mm').format(dateTime);
 
-                      final currentChatDate = dateTime;
-                      final currentSender = message.sender;
-                      final minutes =
-                          currentChatDate.minute + currentChatDate.hour * 60;
+                            final currentChatDate = dateTime;
+                            final currentSender = message.sender!.uid;
+                            final minutes =
+                                currentChatDate.minute + currentChatDate.hour * 60;
 
-                      bool cutMinutes = (index == 0 ||
-                          minutes !=
-                              DateTime.fromMillisecondsSinceEpoch(
-                                          messageList[index - 1].timestamp)
-                                      .minute +
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                              messageList[index - 1].timestamp)
-                                          .hour *
-                                      60);
+                            bool cutMinutes = (index == 0 ||
+                                minutes !=
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        controller.messageList[index - 1].timestamp)
+                                            .minute +
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            controller.messageList[index - 1].timestamp)
+                                                .hour *
+                                            60);
 
-                      bool showUserName = (index == 0 ||
-                          currentSender != messageList[index - 1].sender ||
-                          cutMinutes);
-                      bool showTime = false;
+                            bool showUserName = (index == 0 ||
+                                currentSender != controller.messageList[index - 1].sender!.uid ||
+                                cutMinutes);
+                            bool showTime = false;
 
-                      if (index == messageList.length - 1) {
-                        showTime = true;
-                      } else {
-                        final nextChat = messageList[index + 1];
-                        final nextChatDate =
-                            DateTime.fromMillisecondsSinceEpoch(nextChat.timestamp);
-                        final nextSender = nextChat.sender;
-                        final nextMinutes =
-                            nextChatDate.minute + nextChatDate.hour * 60;
+                            if (index == controller.messageList.length - 1) {
+                              showTime = true;
+                            } else {
+                              final nextChat = controller.messageList[index + 1];
+                              final nextChatDate =
+                                  DateTime.fromMillisecondsSinceEpoch(nextChat.timestamp);
+                              final nextSender = nextChat.sender!.uid;
+                              final nextMinutes =
+                                  nextChatDate.minute + nextChatDate.hour * 60;
 
-                        if (minutes != nextMinutes || currentSender != nextSender) {
-                          showTime = true;
-                        }
-                      }
+                              if (minutes != nextMinutes || currentSender != nextSender) {
+                                showTime = true;
+                              }
+                            }
 
-                      return Container(
-                        margin: EdgeInsets.all(8),
-                        child: Align(
-                          alignment: isMe ? Alignment.topRight : Alignment.topLeft,
-                          child: Column(
-                            crossAxisAlignment: isMe
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
-                            children: [
-                              if (showUserName) Text(message.sender),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: isMe
-                                    ? MainAxisAlignment.end
-                                    : MainAxisAlignment.start,
-                                children: [
-                                  if (isMe && showTime) Text(formattedTime),
-                                  Flexible(
-                                    child: Container(
-                                      padding: EdgeInsets.all(12),
-                                      margin: EdgeInsets.symmetric(horizontal: 8.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color:
-                                            isMe ? Colors.blue : Colors.grey[200],
-                                      ),
-                                      child: Text(
-                                        message.text,
-                                        style: TextStyle(
-                                          color: isMe ? Colors.white : Colors.black,
-                                        ),
-                                        maxLines: null,
+                            return Container(
+                              margin: EdgeInsets.all(8),
+                              child: Align(
+                                alignment: isMe ? Alignment.topRight : Alignment.topLeft,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SizedBox(
+                                        width: 32,
+                                        height: 32,
+                                        child: (!isMe && showUserName) ? Image.network(
+                                          message.sender!.imgUrl.isEmpty ?? true
+                                            ? 'http://picsum.photos/100/100'
+                                            : message.sender!.imgUrl, fit: BoxFit.cover,) : Container(),
                                       ),
                                     ),
-                                  ),
-                                  if (!isMe && showTime) Text(formattedTime),
-                                ],
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: isMe
+                                            ? CrossAxisAlignment.end
+                                            : CrossAxisAlignment.start,
+                                        children: [
+                                          if (showUserName) Text(message.sender!.nickName),
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            mainAxisAlignment: isMe
+                                                ? MainAxisAlignment.end
+                                                : MainAxisAlignment.start,
+                                            children: [
+                                              if (isMe && showTime) Text(formattedTime),
+                                              Flexible(
+                                                child: Container(
+                                                  padding: EdgeInsets.all(12),
+                                                  margin: EdgeInsets.symmetric(horizontal: 8.0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(15),
+                                                    color:
+                                                        isMe ? Colors.blue : Colors.grey[200],
+                                                  ),
+                                                  child: Text(
+                                                    message.text,
+                                                    style: TextStyle(
+                                                      color: isMe ? Colors.white : Colors.black,
+                                                    ),
+                                                    maxLines: null,
+                                                  ),
+                                                ),
+                                              ),
+                                              if (!isMe && showTime) Text(formattedTime),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
                   ),
-                ),
+                  ),
                 BottomAppBar(
                   color: Colors.blue,
                   elevation: 0,
@@ -180,7 +208,7 @@ class ChatScreen extends GetView<ChatController> {
                         IconButton(
                           onPressed: () {
                             controller.sendMessage(
-                              _authController.userInfo.value!.nickName,
+                              _authController.userInfo.value!.uid,
                               controller.messageController.text,
                               roomId,
                               _authController.userInfo.value!.uid,
