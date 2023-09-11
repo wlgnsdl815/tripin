@@ -34,7 +34,7 @@ void main() async {
       onAuthFailed: (ex) {
         print("********* 네이버맵 인증오류 : $ex *********");
       });
-      
+
   runApp(const MyApp());
 }
 

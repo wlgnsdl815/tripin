@@ -94,6 +94,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/edit_profile_controller.dart';
 import 'package:tripin/model/user_model.dart';
+import 'package:tripin/service/db_service.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 
 // enum SearchState {
@@ -106,6 +107,7 @@ import 'package:tripin/view/screens/friend_screen.dart';
 class FriendController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Rxn<UserModel> friendUser = Rxn<UserModel>(null);
+  RxList<UserModel>followingList = <UserModel>[].obs;
   Rx<User> get user => Get.find<AuthController>().user!.obs;
   final AuthController authController = Get.find<AuthController>();
   TextEditingController searchController = TextEditingController();
@@ -137,6 +139,7 @@ class FriendController extends GetxController {
       friendUser.value = null;
       update();
     }
+    return null;
   }
 
   void clearSearchResults() {
@@ -146,7 +149,7 @@ class FriendController extends GetxController {
     update();
   }
 
-  searchFriendByEmail() async {
+  void searchFriendByEmail() async {
     final nickNameToSearch = searchController.text;
     final friendUser = await searchUserByEmail(nickNameToSearch);
     if (friendUser != null) {
@@ -174,10 +177,32 @@ class FriendController extends GetxController {
   }
 
  void addFriend(UserModel friend) {
-    if (!friends.contains(friend)) {
-      friends.add(friend);
-      update();
-    }
+  FirebaseFirestore.instance
+  .collection('user')
+  .doc(FirebaseAuth.instance.currentUser!.uid)
+  .update({'following':FieldValue.arrayUnion([friend.uid])});
+   final isAlreadyAdded = friends.any((existingFriend) =>
+      existingFriend.email == friend.email);
+      if (!isAlreadyAdded) {
+    friends.add(friend);
+    update();
+  } else {
+  final snackBar = SnackBar(
+      content: Text('이미 추가된 친구입니다.'),
+    );
+
+    // ScaffoldMessenger로 SnackBar를 표시
+    ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+  }  
+  }
+
+  void deleteFriend(UserModel friend){
+   FirebaseFirestore.instance
+    .collection('user')
+    .doc(FirebaseAuth.instance.currentUser!.uid)
+    .update({'following':FieldValue.arrayRemove([friend.uid])});
+    followingList.remove(friend);
+    update();
   }
 
 //    void saveFriends() async {
@@ -186,17 +211,18 @@ class FriendController extends GetxController {
 //     await prefs.setStringList('friends', friendList);
 //   }
 
-//  void loadFriends() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     List<String>? friendList = prefs.getStringList('friends');
-//     if (friendList != null) {
-//       friends.clear();
-//       for (String friendJson in friendList) {
-//         final friend = UserModel.fromJson(friendJson);
-//         friends.add(friend);
-//       }
-//     }
-//   }
+ void   getFollowing() async {
+  await authController.getUserInfo(FirebaseAuth.instance.currentUser!.uid);
+    var uidList = authController.userInfo.value!.following;
+    List<UserModel> following = [];
+    for (var uid in uidList) {
+      var userInfo = await DBService().getUserInfoById(uid);
+      following.add(userInfo);
+    }
+    followingList(following);
+    print('$followingList');
+    
+  }
 
 
   Future<String?> getFriendImage(String email) async {
@@ -227,20 +253,15 @@ class FriendController extends GetxController {
     final friendUser = await searchUserByEmail(nickNameToSearch);
 
     if (friendUser != null) {
-      // 이메일을 누를 때 친구를 추가하도록 변경
       addFriend(friendUser);
-
-      // FriendScreen으로 이동
       Get.toNamed(FriendScreen.route, arguments: {'friend': friendUser});
     } else {
-      // 사용자를 찾지 못한 경우 아무것도 하지 않습니다.
     }
   }
-
-  //  @override
-  // void onInit() {
-  //   super.onInit();
-  //   // 앱 시작 시 저장된 친구 목록을 읽어옴
-  //   loadFriends();
-  // }
+   @override
+  void onInit() {
+    super.onInit();
+    // 앱 시작 시 저장된 친구 목록을 읽어옴
+    getFollowing();
+  }
   }

@@ -22,7 +22,7 @@ class FindFriendPage extends GetView<FriendController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('추가할 친구의 이메일 주소를\n입력해주세요.'),
+              Text('추가할 친구의 이메일 주소를\n입력해주세요.',),
               SizedBox(
                 height: 20,
               ),
@@ -56,16 +56,23 @@ class FindFriendPage extends GetView<FriendController> {
                             aspectRatio: 1 / 1,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                clipBehavior: Clip.antiAlias,
-                                child: Image.network(
-                                  friendUser.imgUrl,
-                                  fit: BoxFit.fill,
-                                ),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.grey),
-                              ),
+                              child: 
+                              friendUser.imgUrl != null &&
+                                      friendUser.imgUrl.isNotEmpty
+                                  ? Container(
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20)
+                                    ),
+                                    child: Image.network(friendUser.imgUrl, fit: BoxFit.fill,),
+                                    )
+                                  : Container(
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
@@ -75,6 +82,7 @@ class FindFriendPage extends GetView<FriendController> {
                             controller.addFriend(friendUser);
                             // Get.toNamed(FriendScreen.route,
                             //     );
+                            controller.getFollowing();
                             controller.searchController.clear();
                             controller.clearSearchResults();
                           },
