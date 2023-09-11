@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
@@ -46,17 +47,34 @@ class LoginScreen extends GetView<LoginController> {
                     ),
                   ),
                 ),
-                CustomFormField(
+                Obx(
+                  () => CustomFormField(
                     hintText: '이메일을 입력하세요',
                     hintStyle: TextStyle(color: PlatformColors.subtitle4),
                     validator: (value) {
                       if (!controller.isValidEmail(value)) {
                         return '*이메일 형식을 확인해주세요';
                       }
+                      if (controller.isValidEmail(value)) {
+                        return 'wasd';
+                      }
                       return null;
                     },
                     controller: controller.emailEditingController,
-                    onChanged: (v) => controller.email = v),
+                    onChanged: (v) => controller.email = v,
+                    icon: controller.email.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              controller.email = '';
+                              controller.emailEditingController.clear();
+                            },
+                            child: CircleAvatar(
+                              child: Icon(Icons.close_rounded),
+                            ),
+                          )
+                        : null,
+                  ),
+                ),
                 CustomFormField(
                   obscureText: true,
                   hintText: '비밀번호를 입력하세요',

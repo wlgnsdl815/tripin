@@ -12,6 +12,7 @@ class CustomFormField extends StatefulWidget {
     this.hintStyle,
     this.validator,
     this.onChanged,
+    this.icon,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -20,6 +21,7 @@ class CustomFormField extends StatefulWidget {
   final TextStyle? hintStyle;
   final String? Function(String?)? validator;
   final Function(String)? onChanged;
+  final Widget? icon;
   @override
   State<CustomFormField> createState() => _CustomFormFieldState();
 }
@@ -49,6 +51,8 @@ class _CustomFormFieldState extends State<CustomFormField> {
         hintText: widget.hintText,
         hintStyle:
             widget.hintStyle ?? TextStyle(color: PlatformColors.subtitle4),
+        suffixIconConstraints: BoxConstraints(maxHeight: 30),
+        suffixIcon: widget.icon,
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: widget.validator,
