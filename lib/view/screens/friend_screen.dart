@@ -12,7 +12,8 @@ class FriendScreen extends GetView<FriendController> {
 
   @override
   Widget build(BuildContext context) {
-
+    final _authController = Get.find<AuthController>();
+   print( _authController.userInfo.value!.following);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -24,7 +25,9 @@ class FriendScreen extends GetView<FriendController> {
           Icon(Icons.group_add_sharp),
           TextButton(
               onPressed: () {
-                Get.toNamed(FindFriendPage.route,);
+                Get.toNamed(
+                  FindFriendPage.route,
+                );
               },
               child: Text(
                 '친구 추가',
@@ -100,16 +103,13 @@ class FriendScreen extends GetView<FriendController> {
                           borderRadius: BorderRadius.vertical(
                               top: Radius.circular(80),
                               bottom: Radius.circular(80)),
-                          border: Border.all(color: Colors.black)
-                      ),
+                          border: Border.all(color: Colors.black)),
                       child: Center(
-                        child: Text(
-                            Get.find<AuthController>()
-                              .userInfo
-                              .value
-                              ?.message ??
-                              '로딩중...'
-                        ),
+                        child: Text(Get.find<AuthController>()
+                                .userInfo
+                                .value
+                                ?.message ??
+                            '로딩중...'),
                       ),
                     ),
                   )
@@ -123,11 +123,10 @@ class FriendScreen extends GetView<FriendController> {
             ),
             Text('친구'),
             Obx(
-              ()=> Expanded(
+              () => Expanded(
                 child: ListView.builder(
-                  itemCount: controller.friends.length,
+                  itemCount: controller.followingList.length,
                   itemBuilder: (context, index) {
-                    final friend = controller.friends[index];
                     return ListTile(
                       leading: AspectRatio(
                         aspectRatio: 1 / 1,
@@ -139,14 +138,36 @@ class FriendScreen extends GetView<FriendController> {
                               borderRadius: BorderRadius.circular(12),
                               color: Colors.grey,
                             ),
-                            child: Image.network(
-                              friend.imgUrl,
-                              fit: BoxFit.fill,
-                            ),
+                            child: controller.followingList[index].imgUrl != null &&
+                                    controller.followingList[index].imgUrl.isNotEmpty
+                                ? Container(
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12)
+                                  ),
+                                  child: Image.network(controller.followingList[index].imgUrl, fit: BoxFit.fill,))
+                                : Container(
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+
+                            // controller.followingList[index].imgUrl != null &&
+                            //         friend.imgUrl.isNotEmpty
+                            //     ? Image.network(friend.imgUrl)
+                            //     : Container(
+                            //         clipBehavior: Clip.antiAlias,
+                            //         decoration: BoxDecoration(
+                            //           borderRadius: BorderRadius.circular(12),
+                            //           color: Colors.grey,
+                            //         ),
+                            //       ),
                           ),
                         ),
                       ),
-                      title: Text(friend.nickName),
+                      title: Text(controller.followingList[index].nickName),
                       // title:  Text('$selectedText'),
                     );
                   },
@@ -163,127 +184,127 @@ class FriendScreen extends GetView<FriendController> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return Container(
-                  color: Colors.lightBlue,
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.back();
-                              controller.searchController.clear();
-                              controller.clearSearchResults();
-                            },
-                            child: Icon(Icons.close),
-                          ),
-                          Text('친구 추가'),
-                        ],
-                      ),
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: controller.searchController,
-                              onEditingComplete: () {
-                                controller.searchFriendByEmail();
-                              },
-                              decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                      onPressed: () {
-                                        controller.searchFriendByEmail();
-                                      },
-                                      icon: Icon(Icons.search)),
-                                  filled: true,
-                                  hintText: '이메일로 친구 검색',
-                                  contentPadding: EdgeInsets.all(10),
-                                  border: InputBorder.none),
-                            ),
-                            const SizedBox(),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Obx(() {
-                                final friendUser = controller.friendUser.value;
-                                if (friendUser != null) {
-                                  return Column(
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Get.back();
-                                          controller.searchController.clear();
-                                          controller.clearSearchResults();
-                                        },
-                                        child: Text(friendUser.email),
-                                      ),
-                                      SizedBox(height: 16),
-                                    ],
-                                  );
-                                } else {
-                                  return Column(
-                                    children: [
-                                      Text('검색 결과가 없습니다.'),
-                                      SizedBox(height: 16),
-                                    ],
-                                  );
-                                }
-                              }),
-                            ), // SizedBox(
-                            //   width: double.infinity,
-                            //   child: Obx(() {
-                            //     final searchState =
-                            //         controller.searchState.value;
-                            //     if (searchState == SearchState.Idle) {
-                            //       // 검색을 시작하지 않은 초기화 상태일 때 빈 화면을 표시
-                            //       return Container();
-                            //     } else if (searchState == SearchState.SearchResult) {
-                            //       // 검색 결과가 있는 상태
-                            //       return SizedBox(
-                            //         width: double.infinity,
-                            //         child: Column(
-                            //           children: [
-                            //             ElevatedButton(
-                            //               onPressed: () {
-                            //                 // 버튼을 눌렀을 때 수행할 작업
-                            //               },
-                            //               child: Text(controller
-                            //                   .friendUser.value!.email),
-                            //             ),
-                            //             SizedBox(height: 16),
-                            //           ],
-                            //         ),
-                            //       );
-                            //     } else if (searchState ==
-                            //         SearchState.NoResult) {
-                            //       // 검색 결과가 없는 상태
-                            //       return Column(
-                            //         children: [
-                            //           Text('검색 결과가 없습니다.'),
-                            //           SizedBox(height: 16),
-                            //         ],
-                            //       );
-                            //     } else {
-                            //       // 검색 중인 상태
-                            //       return CircularProgressIndicator();
-                            //     }
-                            //   }),
-                            // )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              });
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.add),
+      //   onPressed: () {
+      //     showModalBottomSheet(
+      //         context: context,
+      //         builder: (context) {
+      //           return Container(
+      //             color: Colors.lightBlue,
+      //             height: MediaQuery.of(context).size.height / 3,
+      //             child: Column(
+      //               children: [
+      //                 Row(
+      //                   children: [
+      //                     GestureDetector(
+      //                       onTap: () {
+      //                         Get.back();
+      //                         controller.searchController.clear();
+      //                         controller.clearSearchResults();
+      //                       },
+      //                       child: Icon(Icons.close),
+      //                     ),
+      //                     Text('친구 추가'),
+      //                   ],
+      //                 ),
+      //                 SingleChildScrollView(
+      //                   child: Column(
+      //                     children: [
+      //                       TextField(
+      //                         controller: controller.searchController,
+      //                         onEditingComplete: () {
+      //                           controller.searchFriendByEmail();
+      //                         },
+      //                         decoration: InputDecoration(
+      //                             suffixIcon: IconButton(
+      //                                 onPressed: () {
+      //                                   controller.searchFriendByEmail();
+      //                                 },
+      //                                 icon: Icon(Icons.search)),
+      //                             filled: true,
+      //                             hintText: '이메일로 친구 검색',
+      //                             contentPadding: EdgeInsets.all(10),
+      //                             border: InputBorder.none),
+      //                       ),
+      //                       const SizedBox(),
+      //                       SizedBox(
+      //                         width: double.infinity,
+      //                         child: Obx(() {
+      //                           final friendUser = controller.friendUser.value;
+      //                           if (friendUser != null) {
+      //                             return Column(
+      //                               children: [
+      //                                 ElevatedButton(
+      //                                   onPressed: () {
+      //                                     Get.back();
+      //                                     controller.searchController.clear();
+      //                                     controller.clearSearchResults();
+      //                                   },
+      //                                   child: Text(friendUser.email),
+      //                                 ),
+      //                                 SizedBox(height: 16),
+      //                               ],
+      //                             );
+      //                           } else {
+      //                             return Column(
+      //                               children: [
+      //                                 Text('검색 결과가 없습니다.'),
+      //                                 SizedBox(height: 16),
+      //                               ],
+      //                             );
+      //                           }
+      //                         }),
+      //                       ), // SizedBox(
+      //                       //   width: double.infinity,
+      //                       //   child: Obx(() {
+      //                       //     final searchState =
+      //                       //         controller.searchState.value;
+      //                       //     if (searchState == SearchState.Idle) {
+      //                       //       // 검색을 시작하지 않은 초기화 상태일 때 빈 화면을 표시
+      //                       //       return Container();
+      //                       //     } else if (searchState == SearchState.SearchResult) {
+      //                       //       // 검색 결과가 있는 상태
+      //                       //       return SizedBox(
+      //                       //         width: double.infinity,
+      //                       //         child: Column(
+      //                       //           children: [
+      //                       //             ElevatedButton(
+      //                       //               onPressed: () {
+      //                       //                 // 버튼을 눌렀을 때 수행할 작업
+      //                       //               },
+      //                       //               child: Text(controller
+      //                       //                   .friendUser.value!.email),
+      //                       //             ),
+      //                       //             SizedBox(height: 16),
+      //                       //           ],
+      //                       //         ),
+      //                       //       );
+      //                       //     } else if (searchState ==
+      //                       //         SearchState.NoResult) {
+      //                       //       // 검색 결과가 없는 상태
+      //                       //       return Column(
+      //                       //         children: [
+      //                       //           Text('검색 결과가 없습니다.'),
+      //                       //           SizedBox(height: 16),
+      //                       //         ],
+      //                       //       );
+      //                       //     } else {
+      //                       //       // 검색 중인 상태
+      //                       //       return CircularProgressIndicator();
+      //                       //     }
+      //                       //   }),
+      //                       // )
+      //                     ],
+      //                   ),
+      //                 ),
+      //               ],
+      //             ),
+      //           );
+      //         });
+      //   },
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

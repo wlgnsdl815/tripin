@@ -29,7 +29,6 @@ class AuthController extends GetxController {
 
   User? get user => _user.value;
 
-
   Future<void> getUserInfo(String uid) async {
     try {
       UserModel? res = await DBService().getUserInfoById(uid);
@@ -61,6 +60,7 @@ class AuthController extends GetxController {
       imgUrl: '',
       isSelected: false,
       message: '',
+      following: [],
     );
 
     await DBService().saveUserInfo(userModel);
@@ -103,6 +103,7 @@ class AuthController extends GetxController {
       imgUrl: user.photoURL ?? '',
       isSelected: false,
       message: '',
+      following: [],
     );
 
     await DBService().saveUserInfo(userModel);
@@ -188,6 +189,7 @@ class AuthController extends GetxController {
       'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
       'isSelected': false,
       'message': '',
+      'following': [],
     });
   }
 
