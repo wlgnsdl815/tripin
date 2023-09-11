@@ -8,10 +8,14 @@ class LoginController extends GetxController {
   final TextEditingController pw2EditingController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
   final RxString _email = ''.obs;
+  final RxString _pw = ''.obs;
 
   final AuthController _authController = AuthController();
   String get email => _email.value;
+  String get pw => _pw.value;
   set email(String value) => _email(value);
+  set pw(String value) => _pw(value);
+
   bool isValidEmail(String? email) {
     final RegExp regex =
         RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
