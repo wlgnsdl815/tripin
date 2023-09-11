@@ -13,7 +13,7 @@ class FriendScreen extends GetView<FriendController> {
   @override
   Widget build(BuildContext context) {
     final _authController = Get.find<AuthController>();
-   print( _authController.userInfo.value!.following);
+    print(_authController.userInfo.value!.following);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -122,56 +122,99 @@ class FriendScreen extends GetView<FriendController> {
               endIndent: 20,
             ),
             Text('친구'),
+
             Obx(
               () => Expanded(
                 child: ListView.builder(
-                  itemCount: controller.followingList.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: AspectRatio(
-                        aspectRatio: 1 / 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.grey,
+                    itemCount: controller.followingList.length,
+                    itemBuilder: (context, index) {
+                      final friendList = controller.followingList[index];
+                      return Dismissible(
+                        key: Key(friendList.uid),
+                        background: Container(
+                          color: Colors.red, // 스와이프할 때 배경색 설정
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
                             ),
-                            child: controller.followingList[index].imgUrl != null &&
-                                    controller.followingList[index].imgUrl.isNotEmpty
-                                ? Container(
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12)
-                                  ),
-                                  child: Image.network(controller.followingList[index].imgUrl, fit: BoxFit.fill,))
-                                : Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-
-                            // controller.followingList[index].imgUrl != null &&
-                            //         friend.imgUrl.isNotEmpty
-                            //     ? Image.network(friend.imgUrl)
-                            //     : Container(
-                            //         clipBehavior: Clip.antiAlias,
-                            //         decoration: BoxDecoration(
-                            //           borderRadius: BorderRadius.circular(12),
-                            //           color: Colors.grey,
-                            //         ),
-                            //       ),
                           ),
                         ),
-                      ),
-                      title: Text(controller.followingList[index].nickName),
-                      // title:  Text('$selectedText'),
-                    );
-                  },
-                ),
+                        // ElevatedButton(onPressed: () {}, child: Text('삭제')),
+                        onDismissed: (direction) {
+                          controller.deleteFriend(friendList);
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                // BottomSheet의 내용을 구성하는 위젯을 반환합니다.
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      title: Text('친구가 삭제되었습니다.'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: ListTile(
+                          leading: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Colors.grey,
+                                ),
+                                child: controller.followingList[index].imgUrl !=
+                                            null &&
+                                        controller.followingList[index].imgUrl
+                                            .isNotEmpty
+                                    ? Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        child: Image.network(
+                                          controller
+                                              .followingList[index].imgUrl,
+                                          fit: BoxFit.fill,
+                                        ))
+                                    : Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+
+                                // controller.followingList[index].imgUrl != null &&
+                                //         friend.imgUrl.isNotEmpty
+                                //     ? Image.network(friend.imgUrl)
+                                //     : Container(
+                                //         clipBehavior: Clip.antiAlias,
+                                //         decoration: BoxDecoration(
+                                //           borderRadius: BorderRadius.circular(12),
+                                //           color: Colors.grey,
+                                //         ),
+                                //       ),
+                              ),
+                            ),
+                          ),
+                          title: Text(controller.followingList[index].nickName),
+                          // title:  Text('$selectedText'),
+                        ),
+                      );
+                      return null;
+                    }),
               ),
             ),
 

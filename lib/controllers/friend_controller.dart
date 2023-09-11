@@ -185,8 +185,6 @@ class FriendController extends GetxController {
       existingFriend.email == friend.email);
       if (!isAlreadyAdded) {
     friends.add(friend);
-    // 친구를 추가한 후에 친구 목록을 저장하려면 여기에 저장 로직 추가
-    // saveFriends();
     update();
   } else {
   final snackBar = SnackBar(
@@ -196,10 +194,15 @@ class FriendController extends GetxController {
     // ScaffoldMessenger로 SnackBar를 표시
     ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
   }  
-    // if (!friends.contains(friend)) {
-    //   friends.add(friend);
-    //   update();
-    // }
+  }
+
+  void deleteFriend(UserModel friend){
+   FirebaseFirestore.instance
+    .collection('user')
+    .doc(FirebaseAuth.instance.currentUser!.uid)
+    .update({'following':FieldValue.arrayRemove([friend.uid])});
+    followingList.remove(friend);
+    update();
   }
 
 //    void saveFriends() async {
