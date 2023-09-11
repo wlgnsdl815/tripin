@@ -6,10 +6,11 @@ class PlanModel {
   final String city; // 도시
   final List<MarkerModel> markers; // 마커들
 
-  PlanModel(
-      {required this.dateTimestamps,
-      required this.city,
-      required this.markers});
+  PlanModel({
+    required this.dateTimestamps,
+    required this.city,
+    required this.markers,
+  });
 
   // 타임스탬프를 DateTime으로 변환하는 함수
   List<DateTime> get dates => dateTimestamps

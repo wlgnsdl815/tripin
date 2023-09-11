@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
+import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 
 class MapScreen extends GetView<MapScreenController> {
@@ -13,7 +13,11 @@ class MapScreen extends GetView<MapScreenController> {
   @override
   Widget build(BuildContext context) {
     final List<NMarker> _nMarkerList = controller.nMarkerList;
-
+    final List<String> citiesName = cities.keys.toList();
+    final List<NLatLng> citiesNLatLng = cities.values.toList();
+    late NaverMapController naverMapController;
+    final SelectFriendsController _selectFriendsController =
+        Get.find<SelectFriendsController>();
     if (!controller.hasPermission.value) {
       controller.hasPermission;
       print('Position: ${controller.myPosition.value}');
@@ -22,8 +26,10 @@ class MapScreen extends GetView<MapScreenController> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text(
-          '지도 페이지',
+        title: Obx(
+          () => Text(
+            '지도 페이지 - Day ${controller.selectedDayIndex.value + 1}',
+          ),
         ),
       ),
       body: Stack(
@@ -37,39 +43,49 @@ class MapScreen extends GetView<MapScreenController> {
                 return Center(child: CircularProgressIndicator()); // 로딩 중 표시
               }
               return NaverMap(
-                key: ValueKey(controller.nMarkerList.length),
+                key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                 onMapTapped: (point, latLng) {
-                  Get.defaultDialog(
-                    title: '마커 생성하기',
-                    content: Column(
-                      children: [
-                        TextField(
-                          controller: controller.placeTextController,
-                          decoration: InputDecoration(
-                            hintText: '장소',
+                  if (controller.dateRange.isEmpty) {
+                    Get.snackbar('알림', '날짜를 먼저 선택해주세요');
+                    return;
+                  }
+
+                  Get.dialog(
+                    Dialog(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('장소 이름과 날짜 선택'),
+                          TextField(
+                            controller: controller.placeTextController,
+                            decoration: InputDecoration(
+                              hintText: '장소',
+                            ),
                           ),
-                        ),
-                        TextField(
-                          controller: controller.descriptionTextController,
-                          decoration: InputDecoration(
-                            hintText: '메모',
+                          SizedBox(
+                            height: 50, // 필요한 높이로 설정
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: controller.dateRange.length,
+                              itemBuilder: (context, index) {
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    controller.addMarkers(
+                                      position: latLng,
+                                      index: index,
+                                    );
+                                    print(index);
+                                  },
+                                  child: Text('Day${index + 1}'),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    cancel: ElevatedButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Text('취소'),
-                    ),
-                    confirm: ElevatedButton(
-                      onPressed: () {
-                        controller.addMarkers(position: latLng);
-                      },
-                      child: Text('생성'),
+                        ],
+                      ),
                     ),
                   );
+
                   print(latLng);
                 },
                 options: NaverMapViewOptions(
@@ -81,8 +97,8 @@ class MapScreen extends GetView<MapScreenController> {
                   ),
                 ),
                 onMapReady: (NMapController) async {
-                  final locationOverlay =
-                      await NMapController.getLocationOverlay();
+                  naverMapController = NMapController;
+
                   NMapController.addOverlayAll(_nMarkerList.toSet());
 
                   print(controller.markerList);
@@ -91,6 +107,7 @@ class MapScreen extends GetView<MapScreenController> {
                   controller.showInfoWindow(_nMarkerList); // 정보창 표시
                   controller.addArrowheadPath(
                       NMapController, _nMarkerList); // 경로 표시
+
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
                       print("Tapped marker with id: ${tappedMarker.info.id}");
@@ -108,19 +125,25 @@ class MapScreen extends GetView<MapScreenController> {
                 type: SFCalendarType.range,
                 todayMark: true,
                 getSelectedDate: (start, end, selectedDateList, selectedOne) {
-                  print('$start, $end, $selectedDateList, $selectedOne');
-                  print(start?.day ?? DateTime.now().day);
-                  controller.getDatesBetween(
-                    start ?? DateTime.now(),
-                    end ?? DateTime.now(),
-                  );
+                  if (start != null && end != null) {
+                    controller.getDatesBetweenAndUpdate(start, end);
+                    _selectFriendsController.updateStartAndEndDate(
+                        roomId, start, end);
+                  } else {
+                    print("시작 날짜 또는 종료 날짜 null");
+                  }
                 },
               ),
               Container(
                 color: Colors.white,
                 child: ExpansionTile(
+                  controller: controller.expansionTileController,
                   backgroundColor: Colors.white,
-                  title: Text('도시선택'),
+                  title: Obx(
+                    () => Text(
+                      controller.selectedCity.value,
+                    ),
+                  ),
                   children: [
                     Container(
                       color: Colors.white,
@@ -136,23 +159,37 @@ class MapScreen extends GetView<MapScreenController> {
                                   int index = row * 3 + column;
                                   return Obx(
                                     () => GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         controller.selectedCity.value =
-                                            cities[index];
-                                        controller.addPlanToFireStore();
+                                            citiesName[index];
+                                        await _selectFriendsController
+                                            .upDateCity(roomId,
+                                                citiesName[index]); // 도시 업데이트
+
                                         print(
                                             '터치: ${controller.selectedCity.value}');
-                                        Get.back();
+                                        controller.expansionTileController
+                                            .collapse();
+                                        controller.selectedCityLatLng.value =
+                                            citiesNLatLng[index];
+                                        final cameraUpdate =
+                                            NCameraUpdate.scrollAndZoomTo(
+                                          target: controller
+                                              .selectedCityLatLng.value,
+                                          zoom: 10,
+                                        );
+                                        naverMapController
+                                            .updateCamera(cameraUpdate);
                                       },
                                       child: Container(
                                         color: controller.selectedCity.value ==
-                                                cities[index]
+                                                citiesName[index]
                                             ? Colors.amber
                                             : Colors.transparent,
                                         padding: EdgeInsets.all(8.0),
                                         child: Center(
                                           child: Text(
-                                            cities[index],
+                                            citiesName[index],
                                           ),
                                         ),
                                       ),
@@ -184,10 +221,18 @@ class MapScreen extends GetView<MapScreenController> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          _showBottomSheet(_nMarkerList);
+          await controller.onDayButtonTap(
+              index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
+        },
+      ),
     );
   }
 
   void _showBottomSheet(List<NMarker> nMarkerList) {
+    // List<NMarker> filteredList = nMarkerList.where((e) => );
     Get.bottomSheet(
       Stack(
         children: [
@@ -226,18 +271,27 @@ class MapScreen extends GetView<MapScreenController> {
                                 thickness: 5,
                               ),
                             ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  child: Text('Day1'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  child: Text('Day2'),
-                                ),
-                              ],
+                            SizedBox(
+                              height: 50.0, // 원하는 높이로 조절
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: controller.dateRange.isEmpty
+                                    ? 1
+                                    : controller.dateRange.length,
+                                itemBuilder: (context, index) {
+                                  if (controller.dateRange.isEmpty) {
+                                    return Text('날짜를 선택해주세요');
+                                  }
+                                  return ElevatedButton(
+                                    onPressed: () {
+                                      controller.onDayButtonTap(index: index);
+                                      print(controller.selectedDayIndex);
+                                      Get.back();
+                                    },
+                                    child: Text('Day ${index + 1}'),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
@@ -257,23 +311,23 @@ class MapScreen extends GetView<MapScreenController> {
   }
 }
 
-final List<String> cities = [
-  '서울',
-  '경기',
-  '인천',
-  '강원',
-  '강릉',
-  '대구',
-  '경주',
-  '부산',
-  '울산',
-  '경남',
-  '경북',
-  '광주',
-  '대전',
-  '충남',
-  '충북',
-  '전남',
-  '전북',
-  '제주',
-];
+final Map<String, NLatLng> cities = {
+  '서울': NLatLng(37.5665, 126.9780),
+  '경기': NLatLng(37.2749, 127.0093),
+  '인천': NLatLng(37.4563, 126.7052),
+  '강원': NLatLng(37.8228, 128.1555),
+  '강릉': NLatLng(37.7519, 128.8766),
+  '대구': NLatLng(35.8714, 128.6014),
+  '경주': NLatLng(35.8562, 129.2247),
+  '부산': NLatLng(35.1796, 129.0756),
+  '울산': NLatLng(35.5384, 129.3114),
+  '경남': NLatLng(35.2376, 128.6919),
+  '경북': NLatLng(36.4919, 128.8889),
+  '광주': NLatLng(35.1595, 126.8526),
+  '대전': NLatLng(36.3504, 127.3845),
+  '충남': NLatLng(36.6588, 126.6728),
+  '충북': NLatLng(36.6359, 127.4913),
+  '전남': NLatLng(34.8679, 126.9910),
+  '전북': NLatLng(35.7175, 127.1530),
+  '제주': NLatLng(33.4890, 126.4983),
+};

@@ -6,6 +6,8 @@ class MarkerModel {
   final String title; // 마커의 타이틀
   final String description; // 마커에 대한 추가 설명
   final int order; // 마커 순서
+  final int timeStamp; // 날짜 timeStamp
+  final int dateIndex;
 
   MarkerModel({
     required this.id,
@@ -13,6 +15,8 @@ class MarkerModel {
     required this.title,
     required this.description,
     required this.order,
+    required this.timeStamp,
+    required this.dateIndex,
   });
 
   // Firestore 문서를 모델 객체로 변환
@@ -23,6 +27,8 @@ class MarkerModel {
       title: map['title'],
       description: map['description'],
       order: map['order'] ?? 0,
+      timeStamp: map['timeStamp'] ?? 0,
+      dateIndex: map['dateIndex'] ?? 0,
     );
   }
 
@@ -35,6 +41,8 @@ class MarkerModel {
       'title': title,
       'description': description,
       'order': order,
+      'timeStamp': timeStamp,
+      'dateIndex': dateIndex,
     };
   }
 }
