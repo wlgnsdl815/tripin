@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/view/screens/calendar_screen.dart';
 import 'package:tripin/view/screens/chat/chat_list_screen.dart';
 import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
@@ -65,6 +66,7 @@ class HomeScreen extends GetView<AuthController> {
             },
             child: Text('친구 목록'),
           ),
+
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
+import 'package:tripin/view/screens/calendar_screen.dart';
 
 class MapScreen extends GetView<MapScreenController> {
   const MapScreen({super.key});
@@ -37,6 +38,12 @@ class MapScreen extends GetView<MapScreenController> {
               type: SFCalendarType.range,
               initialDay: DateTime.now(),
             ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.to(() => CalenderScreen());
+            },
+            child: Text('캘린더'),
           ),
         ],
       ),

@@ -180,7 +180,7 @@ class AuthController extends GetxController {
 
     // Firestore에 사용자 정보 저장
     await FirebaseFirestore.instance
-        .collection('user')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
       'uid': FirebaseAuth.instance.currentUser!.uid,

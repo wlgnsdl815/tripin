@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/friend_controller.dart';
+import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 
 class FindFriendPage extends GetView<FriendController> {
@@ -22,7 +23,7 @@ class FindFriendPage extends GetView<FriendController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('추가할 친구의 이메일 주소를\n입력해주세요.',),
+              Text('추가할 친구의 이메일 주소를\n입력해주세요.', style: AppTextStyle.header18()),
               SizedBox(
                 height: 20,
               ),

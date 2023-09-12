@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
@@ -48,9 +49,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) => GetMaterialApp(
-        theme: ThemeData(
-          fontFamily: "Pretendard"
-        ),
+        theme: ThemeData(fontFamily: "Pretendard"),
         initialBinding: BindingsBuilder(() {
           Get.put(AuthController());
           Get.lazyPut(() => LoginController(), fenix: true);
@@ -60,6 +59,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => ChatController(), fenix: true);
           Get.lazyPut(() => ChatListController(), fenix: true);
           Get.lazyPut(() => MapScreenController(), fenix: true);
+          Get.lazyPut(() => CalendarController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.login,
