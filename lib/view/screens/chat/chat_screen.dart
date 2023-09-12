@@ -8,6 +8,8 @@ import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
 import 'package:tripin/service/db_service.dart';
+import 'package:tripin/utils/colors.dart';
+import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/map_screen.dart';
 
 import '../../../model/user_model.dart';
@@ -24,8 +26,12 @@ class ChatScreen extends GetView<ChatController> {
   Widget build(BuildContext context) {
     final AuthController _authController = Get.find<AuthController>();
     return Scaffold(
+      backgroundColor: PlatformColors.subtitle8,
       appBar: AppBar(
         title: Text(roomId),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: PlatformColors.title,
         actions: [
           IconButton(
             onPressed: () {
@@ -149,7 +155,7 @@ class ChatScreen extends GetView<ChatController> {
                                             ? CrossAxisAlignment.end
                                             : CrossAxisAlignment.start,
                                         children: [
-                                          if (showUserName) Text(message.sender!.nickName),
+                                          if (!isMe && showUserName) Text(message.sender!.nickName, style: AppTextStyle.body12R()),
                                           Row(
                                             crossAxisAlignment: CrossAxisAlignment.end,
                                             mainAxisAlignment: isMe
@@ -157,22 +163,27 @@ class ChatScreen extends GetView<ChatController> {
                                                 : MainAxisAlignment.start,
                                             children: [
                                               if (isMe && showTime) Text(formattedTime),
-                                              Flexible(
-                                                child: Container(
-                                                  padding: EdgeInsets.all(12),
-                                                  margin: EdgeInsets.symmetric(horizontal: 8.0),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(15),
-                                                    color:
-                                                        isMe ? Colors.blue : Colors.grey[200],
-                                                  ),
-                                                  child: Text(
-                                                    message.text,
-                                                    style: TextStyle(
-                                                      color: isMe ? Colors.white : Colors.black,
+                                              Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: isMe
+                                                    ? const BorderRadius.only(
+                                                      topLeft: Radius.circular(10),
+                                                      bottomLeft: Radius.circular(10),
+                                                      bottomRight: Radius.circular(10),
+                                                    )
+                                                    : const BorderRadius.only(
+                                                      topRight: Radius.circular(10),
+                                                    bottomLeft: Radius.circular(10),
+                                                      bottomRight: Radius.circular(10),
                                                     ),
-                                                    maxLines: null,
-                                                  ),
+                                                  color: isMe ? PlatformColors.chatPrimaryLight : Colors.white,
+                                                  border: Border.all(color: PlatformColors.subtitle7)
+                                                ),
+                                                child: Text(
+                                                  message.text,
+                                                  style: AppTextStyle.body13M(),
+                                                  maxLines: null,
                                                 ),
                                               ),
                                               if (!isMe && showTime) Text(formattedTime),

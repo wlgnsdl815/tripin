@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 abstract class PlatformColors {
   static const Color primary = Color(0xff4D80FF);
   static const Color primaryLight = Color(0xff6FA0FE);
+  static const Color chatPrimaryLight = Color(0xffDFEAFF);
   static const Color secondary = Color(0xffFFD951);
   static const Color negative = Color(0xffFF5252);
 

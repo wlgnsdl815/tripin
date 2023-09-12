@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -30,9 +32,11 @@ class AuthController extends GetxController {
   User? get user => _user.value;
 
   Future<void> getUserInfo(String uid) async {
+    userInfo(null);
     try {
       UserModel? res = await DBService().getUserInfoById(uid);
       if (res != null) {
+        log('$res', name: 'getUserInfo :: res');
         userInfo(res);
       }
     } catch (error) {
@@ -45,6 +49,8 @@ class AuthController extends GetxController {
       email: email,
       password: password,
     );
+
+    await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
   }
 
   signUp(String email, String password, String nickName) async {
@@ -64,17 +70,14 @@ class AuthController extends GetxController {
     );
 
     await DBService().saveUserInfo(userModel);
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userModel.uid)
-        .set(userModel.toMap());
+    await getUserInfo(userModel.uid);
   }
 
   logOut() async {
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
     await kakao.UserApi.instance.logout();
+    userInfo(null);
   }
 
   Future<UserCredential> signInWithGoogle() async {
@@ -107,6 +110,7 @@ class AuthController extends GetxController {
     );
 
     await DBService().saveUserInfo(userModel);
+    await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
 
     // 로그인하면, UserCredential을 리턴한다
     return userCredential;
@@ -180,7 +184,7 @@ class AuthController extends GetxController {
 
     // Firestore에 사용자 정보 저장
     await FirebaseFirestore.instance
-        .collection('user')
+        .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
       'uid': FirebaseAuth.instance.currentUser!.uid,
@@ -191,6 +195,7 @@ class AuthController extends GetxController {
       'message': '',
       'following': [],
     });
+    await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
   }
 
   Future<String?> getUserProfilePhotoUrl() async {
