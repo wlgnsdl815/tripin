@@ -15,7 +15,7 @@ class SelectFriendsController extends GetxController {
   getUsers() async {
     final tempUsersData = [];
     QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('user').get();
+        await FirebaseFirestore.instance.collection('users').get();
 
     tempUsersData.clear();
     tempUsersData.addAll(querySnapshot.docs);
