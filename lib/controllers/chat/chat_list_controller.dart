@@ -5,6 +5,13 @@ import 'package:get/get.dart';
 class ChatListController extends GetxController {
   RxList chatList = [].obs;
 
+  RxString roomId = ''.obs;
+
+  setRoomId(String id) {
+    roomId.value = id;
+    print('setRoomId: ${roomId.value}');
+  }
+
   getChatList() async {
     final firestoreInstance = FirebaseFirestore.instance;
     final currentUserUid = FirebaseAuth.instance.currentUser!.uid;

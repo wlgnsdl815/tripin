@@ -40,7 +40,9 @@ class SelectFriendsController extends GetxController {
       roomId: '', // 초기에는 빈 문자열 또는 null을 할당
       lastMessage: '',
       updatedAt: DateTime.now().millisecondsSinceEpoch,
-      participants: participants.toList(), // ObxList를 List로 변환하여 저장
+      participants: participants.toList(),
+      city: '',
+      dateRange: [], // ObxList를 List로 변환하여 저장
     );
 
     // 새로운 채팅방 추가
@@ -53,6 +55,28 @@ class SelectFriendsController extends GetxController {
     });
 
     return roomId.value = docRef.id;
+  }
+
+  upDateCity(String roomId, String selectedCity) async {
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .update({
+      'city': selectedCity,
+    });
+    print('도시 업데이트: $selectedCity');
+  }
+
+  Future<void> updateStartAndEndDate(
+      String roomId, DateTime startDate, DateTime endDate) async {
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .update({
+      'startDate': startDate.millisecondsSinceEpoch,
+      'endDate': endDate.millisecondsSinceEpoch,
+    });
+    print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }
 
   @override

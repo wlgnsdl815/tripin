@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -35,7 +32,11 @@ class ChatScreen extends GetView<ChatController> {
         actions: [
           IconButton(
             onPressed: () {
-              Get.to(() => MapScreen());
+              Get.to(
+                () => MapScreen(
+                  roomId: roomId,
+                ),
+              );
             },
             icon: Icon(Icons.map),
           ),
@@ -63,7 +64,7 @@ class ChatScreen extends GetView<ChatController> {
             //     .toList();
 
             controller.readMessage(messages, messages.entries);
-            
+
             // // timestamp 속성을 기준으로 메시지 리스트 정렬
             // messageList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
