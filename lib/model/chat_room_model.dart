@@ -3,7 +3,7 @@ class ChatRoom {
   String roomId; // 방 고유 ID
   String lastMessage; // 마지막 메시지
   int updatedAt; // 마지막 업데이트 시간 (타임스탬프)
-  List<String> participants; // 참가자 UID 리스트
+  List<String> participants; // 참가자 리스트
   int? startDate;
   int? endDate;
   String city;

@@ -18,3 +18,15 @@ abstract class PlatformColors {
   static const Color subtitle7 = Color(0xffEAEAEA);
   static const Color subtitle8 = Color(0xffF9F9F9);
 }
+
+abstract class CalendarColor {
+  static const Color purple = Color(0xffBE38F3);
+  static const Color yellowGreen = Color(0xffBB1DD8B);
+  static const Color blue = Color(0xff8FB7F2);
+  static const Color orange = Color(0xffFF9839);
+  static const Color red = Color(0xffFF7862);
+  static const Color green = Color(0xff0FA895);
+  static const Color yellow = Color(0xffFFE074);
+  static const Color seaBule = Color(0xFF00A1D8);
+  static const Color pink = Color(0xFFFF9292);
+}

@@ -4,15 +4,17 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/controllers/map/map_screen_controller.dart';
 
 class CalenderScreen extends GetView<CalendarController> {
   const CalenderScreen({super.key});
   static const route = '/calender';
+   
 
   @override
   Widget build(BuildContext context) {
-// final ChatListController _chatListController = ChatListController();
-//     print('${_chatListController.roomId.value}');
+    final MapScreenController _mapScreenController = Get.find<MapScreenController>();
+    print(_mapScreenController.roomId);
 
     CalendarFormat _calendarFormat = CalendarFormat.month;
     DateTime _focusedDay = DateTime.now();
@@ -59,7 +61,7 @@ class CalenderScreen extends GetView<CalendarController> {
                     onPressed: () {
                       controller.addEvent(title: '핑핑이들');
                       Navigator.of(context).pop();
-                      Get.back();
+                      // Get.back();
                     },
                     child: Text("추가"),
                   ),
