@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart' as cf;
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,12 +10,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/model/chat_message_model.dart';
 
+import '../../model/user_model.dart';
+import '../../service/db_service.dart';
+
 class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   final SelectFriendsController _selectFriendsController =
       Get.find<SelectFriendsController>();
   final functions = FirebaseFunctions.instance;
   final ScrollController scrollController = ScrollController();
+  RxList<ChatMessage> messageList = <ChatMessage>[].obs;
 
   // Firebase 초기화 메서드
   FirebaseDatabase _initFirebase() {
@@ -52,7 +59,7 @@ class ChatController extends GetxController {
     // 새 메시지 객체 생성
     ChatMessage newMessage = ChatMessage(
       messageId: '',
-      sender: sender,
+      senderUid: FirebaseAuth.instance.currentUser!.uid,
       text: text,
       timestamp: dateTime.millisecondsSinceEpoch,
       isRead: initialReadUser,
@@ -93,10 +100,31 @@ class ChatController extends GetxController {
     });
   }
 
+  Future<List<ChatMessage>> readMessage(messages, entries) async {
+    List<ChatMessage> messageList = [];
+    for (var e in messages.entries) {
+      UserModel sender = await DBService().getUserInfoById(e.value['sender']);
+      ChatMessage chatMessage = ChatMessage.fromMap(sender, e.value);
+      messageList.add(chatMessage);
+    }
+
+    log('$messageList', name: 'controller :: messageList');
+
+    // timestamp 속성을 기준으로 메시지 리스트 정렬
+    messageList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    this.messageList(messageList);
+    return messageList;
+  }
+
+  Future<UserModel> getSenderInfo(String uid) async {
+    UserModel sender = await DBService().getUserInfoById(uid);
+    return sender;
+  }
+
   // 맵 재귀적 캐스팅 메서드
   Map<String, dynamic> deepCastMap(Map? data) {
     if (data == null) return {};
-
     return data.map<String, dynamic>(
       (key, value) {
         if (value is Map) {

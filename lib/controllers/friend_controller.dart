@@ -120,7 +120,7 @@ class FriendController extends GetxController {
   Future<UserModel?> searchUserByEmail(String email) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
-          .collection('user')
+          .collection('users')
           .where('email', isEqualTo: email)
           .get();
 
@@ -178,7 +178,7 @@ class FriendController extends GetxController {
 
  void addFriend(UserModel friend) {
   FirebaseFirestore.instance
-  .collection('user')
+  .collection('users')
   .doc(FirebaseAuth.instance.currentUser!.uid)
   .update({'following':FieldValue.arrayUnion([friend.uid])});
    final isAlreadyAdded = friends.any((existingFriend) =>
@@ -198,7 +198,7 @@ class FriendController extends GetxController {
 
   void deleteFriend(UserModel friend){
    FirebaseFirestore.instance
-    .collection('user')
+    .collection('users')
     .doc(FirebaseAuth.instance.currentUser!.uid)
     .update({'following':FieldValue.arrayRemove([friend.uid])});
     followingList.remove(friend);
@@ -228,7 +228,7 @@ class FriendController extends GetxController {
   Future<String?> getFriendImage(String email) async {
     try {
       // Firestore에서 사용자 문서를 가져옵니다.
-      final userDoc = await _firestore.collection('user').doc(email).get();
+      final userDoc = await _firestore.collection('users').doc(email).get();
 
       if (userDoc.exists) {
         // 사용자 문서에서 이미지 URL 필드를 가져옵니다.
