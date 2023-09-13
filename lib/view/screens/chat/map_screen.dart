@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
+import 'package:tripin/service/geocoding_service.dart';
 import 'package:tripin/view/screens/calendar_screen.dart';
+
 
 class MapScreen extends GetView<MapScreenController> {
   final String roomId;
@@ -45,41 +47,50 @@ class MapScreen extends GetView<MapScreenController> {
               }
               return NaverMap(
                 key: ValueKey(DateTime.now().millisecondsSinceEpoch),
-                onMapTapped: (point, latLng) {
+                onMapTapped: (point, latLng) async {
                   if (controller.dateRange.isEmpty) {
                     Get.snackbar('알림', '날짜를 먼저 선택해주세요');
                     return;
                   }
-
+                  GeocodingService geocodingService = GeocodingService();
+                  Map<String, dynamic> geoData = await geocodingService
+                      .naverReverseGeocode(latLng.latitude, latLng.longitude);
                   Get.dialog(
                     Dialog(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('장소 이름과 날짜 선택'),
+                          Text('메모'),
+                          Text('data'),
                           TextField(
                             controller: controller.placeTextController,
                             decoration: InputDecoration(
-                              hintText: '장소',
+                              hintText: '메모를 입력해보세요',
                             ),
                           ),
                           SizedBox(
                             height: 50, // 필요한 높이로 설정
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: controller.dateRange.length,
-                              itemBuilder: (context, index) {
-                                return ElevatedButton(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  child: Text(
+                                    '취소',
+                                  ),
+                                ),
+                                ElevatedButton(
                                   onPressed: () {
                                     controller.addMarkers(
                                       position: latLng,
-                                      index: index,
                                     );
-                                    print(index);
                                   },
-                                  child: Text('Day${index + 1}'),
-                                );
-                              },
+                                  child: Text(
+                                      'Day ${controller.selectedDayIndex.value + 1}에 추가'),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -218,6 +229,29 @@ class MapScreen extends GetView<MapScreenController> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 50.0, // 원하는 높이로 조절
+                child: Obx(() {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.dateRange.isEmpty
+                        ? 1
+                        : controller.dateRange.length,
+                    itemBuilder: (context, index) {
+                      if (controller.dateRange.isEmpty) {
+                        return Text('날짜를 선택해주세요');
+                      }
+                      return ElevatedButton(
+                        onPressed: () {
+                          controller.onDayButtonTap(index: index);
+                          print(controller.selectedDayIndex);
+                        },
+                        child: Text('Day ${index + 1}'),
+                      );
+                    },
+                  );
+                }),
+              ),
             ],
           ),
           ElevatedButton(
@@ -228,13 +262,13 @@ class MapScreen extends GetView<MapScreenController> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          _showBottomSheet(_nMarkerList);
-          await controller.onDayButtonTap(
-              index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     _showBottomSheet(_nMarkerList);
+      //     await controller.onDayButtonTap(
+      //         index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
+      //   },
+      // ),
     );
   }
 
