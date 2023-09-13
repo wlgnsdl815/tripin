@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tripin/model/chat_room_model.dart';
+import 'package:tripin/model/user_model.dart';
+import 'package:tripin/service/db_service.dart';
 
 class ChatListController extends GetxController {
   RxList chatList = [].obs;
@@ -24,6 +27,14 @@ class ChatListController extends GetxController {
         .get();
 
     chatList.addAll(querySnapshot.docs);
+    print(querySnapshot.docs.map((e) => e.data()).toList());
+
+    List<Map<String, dynamic>> chatDataList =
+        querySnapshot.docs.map((e) => e.data()).toList();
+    List<UserModel> participants = [];
+
+    for (var chatData in chatDataList) {}
+    chatDataList.map((e) => ChatRoom.fromMap(e, participants));
   }
 
   @override

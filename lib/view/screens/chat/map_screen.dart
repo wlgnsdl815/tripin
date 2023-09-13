@@ -6,6 +6,7 @@ import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/view/screens/calendar_screen.dart';
+import 'package:tripin/service/geocoding_service.dart';
 
 class MapScreen extends GetView<MapScreenController> {
   final String roomId;
@@ -45,18 +46,21 @@ class MapScreen extends GetView<MapScreenController> {
               }
               return NaverMap(
                 key: ValueKey(DateTime.now().millisecondsSinceEpoch),
-                onMapTapped: (point, latLng) {
+                onMapTapped: (point, latLng) async {
                   if (controller.dateRange.isEmpty) {
                     Get.snackbar('알림', '날짜를 먼저 선택해주세요');
                     return;
                   }
-
+                  GeocodingService geocodingService = GeocodingService();
+                  Map<String, dynamic> geoData = await geocodingService
+                      .naverReverseGeocode(latLng.latitude, latLng.longitude);
                   Get.dialog(
                     Dialog(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text('메모'),
+                          Text('data'),
                           TextField(
                             controller: controller.placeTextController,
                             decoration: InputDecoration(

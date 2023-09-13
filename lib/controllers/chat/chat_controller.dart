@@ -34,7 +34,8 @@ class ChatController extends GetxController {
       String sender, String text, String roomId, String senderUid) async {
     print('sendMessage 메서드 호출됨');
     // 채팅방의 모든 참여자 가져오기
-    List<String> participants = _selectFriendsController.participants;
+    List<String> participants =
+        _selectFriendsController.participants.map((e) => e.uid).toList();
 
     Map<String, bool> initialReadUser = {};
     for (String userId in participants) {
