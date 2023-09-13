@@ -72,7 +72,6 @@ class AuthController extends GetxController {
     await DBService().saveUserInfo(userModel);
 
     await getUserInfo(userModel.uid);
-
   }
 
   logOut() async {

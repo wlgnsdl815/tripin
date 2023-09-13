@@ -7,6 +7,7 @@ import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/service/geocoding_service.dart';
 import 'package:tripin/view/screens/calendar_screen.dart';
+import 'package:tripin/service/geocoding_service.dart';
 
 
 class MapScreen extends GetView<MapScreenController> {
