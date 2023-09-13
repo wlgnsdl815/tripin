@@ -6,6 +6,8 @@ import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/service/geocoding_service.dart';
+import 'package:tripin/view/screens/calendar_screen.dart';
+
 
 class MapScreen extends GetView<MapScreenController> {
   final String roomId;
@@ -251,6 +253,12 @@ class MapScreen extends GetView<MapScreenController> {
                 }),
               ),
             ],
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.to(() => CalenderScreen());
+            },
+            child: Text('캘린더'),
           ),
         ],
       ),
