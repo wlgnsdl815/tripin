@@ -40,7 +40,8 @@ class SelectFriendsController extends GetxController {
     //   return userData.firstWhere((user) => user.uid == participantId);
     // }).toList();
 
-    List<String> participantsUidList = participants.map((element) => element.uid).toList();
+    List<String> participantsUidList =
+        participants.map((element) => element.uid).toList();
 
     ChatRoom newRoom = ChatRoom(
       roomId: '',

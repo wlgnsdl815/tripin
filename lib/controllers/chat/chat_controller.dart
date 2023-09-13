@@ -101,6 +101,7 @@ class ChatController extends GetxController {
     });
   }
 
+  // 후에 로직을 개선해서 성능 개선해보기
   Future<List<ChatMessage>> readMessage(messages, entries) async {
     List<ChatMessage> messageList = [];
     for (var e in messages.entries) {

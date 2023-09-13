@@ -6,11 +6,11 @@ class ChatRoom {
   String lastMessage; // 마지막 메시지
   int updatedAt; // 마지막 업데이트 시간 (타임스탬프)
   List<UserModel>? participants; // 참가자 리스트
-  List<String>? participantIdList;  // 참가자 uid 리스트 (채팅방 생성용)
+  List<String>? participantIdList; // 참가자 uid 리스트 (채팅방 생성용)
   int? startDate;
   int? endDate;
   String city;
-  List<int> dateRange;
+  List dateRange;
 
   ChatRoom({
     required this.roomId,
