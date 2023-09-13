@@ -11,8 +11,7 @@ class DBService {
 
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  final userRef = FirebaseFirestore.instance.collection('users')
-    .withConverter(
+  final userRef = FirebaseFirestore.instance.collection('users').withConverter(
       fromFirestore: (snapshot, _) => UserModel.fromMap(snapshot.data()!),
       toFirestore: (user, _) => user.toMap());
 
