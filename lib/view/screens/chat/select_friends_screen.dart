@@ -48,16 +48,17 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                     leading: CircleAvatar(),
                     trailing: Obx(
                       () {
-                        bool isSelected = controller.participants
-                            .contains(controller.userData[index].uid);
+                        bool isSelected = controller.participants.any((user) =>
+                            user.uid == controller.userData[index].uid);
+
                         return IconButton(
                           onPressed: () {
                             if (isSelected) {
                               controller.participants
-                                  .remove(controller.userData[index].uid);
+                                  .remove(controller.userData[index]);
                             } else {
                               controller.participants
-                                  .add(controller.userData[index].uid);
+                                  .add(controller.userData[index]);
                             }
                           },
                           icon: Icon(

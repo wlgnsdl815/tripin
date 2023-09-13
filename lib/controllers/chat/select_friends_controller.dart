@@ -7,8 +7,7 @@ import 'package:tripin/model/user_model.dart';
 
 class SelectFriendsController extends GetxController {
   RxList<UserModel> userData = <UserModel>[].obs;
-  RxList<String> participants =
-      <String>[FirebaseAuth.instance.currentUser!.uid].obs;
+  RxList<UserModel> participants = <UserModel>[].obs;
   RxString roomId = ''.obs;
   final AuthController _authController = Get.find<AuthController>();
 
@@ -36,13 +35,17 @@ class SelectFriendsController extends GetxController {
     print('참가자: $participants');
     final firestoreInstance = FirebaseFirestore.instance;
 
+    // List<UserModel> participantModels = participants.map((participantId) {
+    //   return userData.firstWhere((user) => user.uid == participantId);
+    // }).toList();
+
     ChatRoom newRoom = ChatRoom(
-      roomId: '', // 초기에는 빈 문자열 또는 null을 할당
+      roomId: '',
       lastMessage: '',
       updatedAt: DateTime.now().millisecondsSinceEpoch,
-      participants: participants.toList(),
+      participants: participants,
       city: '',
-      dateRange: [], // ObxList를 List로 변환하여 저장
+      dateRange: [],
     );
 
     // 새로운 채팅방 추가
