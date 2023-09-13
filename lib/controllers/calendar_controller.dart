@@ -30,10 +30,14 @@ class CalendarController extends GetxController {
 
   void readEvent() async {
     var db = FirebaseFirestore.instance;
-    QuerySnapshot docs = await db.collection('users')
+    QuerySnapshot res = await db.collection('users')
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('calendar').get();
 
+    List snapshotData = res.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
     
+    snapshotData.map((e) {
+      
+    });
   }
 }
