@@ -1,6 +1,8 @@
+
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tripin/model/chat_room_model.dart';
 
 import '../model/user_model.dart';
 
@@ -11,7 +13,8 @@ class DBService {
 
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  final userRef = FirebaseFirestore.instance.collection('users').withConverter(
+  final userRef = FirebaseFirestore.instance.collection('users')
+    .withConverter(
       fromFirestore: (snapshot, _) => UserModel.fromMap(snapshot.data()!),
       toFirestore: (user, _) => user.toMap());
 
@@ -29,6 +32,8 @@ class DBService {
       return null;
     }
   }
+
+
 
   Future saveUserInfo(UserModel user) async {
     DocumentSnapshot userDocSnapshot = await userRef.doc(user.uid).get();

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,7 +37,7 @@ void main() async {
       onAuthFailed: (ex) {
         print("********* 네이버맵 인증오류 : $ex *********");
       });
-
+  await initializeDateFormatting();
   runApp(const MyApp());
 }
 
@@ -62,7 +63,6 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => MapScreenController(), fenix: true);
           Get.lazyPut(() => ScheduleController(), fenix: true);
           Get.lazyPut(() => CalendarController(), fenix: true);
-
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.login,

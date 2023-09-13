@@ -27,6 +27,7 @@ class CalenderScreen extends GetView<CalendarController> {
         ],
       ),
       body: TableCalendar(
+        locale: 'ko_KR', 
         firstDay: DateTime.utc(2023, 08, 16),
         lastDay: DateTime.utc(2024, 3, 14),
         focusedDay: _focusedDay,
@@ -59,7 +60,7 @@ class CalenderScreen extends GetView<CalendarController> {
                 actions: [
                   ElevatedButton(
                     onPressed: () {
-                      controller.addEvent(title: '핑핑이들');
+                      controller.addCheckList(title: '핑핑이들');
                       Navigator.of(context).pop();
                       // Get.back();
                     },
