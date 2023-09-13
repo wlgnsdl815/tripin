@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
+import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/service/geocoding_service.dart';
@@ -16,6 +17,7 @@ class MapScreen extends GetView<MapScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    print('$roomId');
     final List<NMarker> _nMarkerList = controller.nMarkerList;
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
@@ -255,12 +257,12 @@ class MapScreen extends GetView<MapScreenController> {
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              Get.to(() => CalenderScreen());
-            },
-            child: Text('캘린더'),
-          ),
+          // ElevatedButton(
+          //   onPressed: () async {
+          //     Get.to(() => CalenderScreen());
+          //   },
+          //   child: Text('캘린더'),
+          // ),
         ],
       ),
       // floatingActionButton: FloatingActionButton(

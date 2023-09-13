@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
+import 'package:tripin/model/enum_color.dart';
 import 'package:tripin/model/user_model.dart';
 
 class SelectFriendsController extends GetxController {
@@ -55,6 +56,29 @@ class SelectFriendsController extends GetxController {
     // 룸 아이디를 doc 아이디로 업데이트
     await docRef.update({
       'roomId': docRef.id,
+    });
+
+    newRoom.roomId = docRef.id;
+
+    String randomColor = RandomColor.getRandomColor();
+
+    firestoreInstance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('calendar')
+        .doc(newRoom.roomId)
+        .set({
+      'roomId': newRoom.roomId,
+      'title': '',
+      'color': randomColor,
+      'checkList': [],
+    });
+
+    firestoreInstance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'joinedTrip': FieldValue.arrayUnion([newRoom.roomId])
     });
 
     return roomId.value = docRef.id;

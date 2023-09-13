@@ -66,6 +66,12 @@ class HomeScreen extends GetView<AuthController> {
             },
             child: Text('친구 목록'),
           ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.to(() => CalenderScreen());
+            },
+            child: Text('캘린더'),
+          ),
 
         ],
       ),
