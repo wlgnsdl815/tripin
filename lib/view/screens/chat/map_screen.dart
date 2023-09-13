@@ -55,30 +55,36 @@ class MapScreen extends GetView<MapScreenController> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('장소 이름과 날짜 선택'),
+                          Text('메모'),
                           TextField(
                             controller: controller.placeTextController,
                             decoration: InputDecoration(
-                              hintText: '장소',
+                              hintText: '메모를 입력해보세요',
                             ),
                           ),
                           SizedBox(
                             height: 50, // 필요한 높이로 설정
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: controller.dateRange.length,
-                              itemBuilder: (context, index) {
-                                return ElevatedButton(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  child: Text(
+                                    '취소',
+                                  ),
+                                ),
+                                ElevatedButton(
                                   onPressed: () {
                                     controller.addMarkers(
                                       position: latLng,
-                                      index: index,
                                     );
-                                    print(index);
                                   },
-                                  child: Text('Day${index + 1}'),
-                                );
-                              },
+                                  child: Text(
+                                      'Day ${controller.selectedDayIndex.value + 1}에 추가'),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -217,17 +223,40 @@ class MapScreen extends GetView<MapScreenController> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 50.0, // 원하는 높이로 조절
+                child: Obx(() {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.dateRange.isEmpty
+                        ? 1
+                        : controller.dateRange.length,
+                    itemBuilder: (context, index) {
+                      if (controller.dateRange.isEmpty) {
+                        return Text('날짜를 선택해주세요');
+                      }
+                      return ElevatedButton(
+                        onPressed: () {
+                          controller.onDayButtonTap(index: index);
+                          print(controller.selectedDayIndex);
+                        },
+                        child: Text('Day ${index + 1}'),
+                      );
+                    },
+                  );
+                }),
+              ),
             ],
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          _showBottomSheet(_nMarkerList);
-          await controller.onDayButtonTap(
-              index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     _showBottomSheet(_nMarkerList);
+      //     await controller.onDayButtonTap(
+      //         index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
+      //   },
+      // ),
     );
   }
 

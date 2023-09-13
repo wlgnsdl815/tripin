@@ -26,6 +26,7 @@ class MapScreenController extends GetxController {
   RxInt selectedDayIndex = 0.obs;
   Rxn<DateTime> startDate = Rxn(); // 시작 날짜
   Rxn<DateTime> endDate = Rxn(); // 종료 날짜
+
   @override
   void onInit() async {
     super.onInit();
@@ -108,8 +109,10 @@ class MapScreenController extends GetxController {
   }
 
   // 마커를 파이어베이스에 추가
-  addMarkers({required NLatLng position, required int index}) async {
-    if (index >= timeStamps.length) {
+  addMarkers({
+    required NLatLng position,
+  }) async {
+    if (selectedDayIndex.value >= timeStamps.length) {
       print('Error: Invalid index for timeStamps list.');
       return;
     }
@@ -121,15 +124,15 @@ class MapScreenController extends GetxController {
         .doc();
 
     // timeStamps의 길이와 index를 체크
-    if (index < timeStamps.length) {
+    if (selectedDayIndex.value < timeStamps.length) {
       final MarkerModel newMarker = MarkerModel(
         id: ref.id,
         position: position,
         title: placeTextController.text,
         description: descriptionTextController.text,
         order: markerList.length + 1,
-        timeStamp: timeStamps[index],
-        dateIndex: index,
+        timeStamp: timeStamps[selectedDayIndex.value],
+        dateIndex: selectedDayIndex.value,
       );
 
       await ref.set(newMarker.toMap());
@@ -139,7 +142,7 @@ class MapScreenController extends GetxController {
       Get.back();
 
       print('timeStamps length: ${timeStamps.length}');
-      print('index: $index');
+      print('index: $selectedDayIndex.value');
       print('마커 생성 성공');
     } else {
       print('Error: Invalid index for timeStamps list.');

@@ -64,14 +64,10 @@ class AuthController extends GetxController {
     );
 
     await DBService().saveUserInfo(userModel);
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userModel.uid)
-        .set(userModel.toMap());
   }
 
   logOut() async {
+    _user.value = null;
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
     await kakao.UserApi.instance.logout();

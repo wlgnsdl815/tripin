@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
+import 'package:tripin/view/screens/chat/schedule_screen.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
   const SelectFriendsScreen({super.key});
@@ -16,6 +17,19 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
         title: Text(
           '친구선택',
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.to(() => ScheduleScreen());
+            },
+            child: Text(
+              '다음',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
