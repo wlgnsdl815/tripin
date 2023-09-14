@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/model/marker_model.dart';
+import 'package:tripin/model/user_model.dart';
+import 'package:tripin/service/db_service.dart';
 
 class MapScreenController extends GetxController {
   // roomId가 많이 쓰여서 멤버 변수로 만들었다.
@@ -26,6 +29,13 @@ class MapScreenController extends GetxController {
   RxInt selectedDayIndex = 0.obs;
   Rxn<DateTime> startDate = Rxn(); // 시작 날짜
   Rxn<DateTime> endDate = Rxn(); // 종료 날짜
+  RxString currentUserNickName = ''.obs;
+
+  List<MarkerModel> get currentDayMarkers {
+    return markerList
+        .where((marker) => marker.dateIndex == selectedDayIndex.value)
+        .toList();
+  }
 
   @override
   void onInit() async {
@@ -133,6 +143,7 @@ class MapScreenController extends GetxController {
         order: markerList.length + 1,
         timeStamp: timeStamps[selectedDayIndex.value],
         dateIndex: selectedDayIndex.value,
+        userNickName: currentUserNickName.value,
       );
 
       await ref.set(newMarker.toMap());
@@ -143,6 +154,7 @@ class MapScreenController extends GetxController {
 
       print('timeStamps length: ${timeStamps.length}');
       print('index: $selectedDayIndex.value');
+      print('userNickName: $currentUserNickName');
       print('마커 생성 성공');
     } else {
       print('Error: Invalid index for timeStamps list.');
@@ -253,6 +265,8 @@ class MapScreenController extends GetxController {
   }
 
   updateDateRangeInFirestore(List<int> newDateRange) async {
+    print('roomId value: $roomId');
+
     await FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(roomId)
@@ -261,22 +275,6 @@ class MapScreenController extends GetxController {
     });
     print('dateRange 업데이트: $newDateRange');
   }
-
-  // addPlanToFireStore() async {
-  //   PlanModel newPlan = PlanModel(
-  //     dateTimestamps: timeStamps.value,
-  //     city: selectedCity.value,
-  //     markers: markerList,
-  //   );
-  //   await FirebaseFirestore.instance
-  //       .collection('chatRooms')
-  //       .doc(roomId)
-  //       .collection('plan')
-  //       .doc(roomId)
-  //       .set(
-  //         newPlan.toMap(),
-  //       );
-  // }
 
   onDayButtonTap({required int index}) {
     print("onDayButtonTap called with index: $index");
@@ -289,5 +287,11 @@ class MapScreenController extends GetxController {
             NMarker(id: markerModel.id, position: markerModel.position))
         .toList();
     print("Updated nMarkerList: ${nMarkerList.value.length}");
+  }
+
+  getCurrentUserNickName() async {
+    var currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    UserModel currentUser = await DBService().getUserInfoById(currentUserUid);
+    currentUserNickName.value = currentUser.nickName;
   }
 }

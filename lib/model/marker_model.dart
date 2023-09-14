@@ -8,6 +8,7 @@ class MarkerModel {
   final int order; // 마커 순서
   final int timeStamp; // 날짜 timeStamp
   final int dateIndex;
+  final String userNickName;
 
   MarkerModel({
     required this.id,
@@ -17,6 +18,7 @@ class MarkerModel {
     required this.order,
     required this.timeStamp,
     required this.dateIndex,
+    required this.userNickName,
   });
 
   // Firestore 문서를 모델 객체로 변환
@@ -29,6 +31,7 @@ class MarkerModel {
       order: map['order'] ?? 0,
       timeStamp: map['timeStamp'] ?? 0,
       dateIndex: map['dateIndex'] ?? 0,
+      userNickName: map['userNickName'] ?? '',
     );
   }
 
@@ -43,6 +46,7 @@ class MarkerModel {
       'order': order,
       'timeStamp': timeStamp,
       'dateIndex': dateIndex,
+      'userNickName': userNickName,
     };
   }
 }

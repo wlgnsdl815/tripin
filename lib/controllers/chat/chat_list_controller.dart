@@ -61,8 +61,7 @@ class ChatListController extends GetxController {
           participants.add(allParticipantsMap[participantUid]!);
         }
       }
-      ChatRoom chatRoom = ChatRoom.fromMap(
-          chatData.data() as Map<String, dynamic>, participants);
+      ChatRoom chatRoom = ChatRoom.fromMap(chatData.data(), participants);
       tempChatRoomList.add(chatRoom);
     }
 
