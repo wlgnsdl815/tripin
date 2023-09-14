@@ -14,7 +14,7 @@ class FriendScreen extends GetView<FriendController> {
   @override
   Widget build(BuildContext context) {
     final _authController = Get.find<AuthController>();
-    print(_authController.userInfo.value!.following);
+    print(_authController.userInfo.value?.following);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -42,16 +42,20 @@ class FriendScreen extends GetView<FriendController> {
       body: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/images/friend_background.png'), fit: BoxFit.fill)),
+                image: AssetImage('assets/images/friend_background.png'),
+                fit: BoxFit.fill)),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16,84,16,16),
+          padding: const EdgeInsets.fromLTRB(16, 84, 16, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: SizedBox(
-                  child: Text('지금, 소중한 사람들과 함께\n여행을 만들어보세요:)', style: AppTextStyle.header18(color: Colors.white),),
+                  child: Text(
+                    '지금, 소중한 사람들과 함께\n여행을 만들어보세요:)',
+                    style: AppTextStyle.header18(color: Colors.white),
+                  ),
                 ),
               ),
               SizedBox(
@@ -108,7 +112,8 @@ class FriendScreen extends GetView<FriendController> {
                                     .userInfo
                                     .value
                                     ?.nickName ??
-                                '로딩중...', style: AppTextStyle.header15(color: Colors.white),
+                                '로딩중...',
+                            style: AppTextStyle.header15(color: Colors.white),
                           ),
                         ),
                       ],
@@ -144,7 +149,7 @@ class FriendScreen extends GetView<FriendController> {
               Obx(
                 () => Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                      padding: EdgeInsets.zero,
                       itemCount: controller.followingList.length,
                       itemBuilder: (context, index) {
                         final friendList = controller.followingList[index];

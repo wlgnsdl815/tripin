@@ -17,7 +17,6 @@ import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/firebase_options.dart';
-import 'package:tripin/service/geocoding_service.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/app_routes.dart';
 import 'package:tripin/utils/app_screens.dart';

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
+import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/service/geocoding_service.dart';
 
 class MapScreen extends GetView<MapScreenController> {
@@ -74,8 +75,8 @@ class MapScreen extends GetView<MapScreenController> {
 
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
-                      print("Tapped marker with id: ${tappedMarker.info.id}");
-                      _showBottomSheet(_nMarkerList);
+                      print('탭한 마커 id: ${tappedMarker.info.id}');
+                      _showBottomSheet(_nMarkerList, 'right');
                       tappedMarker.setIconTintColor(Color(0xFF4D80EE));
                     });
                   }
@@ -208,18 +209,37 @@ class MapScreen extends GetView<MapScreenController> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () async {
-      //     _showBottomSheet(_nMarkerList);
-      //     await controller.onDayButtonTap(
-      //         index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
-      //   },
-      // ),
+      floatingActionButton: Stack(
+        children: [
+          Align(
+            alignment: Alignment.bottomRight,
+            // 오른쪽 버튼
+            child: FloatingActionButton(
+              onPressed: () async {
+                _showBottomSheet(_nMarkerList, 'right');
+                await controller.onDayButtonTap(
+                    index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
+              },
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 30.0),
+              // 왼쪽 버튼
+              child: FloatingActionButton(
+                onPressed: () async {
+                  _showBottomSheet(_nMarkerList, 'left');
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  void _showBottomSheet(List<NMarker> nMarkerList) {
-    // List<NMarker> filteredList = nMarkerList.where((e) => );
+  void _showBottomSheet(List<NMarker> nMarkerList, String buttonPosition) {
     Get.bottomSheet(
       Stack(
         children: [
@@ -243,50 +263,62 @@ class MapScreen extends GetView<MapScreenController> {
                 height: MediaQuery.of(context).size.height *
                     0.6, // 바텀시트 최소 크기를 맞춰야한다.
                 color: Colors.white,
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: nMarkerList.length + 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    if (index == 0) {
-                      return Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 50.0,
-                              child: Divider(
-                                thickness: 5,
+                child: buttonPosition == 'right'
+                    ? ListView.builder(
+                        controller: scrollController,
+                        itemCount: controller.currentDayMarkers.length + 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == 0) {
+                            return Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    width: 50.0,
+                                    child: Divider(
+                                      thickness: 5,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 50.0, // 원하는 높이로 조절
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: controller.dateRange.isEmpty
+                                          ? 1
+                                          : controller.dateRange.length,
+                                      itemBuilder: (context, index) {
+                                        if (controller.dateRange.isEmpty) {
+                                          return Text('날짜를 선택해주세요');
+                                        }
+                                        return ElevatedButton(
+                                          onPressed: () {
+                                            controller.onDayButtonTap(
+                                                index: index);
+                                            print(controller.selectedDayIndex);
+                                            Get.back();
+                                          },
+                                          child: Text('Day ${index + 1}'),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 50.0, // 원하는 높이로 조절
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: controller.dateRange.isEmpty
-                                    ? 1
-                                    : controller.dateRange.length,
-                                itemBuilder: (context, index) {
-                                  if (controller.dateRange.isEmpty) {
-                                    return Text('날짜를 선택해주세요');
-                                  }
-                                  return ElevatedButton(
-                                    onPressed: () {
-                                      controller.onDayButtonTap(index: index);
-                                      print(controller.selectedDayIndex);
-                                      Get.back();
-                                    },
-                                    child: Text('Day ${index + 1}'),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return ListTile(title: Text('아이템 $index'));
-                  },
-                ),
+                            );
+                          }
+                          MarkerModel marker =
+                              controller.currentDayMarkers[index - 1];
+                          print(controller.currentDayMarkers);
+
+                          print(marker.userNickName);
+                          return Column(
+                            children: [
+                              Text('${marker.userNickName} ${marker.title}'),
+                            ],
+                          );
+                        },
+                      )
+                    : SizedBox(),
               );
             },
           ),
@@ -340,9 +372,7 @@ class MapScreen extends GetView<MapScreenController> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      controller.addMarkers(
-                        position: latLng,
-                      );
+                      controller.addMarkers(position: latLng);
                     },
                     child: Text(
                         'Day ${controller.selectedDayIndex.value + 1}에 추가'),
