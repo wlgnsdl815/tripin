@@ -6,8 +6,8 @@ import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 
-class CalenderScreen extends GetView<CalendarController> {
-  const CalenderScreen({super.key});
+class CalendarScreen extends GetView<CalendarController> {
+  const CalendarScreen({super.key});
   static const route = '/calender';
    
 

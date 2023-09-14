@@ -1,80 +1,112 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/utils/colors.dart';
 import 'package:tripin/view/screens/calendar_screen.dart';
 import 'package:tripin/view/screens/chat/chat_list_screen.dart';
 import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 
+import '../../controllers/home_controller.dart';
 import 'edit_profile_screen.dart';
 
-class HomeScreen extends GetView<AuthController> {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
   static const route = '/home';
 
   @override
   Widget build(BuildContext context) {
-    print('Home: ${controller.userInfo}');
+    AuthController authController = Get.find<AuthController>();
+    print('Home: ${authController.userInfo}');
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              controller.logOut();
-            },
-            child: Text('로그아웃'),
-          ),
-          Obx(
-            () => Container(
-              width: Get.width * 0.5,
-              height: Get.width * 0.5,
-              child: Image.network(
-                controller.userInfo.value?.imgUrl.isEmpty ?? true
-                  ? 'http://picsum.photos/100/100'
-                  : controller.userInfo.value!.imgUrl),
-            ),
-          ),
-          Obx(() => Text(controller.userInfo.value != null
-              ? controller.userInfo.value!.nickName
-              : '이름: null')),
-          Obx(() => Text(controller.userInfo.value != null
-              ? controller.userInfo.value!.message
-              : '메세지: null')),
-          ElevatedButton(
-            onPressed: () {
-              Get.to(() => EditProfileScreen());
-            },
-            child: Text('프로필 수정'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Get.to(() => SelectFriendsScreen());
-            },
-            child: Text('채팅방 만들기'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Get.to(() => ChatListScreen());
-            },
-            child: Text('채팅방 목록'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Get.to(() => FriendScreen());
-            },
-            child: Text('친구 목록'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Get.to(() => CalenderScreen());
-            },
-            child: Text('캘린더'),
-          ),
-
-        ],
+      body: PageView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: controller.screens.length,
+        itemBuilder: (context, index) {
+          return Obx(() => controller.screens[controller.curPage.value]);
+        }
       ),
+      bottomNavigationBar: Obx(
+        () => Container(
+          height: 66,
+          color: PlatformColors.subtitle8,
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: BottomNavigationBar(
+            backgroundColor: PlatformColors.subtitle8,
+            currentIndex: controller.curPage.value,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            elevation: 0,
+            onTap: (value) {
+              controller.onPageTapped(value);
+            },
+            items: [
+              BottomNavigationBarItem(
+                label: '',
+                icon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_friends.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+                activeIcon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_selected_friends.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '',
+                icon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_chat_list.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+                activeIcon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_selected_chat_list.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '',
+                icon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_calendar.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+                activeIcon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_selected_calendar.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+              ),
+              BottomNavigationBarItem(
+                label: '',
+                icon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_my_page.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+                activeIcon: Column(
+                  children: [
+                    Image.asset('assets/icons/tab_selected_my_page.png', width: 20),
+                    SizedBox(height: 5),
+                  ],
+                ),
+              ),
+            ]
+          ),
+        ),
+      )
     );
   }
 }

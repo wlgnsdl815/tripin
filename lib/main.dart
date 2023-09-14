@@ -21,6 +21,8 @@ import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/app_routes.dart';
 import 'package:tripin/utils/app_screens.dart';
 
+import 'controllers/home_controller.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -63,6 +65,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => MapScreenController(), fenix: true);
           Get.lazyPut(() => ScheduleController(), fenix: true);
           Get.lazyPut(() => CalendarController(), fenix: true);
+          Get.lazyPut(() => HomeController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.login,
