@@ -8,6 +8,7 @@ import 'package:tripin/utils/colors.dart';
 
 class CalendarController extends GetxController {
   RxList<Event> events = <Event>[].obs;
+  List<DateTime> selectedDates = [];
 
   void addCheckList({required String title}) async {
     final SelectFriendsController _selectFriendsController =
@@ -30,14 +31,15 @@ class CalendarController extends GetxController {
 
   void readEvent() async {
     var db = FirebaseFirestore.instance;
-    QuerySnapshot res = await db.collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection('calendar').get();
+    QuerySnapshot res = await db
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('calendar')
+        .get();
 
-    List snapshotData = res.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-    
-    snapshotData.map((e) {
-      
-    });
+    List snapshotData =
+        res.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+    snapshotData.map((e) {});
   }
 }
