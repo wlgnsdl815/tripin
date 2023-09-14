@@ -43,6 +43,11 @@ class SelectFriendsController extends GetxController {
 
     List<String> participantsUidList =
         participants.map((element) => element.uid).toList();
+    // 현재 사용자의 UID를 participantsUidList에 추가
+    String currentUserUid = _authController.userInfo.value!.uid;
+    if (!participantsUidList.contains(currentUserUid)) {
+      participantsUidList.add(currentUserUid);
+    }
 
     ChatRoom newRoom = ChatRoom(
       roomId: '',
