@@ -9,5 +9,5 @@ class AppScreens {
   static const login = LoginScreen.route;
   static const friend = FriendScreen.route;
   static const findFriend = FindFriendPage.route;
-  static const calender = CalenderScreen.route;
+  static const calender = CalendarScreen.route;
 }

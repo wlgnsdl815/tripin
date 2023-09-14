@@ -26,7 +26,7 @@ class AppRoutes {
     ),
             GetPage(
       name: AppScreens.calender,
-      page: () => CalenderScreen(),
+      page: () => CalendarScreen(),
     ),
   ];
 }
