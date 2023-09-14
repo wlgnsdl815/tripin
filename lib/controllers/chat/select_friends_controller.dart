@@ -8,6 +8,7 @@ import 'package:tripin/model/user_model.dart';
 
 class SelectFriendsController extends GetxController {
   RxList<UserModel> userData = <UserModel>[].obs;
+  RxString rangeHighlightColor = ''.obs;
   RxList<UserModel> participants = <UserModel>[].obs;
   RxString roomId = ''.obs;
   final AuthController _authController = Get.find<AuthController>();
@@ -64,6 +65,7 @@ class SelectFriendsController extends GetxController {
     newRoom.roomId = docRef.id;
 
     String randomColor = RandomColor.getRandomColor();
+    rangeHighlightColor.value = randomColor;
 
     firestoreInstance
         .collection('users')
