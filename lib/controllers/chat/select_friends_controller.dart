@@ -63,7 +63,7 @@ class SelectFriendsController extends GetxController {
 
     newRoom.roomId = docRef.id;
 
-    String randomColor = RandomColor.getRandomColor();
+    String randomColor = CalendarColors.getRandomColor();
 
     firestoreInstance
         .collection('users')
