@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/model/marker_model.dart';
+import 'package:tripin/service/geocoding_service.dart';
 
 class MapScreenController extends GetxController {
   // roomId가 많이 쓰여서 멤버 변수로 만들었다.
@@ -26,6 +27,7 @@ class MapScreenController extends GetxController {
   RxInt selectedDayIndex = 0.obs;
   Rxn<DateTime> startDate = Rxn(); // 시작 날짜
   Rxn<DateTime> endDate = Rxn(); // 종료 날짜
+  RxString markerLocation = ''.obs;
 
   @override
   void onInit() async {
@@ -290,4 +292,18 @@ class MapScreenController extends GetxController {
         .toList();
     print("Updated nMarkerList: ${nMarkerList.value.length}");
   }
+
+  // showMarkersLocation({required double lat, required double lng}) async {
+  //   var markersLocation =
+  //       await GeocodingService().naverReverseGeocode(lat, lng);
+  //   var markerRegion = markersLocation[1].region;
+  //   // print('tapLocation: $markersLocation');
+  //   // print('tapLocation[0]: ${markersLocation[1].region.area3Name}');
+  //   markerLocation.value = markerRegion.area1Name +
+  //       markerRegion.area2Name +
+  //       markerRegion.area3Name +
+  //       markerRegion.area4Name;
+
+  //   print('dddd: ${markerLocation.value}');
+  // }
 }

@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:tripin/model/geocoding_model.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 
 class GeocodingService {
-  Future<Map<String, dynamic>> naverReverseGeocode(
+  Future<List<GeocodingResult>> naverReverseGeocode(
       double lat, double lng) async {
     String url =
-        ('https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$lat,$lng&orders=legalcode,admcode,addr,roadaddr&output=json');
+        ('https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$lng,$lat&sourcecrs=epsg:4326&output=json&orders=addr,admcode,roadaddr');
 
     Dio dio = Dio();
 
@@ -19,8 +20,14 @@ class GeocodingService {
           },
         ),
       );
+      var dataList = List<Map<String, dynamic>>.from(response.data['results']);
+      List<GeocodingResult> resultList =
+          dataList.map((e) => GeocodingResult.fromMap(e)).toList();
       print(response.data);
-      return (response.data);
+
+      print(resultList);
+
+      return resultList;
     } catch (e) {
       throw Exception(e);
     }

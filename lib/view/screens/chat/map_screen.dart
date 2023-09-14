@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/service/geocoding_service.dart';
-import 'package:tripin/view/screens/calendar_screen.dart';
-import 'package:tripin/service/geocoding_service.dart';
-
 
 class MapScreen extends GetView<MapScreenController> {
   final String roomId;
@@ -50,58 +46,11 @@ class MapScreen extends GetView<MapScreenController> {
               }
               return NaverMap(
                 key: ValueKey(DateTime.now().millisecondsSinceEpoch),
+                onSymbolTapped: (symbolInfo) async {
+                  _handleTap(symbolInfo.position, symbolInfo.caption);
+                },
                 onMapTapped: (point, latLng) async {
-                  if (controller.dateRange.isEmpty) {
-                    Get.snackbar('알림', '날짜를 먼저 선택해주세요');
-                    return;
-                  }
-                  GeocodingService geocodingService = GeocodingService();
-                  Map<String, dynamic> geoData = await geocodingService
-                      .naverReverseGeocode(latLng.latitude, latLng.longitude);
-                  Get.dialog(
-                    Dialog(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('메모'),
-                          Text('data'),
-                          TextField(
-                            controller: controller.placeTextController,
-                            decoration: InputDecoration(
-                              hintText: '메모를 입력해보세요',
-                            ),
-                          ),
-                          SizedBox(
-                            height: 50, // 필요한 높이로 설정
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  child: Text(
-                                    '취소',
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    controller.addMarkers(
-                                      position: latLng,
-                                    );
-                                  },
-                                  child: Text(
-                                      'Day ${controller.selectedDayIndex.value + 1}에 추가'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-
-                  print(latLng);
+                  _handleTap(latLng);
                 },
                 options: NaverMapViewOptions(
                   initialCameraPosition: NCameraPosition(
@@ -257,12 +206,6 @@ class MapScreen extends GetView<MapScreenController> {
               ),
             ],
           ),
-          // ElevatedButton(
-          //   onPressed: () async {
-          //     Get.to(() => CalenderScreen());
-          //   },
-          //   child: Text('캘린더'),
-          // ),
         ],
       ),
       // floatingActionButton: FloatingActionButton(
@@ -351,6 +294,65 @@ class MapScreen extends GetView<MapScreenController> {
       ),
       isDismissible: true,
       isScrollControlled: true, // 전체화면 바텀시트 가능
+    );
+  }
+
+  void _handleTap(NLatLng latLng, [String? caption]) async {
+    String captionText = caption ?? '';
+
+    if (controller.dateRange.isEmpty) {
+      Get.snackbar('알림', '날짜를 먼저 선택해주세요');
+      return;
+    }
+
+    var tapLocation = await GeocodingService()
+        .naverReverseGeocode(latLng.latitude, latLng.longitude);
+    var markerRegion = tapLocation[1].region;
+    print(tapLocation.first.buildingName);
+
+    Get.dialog(
+      Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('메모'),
+            Text(captionText),
+            Text(
+                '${tapLocation[1].buildingName} ${markerRegion.area1Name} ${markerRegion.area2Name} ${markerRegion.area3Name} ${markerRegion.area4Name}'),
+            TextField(
+              controller: controller.placeTextController,
+              decoration: InputDecoration(
+                hintText: '메모를 입력해보세요',
+              ),
+            ),
+            SizedBox(
+              height: 50, // 필요한 높이로 설정
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: Text(
+                      '취소',
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      controller.addMarkers(
+                        position: latLng,
+                      );
+                    },
+                    child: Text(
+                        'Day ${controller.selectedDayIndex.value + 1}에 추가'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
