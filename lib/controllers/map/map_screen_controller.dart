@@ -328,12 +328,14 @@ class MapScreenController extends GetxController {
           (e) => DateTime.fromMillisecondsSinceEpoch(e),
         )
         .toList();
-
-    DateTimeRange dateTimeRange =
-        DateTimeRange(start: dateRangeFromFB.first, end: dateRangeFromFB.last);
-    dateRangeFromFirebase.value = dateTimeRange;
-
-    print('dateRangeFromFirebase 값이 들어옴:${dateRangeFromFirebase.value}');
+    if (dateRangeFromFB.isNotEmpty) {
+      DateTimeRange dateTimeRange = DateTimeRange(
+          start: dateRangeFromFB.first, end: dateRangeFromFB.last);
+      dateRangeFromFirebase.value = dateTimeRange;
+      print('dateRangeFromFirebase 값이 들어옴:${dateRangeFromFirebase.value}');
+    } else {
+      return;
+    }
   }
 
   onDayButtonTap({required int index}) {
