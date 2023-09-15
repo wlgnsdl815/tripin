@@ -25,8 +25,6 @@ class ChatListScreen extends GetView<ChatListController> {
           itemCount: controller.chatList.length,
           itemBuilder: (context, index) {
             print(controller.chatList.length);
-            log('${controller.chatList[index].roomId}',
-                name: 'ListView :: roomId');
             return InkWell(
               onTap: () {
                 controller.setRoomId(controller.chatList[index].roomId);

@@ -9,7 +9,7 @@ class ChatListController extends GetxController {
   RxString roomId = ''.obs;
   RxList<ChatRoom> chatList = <ChatRoom>[].obs;
 
-  StreamSubscription? chatRoomsStreamSubscription; // 추가된 부분: 스트림 구독 객체
+  StreamSubscription? chatRoomsStreamSubscription; // 스트림 구독 객체
 
   setRoomId(String id) {
     roomId.value = id;
@@ -64,7 +64,7 @@ class ChatListController extends GetxController {
         tempChatRoomList.add(chatRoom);
       }
 
-      chatList.assignAll(tempChatRoomList); // 변경된 부분: addAll 대신 assignAll 사용
+      chatList.assignAll(tempChatRoomList); // addAll 대신 assignAll 사용
     }); // 콜백 종료
   }
 

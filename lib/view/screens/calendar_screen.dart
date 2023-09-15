@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
-import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 
 class CalendarScreen extends GetView<CalendarController> {
   const CalendarScreen({super.key});
   static const route = '/calender';
-   
 
   @override
   Widget build(BuildContext context) {
-    final MapScreenController _mapScreenController = Get.find<MapScreenController>();
+    final MapScreenController _mapScreenController =
+        Get.find<MapScreenController>();
     print(_mapScreenController.roomId);
 
     CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -30,23 +28,27 @@ class CalendarScreen extends GetView<CalendarController> {
         ],
       ),
       body: TableCalendar(
-        locale: 'ko_KR', 
+        locale: 'ko_KR',
         firstDay: DateTime.utc(2023, 08, 16),
         lastDay: DateTime.utc(2024, 3, 14),
         focusedDay: _focusedDay,
         headerStyle: HeaderStyle(
-          formatButtonVisible: false,
-          titleTextStyle: AppTextStyle.body18M(),
-          leftChevronIcon: Icon(Icons.chevron_left, color: PlatformColors.title, ),
-          rightChevronIcon: Icon(Icons.chevron_right, color: PlatformColors.title,)
-        ),
+            formatButtonVisible: false,
+            titleTextStyle: AppTextStyle.body18M(),
+            leftChevronIcon: Icon(
+              Icons.chevron_left,
+              color: PlatformColors.title,
+            ),
+            rightChevronIcon: Icon(
+              Icons.chevron_right,
+              color: PlatformColors.title,
+            )),
         calendarStyle: CalendarStyle(
           isTodayHighlighted: true,
           todayDecoration: BoxDecoration(
-            color: PlatformColors.primary,
-            shape: BoxShape.circle
-          ),
-          rangeHighlightColor: Color(int.parse("0xFF${Get.find<SelectFriendsController>().rangeHighlightColor.value}")),
+              color: PlatformColors.primary, shape: BoxShape.circle),
+          rangeHighlightColor: Color(int.parse(
+              "0xFF${Get.find<SelectFriendsController>().rangeHighlightColor.value}")),
         ),
         // eventLoader:,
         calendarFormat: _calendarFormat,

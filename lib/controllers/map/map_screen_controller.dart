@@ -30,6 +30,8 @@ class MapScreenController extends GetxController {
   Rxn<DateTime> startDate = Rxn(); // 시작 날짜
   Rxn<DateTime> endDate = Rxn(); // 종료 날짜
   RxString currentUserNickName = ''.obs;
+  Rxn<DateTimeRange> dateRangeFromFirebase = Rxn();
+  RxString description = ''.obs;
 
   List<MarkerModel> get currentDayMarkers {
     return markerList
@@ -122,6 +124,7 @@ class MapScreenController extends GetxController {
   addMarkers({
     required NLatLng position,
   }) async {
+    await getCurrentUserNickName();
     if (selectedDayIndex.value >= timeStamps.length) {
       print('Error: Invalid index for timeStamps list.');
       return;
@@ -139,7 +142,7 @@ class MapScreenController extends GetxController {
         id: ref.id,
         position: position,
         title: placeTextController.text,
-        description: descriptionTextController.text,
+        descriptions: [descriptionTextController.text],
         order: markerList.length + 1,
         timeStamp: timeStamps[selectedDayIndex.value],
         dateIndex: selectedDayIndex.value,
@@ -159,6 +162,29 @@ class MapScreenController extends GetxController {
     } else {
       print('Error: Invalid index for timeStamps list.');
     }
+  }
+
+  upDateAndGetDescription(String markerId) async {
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .collection('markers')
+        .doc(markerId)
+        .update({
+      'descriptions': FieldValue.arrayUnion([descriptionTextController.text])
+    });
+
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .collection('markers')
+        .doc(markerId)
+        .get();
+
+    var snapshotData = snapshot.data() as Map<String, dynamic>;
+    // 가장 마지막에 추가된 설명을 반환
+    description.value = snapshotData['descriptions'].last;
+    descriptionTextController.clear();
   }
 
   // 파이어베이스에서 마커를 가져와서 markerList에 담아주고 NMarker 객체로 변환해서 리스트에 다시 담아준다.
@@ -274,6 +300,40 @@ class MapScreenController extends GetxController {
       'dateRange': newDateRange,
     });
     print('dateRange 업데이트: $newDateRange');
+    // 마커 초기화
+    final markersCollection = FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .collection('markers');
+    final markerDocs = await markersCollection.get();
+    for (var doc in markerDocs.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  getDatesFromFirebase() async {
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .get();
+
+    var data = snapshot.data() as Map<String, dynamic>;
+    List<dynamic> dateRange = data['dateRange'];
+    // DateTime dateRangeFromFirebase =
+    //     DateTime.fromMillisecondsSinceEpoch(data['dateRange']);
+    // DateTime convertedEndDate =
+    //     DateTime.fromMillisecondsSinceEpoch(data['endDate']);
+    List<DateTime> dateRangeFromFB = dateRange
+        .map(
+          (e) => DateTime.fromMillisecondsSinceEpoch(e),
+        )
+        .toList();
+
+    DateTimeRange dateTimeRange =
+        DateTimeRange(start: dateRangeFromFB.first, end: dateRangeFromFB.last);
+    dateRangeFromFirebase.value = dateTimeRange;
+
+    print('dateRangeFromFirebase 값이 들어옴:${dateRangeFromFirebase.value}');
   }
 
   onDayButtonTap({required int index}) {

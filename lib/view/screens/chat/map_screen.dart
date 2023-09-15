@@ -14,6 +14,7 @@ class MapScreen extends GetView<MapScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.getDatesFromFirebase();
     print('$roomId');
     final List<NMarker> _nMarkerList = controller.nMarkerList;
     final List<String> citiesName = cities.keys.toList();
@@ -54,12 +55,15 @@ class MapScreen extends GetView<MapScreenController> {
                   _handleTap(latLng);
                 },
                 options: NaverMapViewOptions(
-                  initialCameraPosition: NCameraPosition(
-                    target: controller.myPosition.value,
-                    zoom: 15,
-                    bearing: 0,
-                    tilt: 0,
-                  ),
+                  initialCameraPosition: _nMarkerList.isEmpty
+                      ? NCameraPosition(
+                          target: controller.myPosition.value,
+                          zoom: 15,
+                        )
+                      : NCameraPosition(
+                          target: _nMarkerList.last.position,
+                          zoom: 15,
+                        ),
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
@@ -86,18 +90,47 @@ class MapScreen extends GetView<MapScreenController> {
           ),
           Column(
             children: [
-              SFDatePicker(
-                type: SFCalendarType.range,
-                todayMark: true,
-                getSelectedDate: (start, end, selectedDateList, selectedOne) {
-                  if (start != null && end != null) {
-                    controller.getDatesBetweenAndUpdate(start, end);
-                    _selectFriendsController.updateStartAndEndDate(
-                        roomId, start, end);
-                  } else {
-                    print("시작 날짜 또는 종료 날짜 null");
-                  }
-                },
+              Obx(
+                () => SFDatePicker(
+                  key: ValueKey(controller.dateRangeFromFirebase.value),
+                  initialDateRange: controller.dateRangeFromFirebase.value,
+                  type: SFCalendarType.range,
+                  todayMark: true,
+                  getSelectedDate: (start, end, selectedDateList, selectedOne) {
+                    print(controller.dateRange.isNotEmpty);
+                    print(controller.dateRange.first);
+                    if (start != null && end != null) {
+                      if (controller.dateRange.isNotEmpty) {
+                        Get.defaultDialog(
+                          title: "날짜 변경 확인",
+                          content: Text("날짜를 변경하면 일정도 함께 사라집니다. 계속하시겠습니까?"),
+                          confirm: TextButton(
+                            child: Text("변경"),
+                            onPressed: () {
+                              controller.getDatesBetweenAndUpdate(start, end);
+                              _selectFriendsController.updateStartAndEndDate(
+                                  roomId, start, end);
+
+                              Get.back();
+                            },
+                          ),
+                          cancel: TextButton(
+                            child: Text("취소"),
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        );
+                      } else {
+                        controller.getDatesBetweenAndUpdate(start, end);
+                        _selectFriendsController.updateStartAndEndDate(
+                            roomId, start, end);
+                      }
+                    } else {
+                      print("시작 날짜 또는 종료 날짜 null");
+                    }
+                  },
+                ),
               ),
               Container(
                 color: Colors.white,
@@ -215,6 +248,7 @@ class MapScreen extends GetView<MapScreenController> {
             alignment: Alignment.bottomRight,
             // 오른쪽 버튼
             child: FloatingActionButton(
+              heroTag: 'rightButton',
               onPressed: () async {
                 _showBottomSheet(_nMarkerList, 'right');
                 await controller.onDayButtonTap(
@@ -228,6 +262,7 @@ class MapScreen extends GetView<MapScreenController> {
               padding: const EdgeInsets.only(left: 30.0),
               // 왼쪽 버튼
               child: FloatingActionButton(
+                heroTag: 'leftButton',
                 onPressed: () async {
                   _showBottomSheet(_nMarkerList, 'left');
                 },
@@ -312,8 +347,100 @@ class MapScreen extends GetView<MapScreenController> {
 
                           print(marker.userNickName);
                           return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${marker.userNickName} ${marker.title}'),
+                              Row(
+                                children: [
+                                  Text(marker.order.toString()),
+                                  Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text('${marker.title}'),
+                                    ),
+                                    color: Colors.amber,
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 30.0),
+                                child: Column(
+                                  children: [
+                                    Text('장소 메모'),
+                                    Container(
+                                      color: Colors.grey,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Obx(
+                                          () {
+                                            MarkerModel updatedMarker =
+                                                controller.currentDayMarkers
+                                                    .firstWhere(
+                                              (m) => m.id == marker.id,
+                                              orElse: () => marker,
+                                            );
+                                            return Column(
+                                              children: [
+                                                Container(
+                                                  color: Colors.grey,
+                                                  child: Column(
+                                                    children: [
+                                                      ...(updatedMarker
+                                                              .descriptions
+                                                              .isNotEmpty
+                                                          ? updatedMarker
+                                                              .descriptions
+                                                              .map((desc) =>
+                                                                  Text(desc))
+                                                              .toList()
+                                                          : [
+                                                              Text(
+                                                                  "메모를 추가해보세요.")
+                                                            ]),
+                                                      Text(updatedMarker
+                                                          .userNickName),
+                                                    ],
+                                                  ),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Get.defaultDialog(
+                                                      title: '메모',
+                                                      content: TextField(
+                                                        controller: controller
+                                                            .descriptionTextController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText: '메모를 입력하세요',
+                                                        ),
+                                                      ),
+                                                      cancel: TextButton(
+                                                        onPressed: () {
+                                                          Get.back();
+                                                        },
+                                                        child: Text('취소'),
+                                                      ),
+                                                      confirm: TextButton(
+                                                        onPressed: () {
+                                                          controller
+                                                              .upDateAndGetDescription(
+                                                                  marker.id);
+                                                          Get.back();
+                                                        },
+                                                        child: Text('저장'),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Text('메모 추가'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           );
                         },

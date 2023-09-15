@@ -4,7 +4,7 @@ class MarkerModel {
   final String id; // 마커 ID
   final NLatLng position; // 마커의 위치
   final String title; // 마커의 타이틀
-  final String description; // 마커에 대한 추가 설명
+  final List<String> descriptions; // 마커에 대한 추가 설명
   final int order; // 마커 순서
   final int timeStamp; // 날짜 timeStamp
   final int dateIndex;
@@ -14,7 +14,7 @@ class MarkerModel {
     required this.id,
     required this.position,
     required this.title,
-    required this.description,
+    required this.descriptions,
     required this.order,
     required this.timeStamp,
     required this.dateIndex,
@@ -27,7 +27,7 @@ class MarkerModel {
       id: map['id'],
       position: NLatLng(map['latitude'], map['longitude']),
       title: map['title'],
-      description: map['description'],
+      descriptions: List<String>.from(map['descriptions'] ?? []),
       order: map['order'] ?? 0,
       timeStamp: map['timeStamp'] ?? 0,
       dateIndex: map['dateIndex'] ?? 0,
@@ -42,7 +42,7 @@ class MarkerModel {
       'latitude': position.latitude,
       'longitude': position.longitude,
       'title': title,
-      'description': description,
+      'descriptions': descriptions,
       'order': order,
       'timeStamp': timeStamp,
       'dateIndex': dateIndex,
