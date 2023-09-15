@@ -14,89 +14,88 @@ class HomeScreen extends GetView<HomeController> {
     AuthController authController = Get.find<AuthController>();
     print('Home: ${authController.userInfo}');
     return Scaffold(
-        body: PageView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: controller.screens.length,
-            itemBuilder: (context, index) {
-              return Obx(() => controller.screens[controller.curPage.value]);
-            }),
-        bottomNavigationBar: Obx(
-          () => BottomNavigationBar(
-              backgroundColor: PlatformColors.subtitle8,
-              currentIndex: controller.curPage.value,
-              type: BottomNavigationBarType.fixed,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              elevation: 0,
-              onTap: (value) {
-                controller.onPageTapped(value);
-              },
-              items: [
-                BottomNavigationBarItem(
-                  label: '',
-                  icon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_friends.png', width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                  activeIcon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_selected_friends.png',
-                          width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: '',
-                  icon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_chat_list.png', width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                  activeIcon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_selected_chat_list.png',
-                          width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: '',
-                  icon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_calendar.png', width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                  activeIcon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_selected_calendar.png',
-                          width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: '',
-                  icon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_my_page.png', width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                  activeIcon: Column(
-                    children: [
-                      Image.asset('assets/icons/tab_selected_my_page.png',
-                          width: 20),
-                      SizedBox(height: 5),
-                    ],
-                  ),
-                ),
-              ]),
-        ));
+      body: PageView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: controller.screens.length,
+        itemBuilder: (context, index) {
+          return Obx(() => controller.screens[controller.curPage.value]);
+        }
+      ),
+      bottomNavigationBar: Obx(
+        () => BottomNavigationBar(
+          backgroundColor: PlatformColors.subtitle8,
+          currentIndex: controller.curPage.value,
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          elevation: 0,
+          onTap: (value) {
+            controller.onPageTapped(value);
+          },
+          items: [
+            BottomNavigationBarItem(
+              label: '',
+              icon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_friends.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+              activeIcon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_selected_friends.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: '',
+              icon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_chat_list.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+              activeIcon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_selected_chat_list.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: '',
+              icon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_calendar.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+              activeIcon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_selected_calendar.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: '',
+              icon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_my_page.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+              activeIcon: Column(
+                children: [
+                  Image.asset('assets/icons/tab_selected_my_page.png', width: 20),
+                  SizedBox(height: 5),
+                ],
+              ),
+            ),
+          ]
+        ),
+      )
+    );
   }
 }

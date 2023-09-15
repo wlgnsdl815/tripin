@@ -16,7 +16,7 @@ class Event {
     required this.title,
     required this.checkList,
     required this.color,
-    required this.room
+    required this.room,
   });
 
   Map<String, dynamic> toMap() {

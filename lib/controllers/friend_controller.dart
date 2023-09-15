@@ -190,7 +190,7 @@ class FriendController extends GetxController {
   final snackBar = SnackBar(
       content: Text('이미 추가된 친구입니다.'),
     );
-
+    print('이미 추가된 친구입니다');
     // ScaffoldMessenger로 SnackBar를 표시
     ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
   }  

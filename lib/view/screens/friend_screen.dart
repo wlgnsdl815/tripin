@@ -168,19 +168,49 @@ class FriendScreen extends GetView<FriendController> {
                           // ElevatedButton(onPressed: () {}, child: Text('삭제')),
                           onDismissed: (direction) {
                             controller.deleteFriend(friendList);
-                            showModalBottomSheet(
+                            showDialog(
                               context: context,
                               builder: (context) {
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ListTile(
-                                      title: Text('친구가 삭제되었습니다.'),
-                                    ),
+                                return AlertDialog(
+                                  content: Text("친구가 삭제되었습니다."),
+                                  actions: <Widget>[
+                                    ElevatedButton(
+                                        onPressed: () => Get.back(),
+                                        child: Text("확인")),
                                   ],
                                 );
+
+                                // return Column(
+                                //   mainAxisSize: MainAxisSize.min,
+                                //   children: [
+                                //     ListTile(
+                                //       title: Text('친구가 삭제되었습니다.'),
+                                //     ),
+                                //   ],
+                                // );
                               },
                             );
+                          },
+                          confirmDismiss: (DismissDirection direction) async {
+                            return await showDialog(
+                                context: context,
+                                builder: (BuildContext) {
+                                  return AlertDialog(
+                                    title: Text("경고"),
+                                    content: Text("진짜로 지우실래요?"),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: Text("확인")),
+                                      OutlinedButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        child: Text("취소"),
+                                      ),
+                                    ],
+                                  );
+                                });
                           },
                           child: ListTile(
                             leading: AspectRatio(
