@@ -32,11 +32,16 @@ class MapScreenController extends GetxController {
   RxString currentUserNickName = ''.obs;
   Rxn<DateTimeRange> dateRangeFromFirebase = Rxn();
   RxString description = ''.obs;
+  RxString placeText = ''.obs;
 
   List<MarkerModel> get currentDayMarkers {
     return markerList
         .where((marker) => marker.dateIndex == selectedDayIndex.value)
         .toList();
+  }
+
+  setPlaceText(String place) {
+    placeText.value = place;
   }
 
   @override
@@ -141,7 +146,9 @@ class MapScreenController extends GetxController {
       final MarkerModel newMarker = MarkerModel(
         id: ref.id,
         position: position,
-        title: placeTextController.text,
+        title: placeTextController.text == ''
+            ? placeText.value
+            : placeTextController.text,
         descriptions: [descriptionTextController.text],
         order: markerList.length + 1,
         timeStamp: timeStamps[selectedDayIndex.value],
@@ -245,7 +252,7 @@ class MapScreenController extends GetxController {
       MarkerModel correspondingModel =
           markerList.firstWhere((model) => model.id == nMarker.info.id);
 
-      final infoText = correspondingModel.title;
+      final infoText = correspondingModel.order.toString();
       final infoWindow =
           NInfoWindow.onMarker(id: nMarker.info.id, text: infoText);
 

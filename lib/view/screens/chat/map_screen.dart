@@ -90,48 +90,6 @@ class MapScreen extends GetView<MapScreenController> {
           ),
           Column(
             children: [
-              Obx(
-                () => SFDatePicker(
-                  key: ValueKey(controller.dateRangeFromFirebase.value),
-                  initialDateRange: controller.dateRangeFromFirebase.value,
-                  type: SFCalendarType.range,
-                  todayMark: true,
-                  getSelectedDate: (start, end, selectedDateList, selectedOne) {
-                    print(controller.dateRange.isNotEmpty);
-                    print(controller.dateRange.first);
-                    if (start != null && end != null) {
-                      if (controller.dateRange.isNotEmpty) {
-                        Get.defaultDialog(
-                          title: "날짜 변경 확인",
-                          content: Text("날짜를 변경하면 일정도 함께 사라집니다. 계속하시겠습니까?"),
-                          confirm: TextButton(
-                            child: Text("변경"),
-                            onPressed: () {
-                              controller.getDatesBetweenAndUpdate(start, end);
-                              _selectFriendsController.updateStartAndEndDate(
-                                  roomId, start, end);
-
-                              Get.back();
-                            },
-                          ),
-                          cancel: TextButton(
-                            child: Text("취소"),
-                            onPressed: () {
-                              Get.back();
-                            },
-                          ),
-                        );
-                      } else {
-                        controller.getDatesBetweenAndUpdate(start, end);
-                        _selectFriendsController.updateStartAndEndDate(
-                            roomId, start, end);
-                      }
-                    } else {
-                      print("시작 날짜 또는 종료 날짜 null");
-                    }
-                  },
-                ),
-              ),
               Container(
                 color: Colors.white,
                 child: ExpansionTile(
@@ -215,6 +173,40 @@ class MapScreen extends GetView<MapScreenController> {
                   ],
                 ),
               ),
+              Obx(
+                () => SFDatePicker(
+                  key: ValueKey(controller.dateRangeFromFirebase.value),
+                  initialDateRange: controller.dateRangeFromFirebase.value,
+                  type: SFCalendarType.range,
+                  todayMark: true,
+                  getSelectedDate: (start, end, selectedDateList, selectedOne) {
+                    // print(controller.dateRange.isNotEmpty);
+                    // print(controller.dateRange.first);
+                    if (start != null && end != null) {
+                      if (controller.dateRange.isNotEmpty) {
+                        alertDialog(
+                          context,
+                          title: '일정를 변경 하시겠습니까?',
+                          content: '일정를 변경하면 핀과 메모가 사라져요!',
+                          onAccept: () {
+                            controller.getDatesBetweenAndUpdate(start, end);
+                            _selectFriendsController.updateStartAndEndDate(
+                                roomId, start, end);
+                          },
+                          onCancle: () {},
+                          top: 0.3,
+                        );
+                      } else {
+                        controller.getDatesBetweenAndUpdate(start, end);
+                        _selectFriendsController.updateStartAndEndDate(
+                            roomId, start, end);
+                      }
+                    } else {
+                      print("시작 날짜 또는 종료 날짜 null");
+                    }
+                  },
+                ),
+              ),
               SizedBox(
                 height: 50.0, // 원하는 높이로 조절
                 child: Obx(() {
@@ -290,9 +282,9 @@ class MapScreen extends GetView<MapScreenController> {
           ),
           DraggableScrollableSheet(
             initialChildSize: 0.6, // 초기 크기를 60%로 설정
-            maxChildSize: 1, // 최대 크기를 90%로 설정
+            maxChildSize: 0.9, // 최대 크기를 90%로 설정
             snap: true,
-            snapSizes: [0.6, 1],
+            snapSizes: [0.6, 0.9],
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 height: MediaQuery.of(context).size.height *
@@ -314,29 +306,31 @@ class MapScreen extends GetView<MapScreenController> {
                                       thickness: 5,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 50.0, // 원하는 높이로 조절
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: controller.dateRange.isEmpty
-                                          ? 1
-                                          : controller.dateRange.length,
-                                      itemBuilder: (context, index) {
-                                        if (controller.dateRange.isEmpty) {
-                                          return Text('날짜를 선택해주세요');
-                                        }
-                                        return ElevatedButton(
-                                          onPressed: () {
-                                            controller.onDayButtonTap(
-                                                index: index);
-                                            print(controller.selectedDayIndex);
-                                            Get.back();
-                                          },
-                                          child: Text('Day ${index + 1}'),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                  Text('여행 코스'),
+                                  Divider(),
+                                  // SizedBox(
+                                  //   height: 50.0, // 원하는 높이로 조절
+                                  //   child: ListView.builder(
+                                  //     scrollDirection: Axis.horizontal,
+                                  //     itemCount: controller.dateRange.isEmpty
+                                  //         ? 1
+                                  //         : controller.dateRange.length,
+                                  //     itemBuilder: (context, index) {
+                                  //       if (controller.dateRange.isEmpty) {
+                                  //         return Text('날짜를 선택해주세요');
+                                  //       }
+                                  //       return ElevatedButton(
+                                  //         onPressed: () {
+                                  //           controller.onDayButtonTap(
+                                  //               index: index);
+                                  //           print(controller.selectedDayIndex);
+                                  //           Get.back();
+                                  //         },
+                                  //         child: Text('Day ${index + 1}'),
+                                  //       );
+                                  //     },
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             );
@@ -347,102 +341,103 @@ class MapScreen extends GetView<MapScreenController> {
 
                           print(marker.userNickName);
                           return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(marker.order.toString()),
-                                  Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('${marker.title}'),
-                                    ),
-                                    color: Colors.amber,
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 30.0),
-                                child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    Text('장소 메모'),
+                                    Text(marker.order.toString()),
                                     Container(
-                                      color: Colors.grey,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Obx(
-                                          () {
-                                            MarkerModel updatedMarker =
-                                                controller.currentDayMarkers
-                                                    .firstWhere(
-                                              (m) => m.id == marker.id,
-                                              orElse: () => marker,
-                                            );
-                                            return Column(
-                                              children: [
-                                                Container(
-                                                  color: Colors.grey,
-                                                  child: Column(
-                                                    children: [
-                                                      ...(updatedMarker
-                                                              .descriptions
-                                                              .isNotEmpty
-                                                          ? updatedMarker
-                                                              .descriptions
-                                                              .map((desc) =>
-                                                                  Text(desc))
-                                                              .toList()
-                                                          : [
-                                                              Text(
-                                                                  "메모를 추가해보세요.")
-                                                            ]),
-                                                      Text(updatedMarker
-                                                          .userNickName),
-                                                    ],
-                                                  ),
-                                                ),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    Get.defaultDialog(
-                                                      title: '메모',
-                                                      content: TextField(
-                                                        controller: controller
-                                                            .descriptionTextController,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          hintText: '메모를 입력하세요',
-                                                        ),
-                                                      ),
-                                                      cancel: TextButton(
-                                                        onPressed: () {
-                                                          Get.back();
-                                                        },
-                                                        child: Text('취소'),
-                                                      ),
-                                                      confirm: TextButton(
-                                                        onPressed: () {
-                                                          controller
-                                                              .upDateAndGetDescription(
-                                                                  marker.id);
-                                                          Get.back();
-                                                        },
-                                                        child: Text('저장'),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Text('메모 추가'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        ),
+                                        child: Text('${marker.title}'),
                                       ),
+                                      color: Colors.amber,
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          );
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 30.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('장소 메모'),
+                                      Obx(
+                                        () {
+                                          MarkerModel updatedMarker = controller
+                                              .currentDayMarkers
+                                              .firstWhere(
+                                            (m) => m.id == marker.id,
+                                            orElse: () => marker,
+                                          );
+
+                                          // 메모가 있는 경우와 없는 경우를 분리
+                                          if (updatedMarker.descriptions
+                                              .where((desc) =>
+                                                  desc.trim().isNotEmpty)
+                                              .isEmpty) {
+                                            return Text('작성된 메모가 없습니다.');
+                                          } else {
+                                            return Container(
+                                              color: Colors.grey,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    ...updatedMarker
+                                                        .descriptions
+                                                        .where((desc) => desc
+                                                            .trim()
+                                                            .isNotEmpty)
+                                                        .map((desc) =>
+                                                            Text(desc))
+                                                        .toList(),
+                                                    Text(updatedMarker
+                                                        .userNickName),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Get.defaultDialog(
+                                            title: '메모',
+                                            content: TextField(
+                                              controller: controller
+                                                  .descriptionTextController,
+                                              decoration: InputDecoration(
+                                                hintText: '메모를 입력하세요',
+                                              ),
+                                            ),
+                                            cancel: TextButton(
+                                              onPressed: () {
+                                                Get.back();
+                                              },
+                                              child: Text('취소'),
+                                            ),
+                                            confirm: TextButton(
+                                              onPressed: () {
+                                                controller
+                                                    .upDateAndGetDescription(
+                                                        marker.id);
+                                                Get.back();
+                                              },
+                                              child: Text('저장'),
+                                            ),
+                                          );
+                                        },
+                                        child: Text('메모 추가'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]);
                         },
                       )
                     : SizedBox(),
@@ -468,6 +463,16 @@ class MapScreen extends GetView<MapScreenController> {
         .naverReverseGeocode(latLng.latitude, latLng.longitude);
     var markerRegion = tapLocation[1].region;
     print(tapLocation.first.buildingName);
+    // 캡션 텍스트(심볼 클릭시)가 있으면 캡션 텍스트를 넣어주고
+    if (captionText != '') {
+      String place = captionText;
+      controller.setPlaceText(place);
+    } else {
+      // 없으면 주소를 기본 값으로 넣어준다.
+      String place =
+          '${tapLocation[1].buildingName} ${markerRegion.area1Name} ${markerRegion.area2Name} ${markerRegion.area3Name} ${markerRegion.area4Name}';
+      controller.setPlaceText(place);
+    }
 
     Get.dialog(
       Dialog(
@@ -480,6 +485,12 @@ class MapScreen extends GetView<MapScreenController> {
                 '${tapLocation[1].buildingName} ${markerRegion.area1Name} ${markerRegion.area2Name} ${markerRegion.area3Name} ${markerRegion.area4Name}'),
             TextField(
               controller: controller.placeTextController,
+              decoration: InputDecoration(
+                hintText: '장소를 입력해보세요',
+              ),
+            ),
+            TextField(
+              controller: controller.descriptionTextController,
               decoration: InputDecoration(
                 hintText: '메모를 입력해보세요',
               ),
