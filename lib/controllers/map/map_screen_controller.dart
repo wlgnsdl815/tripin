@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
+import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
 
 class MapScreenController extends GetxController {
   // roomId가 많이 쓰여서 멤버 변수로 만들었다.
-  final String roomId;
-  MapScreenController() : roomId = Get.find<ChatListController>().roomId.value;
   RxBool hasPermission = false.obs;
   Rx<NLatLng> myPosition = NLatLng(37.5665, 126.9780).obs;
   RxBool isLocationLoaded = false.obs;
@@ -34,6 +32,9 @@ class MapScreenController extends GetxController {
   RxString description = ''.obs;
   RxString placeText = ''.obs;
 
+  final SelectFriendsController _selectFriendsController =
+      Get.find<SelectFriendsController>();
+
   List<MarkerModel> get currentDayMarkers {
     return markerList
         .where((marker) => marker.dateIndex == selectedDayIndex.value)
@@ -48,11 +49,11 @@ class MapScreenController extends GetxController {
   void onInit() async {
     super.onInit();
     await getMyLocation();
-    print('roomId: $roomId');
+    print('roomId: ${_selectFriendsController.roomId.value}');
     // Firestore 스냅샷 구독 (chatRooms)
     FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .snapshots()
         .listen((snapshot) {
       if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
@@ -67,7 +68,7 @@ class MapScreenController extends GetxController {
     // Firestore 스냅샷 구독 (markers)
     FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .collection('markers')
         .snapshots()
         .listen(updateMarkersFromSnapshot);
@@ -137,7 +138,7 @@ class MapScreenController extends GetxController {
     // 참조를 가져와서 markerId를 자동생성 가능하게 함
     final DocumentReference ref = FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .collection('markers')
         .doc();
 
@@ -174,7 +175,7 @@ class MapScreenController extends GetxController {
   upDateAndGetDescription(String markerId) async {
     await FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .collection('markers')
         .doc(markerId)
         .update({
@@ -183,7 +184,7 @@ class MapScreenController extends GetxController {
 
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .collection('markers')
         .doc(markerId)
         .get();
@@ -298,11 +299,11 @@ class MapScreenController extends GetxController {
   }
 
   updateDateRangeInFirestore(List<int> newDateRange) async {
-    print('roomId value: $roomId');
+    print('roomId value: ${_selectFriendsController.roomId.value}');
 
     await FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .update({
       'dateRange': newDateRange,
     });
@@ -310,7 +311,7 @@ class MapScreenController extends GetxController {
     // 마커 초기화
     final markersCollection = FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .collection('markers');
     final markerDocs = await markersCollection.get();
     for (var doc in markerDocs.docs) {
@@ -321,7 +322,7 @@ class MapScreenController extends GetxController {
   getDatesFromFirebase() async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('chatRooms')
-        .doc(roomId)
+        .doc(_selectFriendsController.roomId.value)
         .get();
 
     var data = snapshot.data() as Map<String, dynamic>;

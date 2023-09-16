@@ -3,31 +3,33 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
+import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/map_screen.dart';
 
 class ChatScreen extends GetView<ChatController> {
-  final String roomId;
+  static const route = '/chat';
 
   const ChatScreen({
     super.key,
-    required this.roomId,
   });
 
   @override
   Widget build(BuildContext context) {
     final AuthController _authController = Get.find<AuthController>();
+    final SelectFriendsController _selectFriendsController =
+        Get.find<SelectFriendsController>();
     return Scaffold(
       backgroundColor: PlatformColors.subtitle8,
       appBar: AppBar(
-        title: Text(roomId),
+        title: Text(_selectFriendsController.roomId.value),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: PlatformColors.title,
       ),
       body: StreamBuilder<Map<dynamic, dynamic>>(
-        stream: controller.getMessage(roomId),
+        stream: controller.getMessage(_selectFriendsController.roomId.value),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == null) {
             return Center(child: Text('대화를 시작해보세요.'));
@@ -281,9 +283,7 @@ class ChatScreen extends GetView<ChatController> {
                         child: GestureDetector(
                           onTap: () {
                             Get.to(
-                              () => MapScreen(
-                                roomId: roomId,
-                              ),
+                              () => MapScreen(),
                             );
                           },
                           child: Container(
@@ -366,7 +366,7 @@ class ChatScreen extends GetView<ChatController> {
                                     controller.sendMessage(
                                       _authController.userInfo.value!.uid,
                                       controller.messageController.text,
-                                      roomId,
+                                      _selectFriendsController.roomId.value,
                                       _authController.userInfo.value!.uid,
                                     );
                                   },

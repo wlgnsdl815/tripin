@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/utils/colors.dart';
+import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
-import 'package:tripin/view/screens/chat/schedule_screen.dart';
+import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
   const SelectFriendsScreen({super.key});
@@ -13,79 +15,110 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
   Widget build(BuildContext context) {
     final _chatListController = Get.find<ChatListController>();
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          // 아이콘 나중에 수정하기
+          icon: Icon(
+            Icons.close,
+            color: PlatformColors.title,
+          ),
+        ),
         title: Text(
-          '친구선택',
+          '친구 선택',
+          style: AppTextStyle.body16M(),
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Get.to(() => ScheduleScreen());
-            },
-            child: Text(
-              '다음',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(
-              () => ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.userData.length,
-                itemBuilder: (context, index) {
-                  if (controller.userData[index].uid ==
-                      FirebaseAuth.instance.currentUser!.uid) {
-                    return SizedBox();
-                  }
-                  return ListTile(
-                    title: Text(controller.userData[index].nickName),
-                    leading: CircleAvatar(),
-                    trailing: Obx(
-                      () {
-                        bool isSelected = controller.participants.any((user) =>
-                            user.uid == controller.userData[index].uid);
-
-                        return IconButton(
-                          onPressed: () {
-                            if (isSelected) {
-                              controller.participants
-                                  .remove(controller.userData[index]);
-                            } else {
-                              controller.participants
-                                  .add(controller.userData[index]);
-                            }
-                          },
-                          icon: Icon(
-                            Icons.circle,
-                            color: isSelected ? Colors.blue : Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              String roomId = await controller.createChatRoom();
-              _chatListController.setRoomId(roomId);
-              Get.to(
-                () => ChatScreen(
-                  roomId: roomId,
+          Obx(
+            () => TextButton(
+              onPressed: controller.participants.isEmpty
+                  ? null
+                  : () async {
+                      String roomId = await controller.createChatRoom();
+                      _chatListController.setRoomId(roomId);
+                      Get.to(
+                        () => ChatScreen(),
+                      );
+                    },
+              child: Obx(
+                () => Text(
+                  '완료',
+                  style: AppTextStyle.body16M(
+                    color: controller.participants.isEmpty
+                        ? PlatformColors.subtitle6
+                        : PlatformColors.title,
+                  ),
                 ),
-              );
-            },
-            child: Text('채팅방 생성'),
+              ),
+            ),
           ),
         ],
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            CustomTextFiledWithOutForm(
+              prefixIcon: Icon(Icons.search),
+              hintText: '친구 이름 또는 이메일 검색',
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.userData.length,
+                  itemBuilder: (context, index) {
+                    if (controller.userData[index].uid ==
+                        FirebaseAuth.instance.currentUser!.uid) {
+                      return SizedBox();
+                    }
+                    return ListTile(
+                      title: Text(controller.userData[index].nickName),
+                      leading: Container(
+                        width: 47,
+                        height: 47,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(19),
+                          color: PlatformColors.primary,
+                        ),
+                      ),
+                      trailing: Obx(
+                        () {
+                          bool isSelected = controller.participants.any(
+                              (user) =>
+                                  user.uid == controller.userData[index].uid);
+
+                          return IconButton(
+                            onPressed: () {
+                              if (isSelected) {
+                                controller.participants
+                                    .remove(controller.userData[index]);
+                              } else {
+                                controller.participants
+                                    .add(controller.userData[index]);
+                                print(controller.participants.value);
+                              }
+                            },
+                            icon: Icon(
+                              Icons.circle,
+                              color: isSelected ? Colors.blue : Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -15,13 +15,12 @@ class CalendarScreen extends GetView<CalendarController> {
 
   @override
   Widget build(BuildContext context) {
-
-    print(Get.find<SelectFriendsController>().rangeHighlightColor.value);
-
+    final SelectFriendsController _selectFriendsController =
+        Get.find<SelectFriendsController>();
 
     final MapScreenController _mapScreenController =
         Get.find<MapScreenController>();
-    print(_mapScreenController.roomId);
+    print(_selectFriendsController.roomId.value);
 
     CalendarFormat _calendarFormat = CalendarFormat.month;
     DateTime _focusedDay = DateTime.now();
@@ -33,7 +32,6 @@ class CalendarScreen extends GetView<CalendarController> {
           IconButton(onPressed: () {}, icon: Icon(Icons.search))
         ],
       ),
-
       body:
           // CalendarCarousel(
           //   weekFormat: false,
@@ -74,7 +72,6 @@ class CalendarScreen extends GetView<CalendarController> {
           //   },
           // )
           TableCalendar(
-
         locale: 'ko_KR',
         firstDay: DateTime.utc(2023, 08, 16),
         lastDay: DateTime.utc(2024, 3, 14),

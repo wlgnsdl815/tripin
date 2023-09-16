@@ -8,12 +8,20 @@ class CustomButton extends StatefulWidget {
     required this.text,
     this.backgroundColor,
     this.textStyle,
+    this.borderRadius,
+    this.textPadding,
+    this.textMargin,
+    this.borderColor,
   }) : super(key: key);
 
   final VoidCallback onTap;
   final Color? backgroundColor;
   final TextStyle? textStyle;
   final String text;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? textPadding;
+  final EdgeInsets? textMargin;
+  final Color? borderColor;
 
   @override
   State<CustomButton> createState() => _CustomButtonState();
@@ -28,13 +36,23 @@ class _CustomButtonState extends State<CustomButton> {
           vertical: 16,
         ),
         backgroundColor: widget.backgroundColor ?? PlatformColors.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: widget.borderRadius ?? BorderRadius.circular(0),
+          side: BorderSide(color: widget.borderColor ?? Colors.transparent),
+        ),
       ),
       onPressed: widget.onTap,
-      child: Text(
-        widget.text,
-        style: widget.textStyle ??
-            TextStyle(
-                fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
+      child: Container(
+        padding: widget.textPadding ?? EdgeInsets.zero,
+        margin: widget.textMargin ?? EdgeInsets.zero,
+        child: Text(
+          widget.text,
+          style: widget.textStyle ??
+              TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }

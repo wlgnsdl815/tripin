@@ -8,6 +8,8 @@ abstract class Env {
   static const String kakaoNativeKey = _Env.kakaoNativeKey;
   @EnviedField(varName: 'KAKAO_JAVASCRIPT_APP_KEY')
   static const String kakaoJSKey = _Env.kakaoJSKey;
+  @EnviedField(varName: 'KAKAO_REST_API_KEY')
+  static const String kakaoRestApiKey = _Env.kakaoRestApiKey;
   @EnviedField(varName: 'NAVER_MAP_KEY')
   static const String naverMapKey = _Env.naverMapKey;
   @EnviedField(varName: 'NAVER_MAP_CLIENT_ID')

@@ -1,10 +1,10 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
-import 'package:tripin/view/screens/chat/chat_screen.dart';
+import 'package:tripin/utils/app_screens.dart';
+import 'package:tripin/utils/colors.dart';
+import 'package:tripin/utils/text_styles.dart';
 
 class ChatListScreen extends GetView<ChatListController> {
   const ChatListScreen({super.key});
@@ -16,8 +16,12 @@ class ChatListScreen extends GetView<ChatListController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '채팅방 목록보기',
+          '나의 여행 방',
+          style: AppTextStyle.header20(),
         ),
+        backgroundColor: PlatformColors.subtitle7,
+        centerTitle: false,
+        elevation: 0.0,
       ),
       body: Obx(
         () => ListView.separated(
@@ -29,11 +33,7 @@ class ChatListScreen extends GetView<ChatListController> {
               onTap: () {
                 controller.setRoomId(controller.chatList[index].roomId);
                 print(controller.roomId);
-                Get.to(
-                  () => ChatScreen(
-                    roomId: controller.chatList[index].roomId,
-                  ),
-                );
+                Get.offAndToNamed(AppScreens.chat);
               },
               child: ListTile(
                 title: Text(

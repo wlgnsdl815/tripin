@@ -2,30 +2,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
-import 'package:sfac_design_flutter/sfac_design_flutter.dart';
+import 'package:kpostal/kpostal.dart';
+import 'package:tripin/const/cities.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
-import 'package:tripin/model/marker_model.dart';
-import 'package:tripin/service/geocoding_service.dart';
+import 'package:tripin/model/kakao_geocoding_model.dart';
+import 'package:tripin/service/kakao_geocoding_service.dart';
+import 'package:tripin/utils/api_keys_env.dart';
+import 'package:tripin/utils/colors.dart';
+import 'package:tripin/utils/text_styles.dart';
+import 'package:tripin/view/widget/custom_button.dart';
+import 'package:tripin/view/widget/custom_date_picker.dart';
+import 'package:tripin/view/widget/custom_map_bottom_sheet.dart';
 
 class MapScreen extends GetView<MapScreenController> {
-  final String roomId;
-  const MapScreen({required this.roomId, super.key});
+  static const route = '/map';
+
+  const MapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     controller.getDatesFromFirebase();
-    print('$roomId');
     final List<NMarker> _nMarkerList = controller.nMarkerList;
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
     late NaverMapController naverMapController;
+
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
+
     if (!controller.hasPermission.value) {
       controller.hasPermission;
       print('Position: ${controller.myPosition.value}');
-      print('Current RoomId ${roomId}');
+      print('Current RoomId ${_selectFriendsController.roomId.value}');
     }
     return Scaffold(
       appBar: AppBar(
@@ -67,11 +76,8 @@ class MapScreen extends GetView<MapScreenController> {
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
-
+                  print(naverMapController);
                   NMapController.addOverlayAll(_nMarkerList.toSet());
-
-                  print(controller.markerList);
-                  print(_nMarkerList);
                   print("네이버 맵 로딩됨!");
                   controller.showInfoWindow(_nMarkerList); // 정보창 표시
                   controller.addArrowheadPath(
@@ -90,6 +96,7 @@ class MapScreen extends GetView<MapScreenController> {
           ),
           Column(
             children: [
+              // 도시 선택하는 Table
               Container(
                 color: Colors.white,
                 child: ExpansionTile(
@@ -119,9 +126,10 @@ class MapScreen extends GetView<MapScreenController> {
                                         controller.selectedCity.value =
                                             citiesName[index];
                                         await _selectFriendsController
-                                            .upDateCity(roomId,
+                                            .upDateCity(
+                                                _selectFriendsController
+                                                    .roomId.value,
                                                 citiesName[index]); // 도시 업데이트
-
                                         print(
                                             '터치: ${controller.selectedCity.value}');
                                         controller.expansionTileController
@@ -173,63 +181,54 @@ class MapScreen extends GetView<MapScreenController> {
                   ],
                 ),
               ),
-              Obx(
-                () => SFDatePicker(
-                  key: ValueKey(controller.dateRangeFromFirebase.value),
-                  initialDateRange: controller.dateRangeFromFirebase.value,
-                  type: SFCalendarType.range,
-                  todayMark: true,
-                  getSelectedDate: (start, end, selectedDateList, selectedOne) {
-                    // print(controller.dateRange.isNotEmpty);
-                    // print(controller.dateRange.first);
-                    if (start != null && end != null) {
-                      if (controller.dateRange.isNotEmpty) {
-                        alertDialog(
-                          context,
-                          title: '일정를 변경 하시겠습니까?',
-                          content: '일정를 변경하면 핀과 메모가 사라져요!',
-                          onAccept: () {
-                            controller.getDatesBetweenAndUpdate(start, end);
-                            _selectFriendsController.updateStartAndEndDate(
-                                roomId, start, end);
+              // 날짜 선택 데이트 피커
+              CustomDatePicker(),
+              // 날짜 변경 버튼
+              SizedBox(height: 11),
+              Obx(() {
+                if (controller.dateRange.isEmpty) {
+                  return Text('날짜를 선택해주세요');
+                }
+
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children:
+                        List.generate(controller.dateRange.length, (index) {
+                      bool isSelected =
+                          index == controller.selectedDayIndex.value;
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            right: (index < controller.dateRange.length - 1)
+                                ? 6
+                                : 0),
+                        child: CustomButton(
+                          onTap: () {
+                            controller.onDayButtonTap(index: index);
+                            controller.selectedDayIndex.value = index;
                           },
-                          onCancle: () {},
-                          top: 0.3,
-                        );
-                      } else {
-                        controller.getDatesBetweenAndUpdate(start, end);
-                        _selectFriendsController.updateStartAndEndDate(
-                            roomId, start, end);
-                      }
-                    } else {
-                      print("시작 날짜 또는 종료 날짜 null");
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 50.0, // 원하는 높이로 조절
-                child: Obx(() {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.dateRange.isEmpty
-                        ? 1
-                        : controller.dateRange.length,
-                    itemBuilder: (context, index) {
-                      if (controller.dateRange.isEmpty) {
-                        return Text('날짜를 선택해주세요');
-                      }
-                      return ElevatedButton(
-                        onPressed: () {
-                          controller.onDayButtonTap(index: index);
-                          print(controller.selectedDayIndex);
-                        },
-                        child: Text('Day ${index + 1}'),
+                          text: 'Day ${index + 1}',
+                          textStyle: AppTextStyle.body16M(
+                            color: isSelected
+                                ? PlatformColors.primary
+                                : PlatformColors.subtitle2,
+                          ),
+                          textMargin: EdgeInsets.symmetric(
+                            horizontal: 24,
+                          ),
+                          backgroundColor: isSelected
+                              ? PlatformColors.chatPrimaryLight
+                              : Colors.white,
+                          borderColor: isSelected
+                              ? PlatformColors.primary
+                              : PlatformColors.subtitle6,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
                       );
-                    },
-                  );
-                }),
-              ),
+                    }),
+                  ),
+                );
+              }),
             ],
           ),
         ],
@@ -256,7 +255,23 @@ class MapScreen extends GetView<MapScreenController> {
               child: FloatingActionButton(
                 heroTag: 'leftButton',
                 onPressed: () async {
-                  _showBottomSheet(_nMarkerList, 'left');
+                  Kpostal result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => KpostalView(
+                        kakaoKey: Env.kakaoJSKey,
+                      ),
+                    ),
+                  );
+                  final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+                    target:
+                        NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
+                    zoom: 16,
+                  );
+                  if (naverMapController != null) {
+                    print('update camera');
+                    naverMapController!.updateCamera(cameraUpdate);
+                  } // _showBottomSheet(_nMarkerList, 'left');
                 },
               ),
             ),
@@ -280,170 +295,7 @@ class MapScreen extends GetView<MapScreenController> {
               },
             ),
           ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.6, // 초기 크기를 60%로 설정
-            maxChildSize: 0.9, // 최대 크기를 90%로 설정
-            snap: true,
-            snapSizes: [0.6, 0.9],
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                height: MediaQuery.of(context).size.height *
-                    0.6, // 바텀시트 최소 크기를 맞춰야한다.
-                color: Colors.white,
-                child: buttonPosition == 'right'
-                    ? ListView.builder(
-                        controller: scrollController,
-                        itemCount: controller.currentDayMarkers.length + 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    width: 50.0,
-                                    child: Divider(
-                                      thickness: 5,
-                                    ),
-                                  ),
-                                  Text('여행 코스'),
-                                  Divider(),
-                                  // SizedBox(
-                                  //   height: 50.0, // 원하는 높이로 조절
-                                  //   child: ListView.builder(
-                                  //     scrollDirection: Axis.horizontal,
-                                  //     itemCount: controller.dateRange.isEmpty
-                                  //         ? 1
-                                  //         : controller.dateRange.length,
-                                  //     itemBuilder: (context, index) {
-                                  //       if (controller.dateRange.isEmpty) {
-                                  //         return Text('날짜를 선택해주세요');
-                                  //       }
-                                  //       return ElevatedButton(
-                                  //         onPressed: () {
-                                  //           controller.onDayButtonTap(
-                                  //               index: index);
-                                  //           print(controller.selectedDayIndex);
-                                  //           Get.back();
-                                  //         },
-                                  //         child: Text('Day ${index + 1}'),
-                                  //       );
-                                  //     },
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                            );
-                          }
-                          MarkerModel marker =
-                              controller.currentDayMarkers[index - 1];
-                          print(controller.currentDayMarkers);
-
-                          print(marker.userNickName);
-                          return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(marker.order.toString()),
-                                    Container(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text('${marker.title}'),
-                                      ),
-                                      color: Colors.amber,
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 30.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('장소 메모'),
-                                      Obx(
-                                        () {
-                                          MarkerModel updatedMarker = controller
-                                              .currentDayMarkers
-                                              .firstWhere(
-                                            (m) => m.id == marker.id,
-                                            orElse: () => marker,
-                                          );
-
-                                          // 메모가 있는 경우와 없는 경우를 분리
-                                          if (updatedMarker.descriptions
-                                              .where((desc) =>
-                                                  desc.trim().isNotEmpty)
-                                              .isEmpty) {
-                                            return Text('작성된 메모가 없습니다.');
-                                          } else {
-                                            return Container(
-                                              color: Colors.grey,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    ...updatedMarker
-                                                        .descriptions
-                                                        .where((desc) => desc
-                                                            .trim()
-                                                            .isNotEmpty)
-                                                        .map((desc) =>
-                                                            Text(desc))
-                                                        .toList(),
-                                                    Text(updatedMarker
-                                                        .userNickName),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Get.defaultDialog(
-                                            title: '메모',
-                                            content: TextField(
-                                              controller: controller
-                                                  .descriptionTextController,
-                                              decoration: InputDecoration(
-                                                hintText: '메모를 입력하세요',
-                                              ),
-                                            ),
-                                            cancel: TextButton(
-                                              onPressed: () {
-                                                Get.back();
-                                              },
-                                              child: Text('취소'),
-                                            ),
-                                            confirm: TextButton(
-                                              onPressed: () {
-                                                controller
-                                                    .upDateAndGetDescription(
-                                                        marker.id);
-                                                Get.back();
-                                              },
-                                              child: Text('저장'),
-                                            ),
-                                          );
-                                        },
-                                        child: Text('메모 추가'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ]);
-                        },
-                      )
-                    : SizedBox(),
-              );
-            },
-          ),
+          CustomMapBottomSheet(),
         ],
       ),
       isDismissible: true,
@@ -453,95 +305,124 @@ class MapScreen extends GetView<MapScreenController> {
 
   void _handleTap(NLatLng latLng, [String? caption]) async {
     String captionText = caption ?? '';
-
+    KakaoGeocodingModel tapLocationFromKaKao = await KaKaoGeocodingService()
+        .getGeoDataFromKakao(lat: latLng.latitude, lng: latLng.longitude);
     if (controller.dateRange.isEmpty) {
       Get.snackbar('알림', '날짜를 먼저 선택해주세요');
       return;
     }
 
-    var tapLocation = await GeocodingService()
-        .naverReverseGeocode(latLng.latitude, latLng.longitude);
-    var markerRegion = tapLocation[1].region;
-    print(tapLocation.first.buildingName);
     // 캡션 텍스트(심볼 클릭시)가 있으면 캡션 텍스트를 넣어주고
     if (captionText != '') {
-      String place = captionText;
-      controller.setPlaceText(place);
+      controller.setPlaceText(captionText);
     } else {
       // 없으면 주소를 기본 값으로 넣어준다.
-      String place =
-          '${tapLocation[1].buildingName} ${markerRegion.area1Name} ${markerRegion.area2Name} ${markerRegion.area3Name} ${markerRegion.area4Name}';
-      controller.setPlaceText(place);
+
+      controller.setPlaceText(tapLocationFromKaKao.addressName!);
     }
 
     Get.dialog(
       Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('메모'),
-            Text(captionText),
-            Text(
-                '${tapLocation[1].buildingName} ${markerRegion.area1Name} ${markerRegion.area2Name} ${markerRegion.area3Name} ${markerRegion.area4Name}'),
-            TextField(
-              controller: controller.placeTextController,
-              decoration: InputDecoration(
-                hintText: '장소를 입력해보세요',
-              ),
-            ),
-            TextField(
-              controller: controller.descriptionTextController,
-              decoration: InputDecoration(
-                hintText: '메모를 입력해보세요',
-              ),
-            ),
-            SizedBox(
-              height: 50, // 필요한 높이로 설정
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: Text(
-                      '취소',
-                    ),
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.5),
+                        color: PlatformColors.primary),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.addMarkers(position: latLng);
-                    },
-                    child: Text(
-                        'Day ${controller.selectedDayIndex.value + 1}에 추가'),
+                  Text(
+                    '메모',
+                    style: AppTextStyle.body15M(),
                   ),
                 ],
               ),
-            ),
-          ],
+              SizedBox(height: 19),
+              Row(
+                children: [
+                  Text(
+                    captionText,
+                    style: AppTextStyle.body16M(),
+                  ),
+                  SizedBox(width: 4),
+                  Text(tapLocationFromKaKao.addressName!),
+                ],
+              ),
+              Divider(
+                color: PlatformColors.subtitle7,
+              ),
+              SizedBox(height: 8),
+              TextField(
+                maxLines: 5,
+                controller: controller.descriptionTextController,
+                decoration: InputDecoration(
+                  fillColor: PlatformColors.subtitle8,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: PlatformColors.subtitle7,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: PlatformColors.subtitle7,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  hintText: '메모를 입력해보세요!',
+                  hintStyle: TextStyle(color: PlatformColors.subtitle4),
+                  suffixIconConstraints: BoxConstraints(maxHeight: 30),
+                ),
+              ),
+              SizedBox(height: 13),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
+                    onTap: () {
+                      controller.descriptionTextController.clear();
+                      Get.back();
+                    },
+                    text: '취소',
+                    textPadding: EdgeInsets.symmetric(
+                      horizontal: 48,
+                    ),
+                    textStyle: AppTextStyle.body12M(
+                      color: PlatformColors.subtitle7,
+                    ),
+                    borderRadius: BorderRadius.circular(44),
+                    borderColor: PlatformColors.subtitle7,
+                    backgroundColor: Colors.white,
+                  ),
+                  CustomButton(
+                    onTap: () {
+                      controller.addMarkers(position: latLng);
+                    },
+                    text: '등록',
+                    textPadding: EdgeInsets.symmetric(
+                      horizontal: 48,
+                    ),
+                    textStyle: AppTextStyle.body12M(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(44),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-final Map<String, NLatLng> cities = {
-  '서울': NLatLng(37.5665, 126.9780),
-  '경기': NLatLng(37.2749, 127.0093),
-  '인천': NLatLng(37.4563, 126.7052),
-  '강원': NLatLng(37.8228, 128.1555),
-  '강릉': NLatLng(37.7519, 128.8766),
-  '대구': NLatLng(35.8714, 128.6014),
-  '경주': NLatLng(35.8562, 129.2247),
-  '부산': NLatLng(35.1796, 129.0756),
-  '울산': NLatLng(35.5384, 129.3114),
-  '경남': NLatLng(35.2376, 128.6919),
-  '경북': NLatLng(36.4919, 128.8889),
-  '광주': NLatLng(35.1595, 126.8526),
-  '대전': NLatLng(36.3504, 127.3845),
-  '충남': NLatLng(36.6588, 126.6728),
-  '충북': NLatLng(36.6359, 127.4913),
-  '전남': NLatLng(34.8679, 126.9910),
-  '전북': NLatLng(35.7175, 127.1530),
-  '제주': NLatLng(33.4890, 126.4983),
-};
