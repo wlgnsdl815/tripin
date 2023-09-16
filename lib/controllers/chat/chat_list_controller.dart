@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
 
@@ -10,10 +11,15 @@ class ChatListController extends GetxController {
   RxList<ChatRoom> chatList = <ChatRoom>[].obs;
 
   StreamSubscription? chatRoomsStreamSubscription; // 스트림 구독 객체
+  final GlobalGetXController _globalGetXController =
+      Get.find<GlobalGetXController>();
 
   setRoomId(String id) {
     roomId.value = id;
     print('setRoomId: ${roomId.value}');
+    _globalGetXController.setRoomId(id);
+    print(
+        'GlobalGeXController in ChatList roomId: ${_globalGetXController.roomId}');
   }
 
   getChatList() {
@@ -34,6 +40,9 @@ class ChatListController extends GetxController {
         List<String> participantUidList =
             List<String>.from(chatData['participants']);
         allParticipantUids.addAll(participantUidList);
+      }
+      if (allParticipantUids.isEmpty) {
+        return;
       }
       // 한번의 쿼리로 모든 참가자의 정보를 가져옴, 반복 쿼리를 피해 성능을 향상
       final allParticipantsSnapshots = await firestoreInstance

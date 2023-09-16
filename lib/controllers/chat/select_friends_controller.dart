@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/enum_color.dart';
 import 'package:tripin/model/user_model.dart';
@@ -12,6 +13,8 @@ class SelectFriendsController extends GetxController {
   RxList<UserModel> participants = <UserModel>[].obs;
   RxString roomId = ''.obs;
   final AuthController _authController = Get.find<AuthController>();
+  final GlobalGetXController _globalGetXController =
+      Get.find<GlobalGetXController>();
 
   getUsers() async {
     final tempUsersData = [];
@@ -91,6 +94,9 @@ class SelectFriendsController extends GetxController {
       'joinedTrip': FieldValue.arrayUnion([newRoom.roomId])
     });
 
+    _globalGetXController.setRoomId(roomId.value);
+    print(
+        'getxController in Select Friends Controller: ${_globalGetXController.roomId}');
     return roomId.value = docRef.id;
   }
 

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart' as cf;
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +16,7 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   final SelectFriendsController _selectFriendsController =
       Get.find<SelectFriendsController>();
+
   final functions = FirebaseFunctions.instance;
   final ScrollController scrollController = ScrollController();
   RxList<ChatMessage> messageList = <ChatMessage>[].obs;

@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
-import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
+import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
-import 'package:tripin/view/screens/chat/map_screen.dart';
 
 class ChatScreen extends GetView<ChatController> {
   static const route = '/chat';
@@ -18,18 +18,27 @@ class ChatScreen extends GetView<ChatController> {
   @override
   Widget build(BuildContext context) {
     final AuthController _authController = Get.find<AuthController>();
-    final SelectFriendsController _selectFriendsController =
-        Get.find<SelectFriendsController>();
+    final GlobalGetXController _globalGetXController =
+        Get.find<GlobalGetXController>();
+    print(
+        '_globalGetXController in ChatScreen roomId: ${_globalGetXController.roomId}');
+
     return Scaffold(
       backgroundColor: PlatformColors.subtitle8,
       appBar: AppBar(
-        title: Text(_selectFriendsController.roomId.value),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(Icons.navigate_before),
+        ),
+        title: Text(_globalGetXController.roomId.value),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: PlatformColors.title,
       ),
       body: StreamBuilder<Map<dynamic, dynamic>>(
-        stream: controller.getMessage(_selectFriendsController.roomId.value),
+        stream: controller.getMessage(_globalGetXController.roomId.value),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == null) {
             return Center(child: Text('대화를 시작해보세요.'));
@@ -282,9 +291,7 @@ class ChatScreen extends GetView<ChatController> {
                             horizontal: 12, vertical: 4),
                         child: GestureDetector(
                           onTap: () {
-                            Get.to(
-                              () => MapScreen(),
-                            );
+                            Get.toNamed(AppScreens.map);
                           },
                           child: Container(
                             height: 50,
@@ -366,7 +373,7 @@ class ChatScreen extends GetView<ChatController> {
                                     controller.sendMessage(
                                       _authController.userInfo.value!.uid,
                                       controller.messageController.text,
-                                      _selectFriendsController.roomId.value,
+                                      _globalGetXController.roomId.value,
                                       _authController.userInfo.value!.uid,
                                     );
                                   },

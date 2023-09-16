@@ -5,6 +5,7 @@ import 'package:sfac_design_flutter/widgets/alertDialog/alert_dialog.dart';
 import 'package:sfac_design_flutter/widgets/datepicker/calendar.dart';
 import 'package:sfac_design_flutter/widgets/datepicker/date_picker.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 
 class CustomDatePicker extends StatelessWidget {
@@ -16,6 +17,9 @@ class CustomDatePicker extends StatelessWidget {
         Get.find<MapScreenController>();
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
+    final GlobalGetXController _globalGetXController =
+        Get.find<GlobalGetXController>();
+    print('_globalGetXController.roomId: ${_globalGetXController.roomId}');
     return Obx(
       () => SFDatePicker(
         key: ValueKey(_mapScreenController.dateRangeFromFirebase.value),
@@ -34,7 +38,7 @@ class CustomDatePicker extends StatelessWidget {
                 onAccept: () {
                   _mapScreenController.getDatesBetweenAndUpdate(start, end);
                   _selectFriendsController.updateStartAndEndDate(
-                      _selectFriendsController.roomId.value, start, end);
+                      _globalGetXController.roomId.value, start, end);
                 },
                 onCancle: () {},
                 top: 0.3,
@@ -42,7 +46,7 @@ class CustomDatePicker extends StatelessWidget {
             } else {
               _mapScreenController.getDatesBetweenAndUpdate(start, end);
               _selectFriendsController.updateStartAndEndDate(
-                  _selectFriendsController.roomId.value, start, end);
+                  _globalGetXController.roomId.value, start, end);
             }
           } else {
             print("시작 날짜 또는 종료 날짜 null");

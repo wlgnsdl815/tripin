@@ -1,6 +1,3 @@
-import 'package:get/get.dart';
-
-import '../controllers/chat/chat_controller.dart';
 import 'user_model.dart';
 
 class ChatMessage {

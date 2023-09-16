@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:tripin/const/cities.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/model/kakao_geocoding_model.dart';
 import 'package:tripin/service/kakao_geocoding_service.dart';
@@ -22,7 +23,6 @@ class MapScreen extends GetView<MapScreenController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.getDatesFromFirebase();
     final List<NMarker> _nMarkerList = controller.nMarkerList;
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
@@ -30,11 +30,15 @@ class MapScreen extends GetView<MapScreenController> {
 
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
+    final GlobalGetXController _globalGetXController =
+        Get.find<GlobalGetXController>();
+    print(
+        '_globalGetXController in Map Screen roomId: ${_globalGetXController.roomId}');
 
+    controller.getDatesFromFirebase();
     if (!controller.hasPermission.value) {
       controller.hasPermission;
       print('Position: ${controller.myPosition.value}');
-      print('Current RoomId ${_selectFriendsController.roomId.value}');
     }
     return Scaffold(
       appBar: AppBar(
@@ -127,7 +131,7 @@ class MapScreen extends GetView<MapScreenController> {
                                             citiesName[index];
                                         await _selectFriendsController
                                             .upDateCity(
-                                                _selectFriendsController
+                                                _globalGetXController
                                                     .roomId.value,
                                                 citiesName[index]); // 도시 업데이트
                                         print(

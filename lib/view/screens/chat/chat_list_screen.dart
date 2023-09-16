@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
@@ -11,6 +12,8 @@ class ChatListScreen extends GetView<ChatListController> {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalGetXController _globalGetXController =
+        Get.find<GlobalGetXController>();
     var currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     print('리스트를 보여줄 때 현재 유저: $currentUserUid');
     return Scaffold(
@@ -31,8 +34,10 @@ class ChatListScreen extends GetView<ChatListController> {
             print(controller.chatList.length);
             return InkWell(
               onTap: () {
+                _globalGetXController
+                    .setRoomId(controller.chatList[index].roomId);
                 controller.setRoomId(controller.chatList[index].roomId);
-                print(controller.roomId);
+
                 Get.offAndToNamed(AppScreens.chat);
               },
               child: ListTile(
