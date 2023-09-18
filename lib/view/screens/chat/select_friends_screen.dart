@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
@@ -10,6 +11,8 @@ import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
   const SelectFriendsScreen({super.key});
+
+  static const route = '/selectFriends';
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +42,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                   : () async {
                       String roomId = await controller.createChatRoom();
                       _chatListController.setRoomId(roomId);
-                      Get.to(
-                        () => ChatScreen(),
-                      );
+                      Get.offAndToNamed(AppScreens.chat);
                     },
               child: Obx(
                 () => Text(

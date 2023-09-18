@@ -5,6 +5,7 @@ import 'package:tripin/view/screens/calendar_screen.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
 import 'package:tripin/view/screens/chat/chat_setting_screen.dart';
 import 'package:tripin/view/screens/chat/map_screen.dart';
+import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 import 'package:tripin/view/screens/home_screen.dart';
 import 'package:tripin/view/screens/login_screen.dart';
@@ -42,6 +43,10 @@ class AppRoutes {
     GetPage(
       name: AppScreens.chatSetting,
       page: () => ChatSettingScreen(),
+    ),
+    GetPage(
+      name: AppScreens.selectFriends,
+      page: () => SelectFriendsScreen(),
     ),
   ];
 }

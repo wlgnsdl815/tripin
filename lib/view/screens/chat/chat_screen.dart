@@ -46,7 +46,7 @@ class ChatScreen extends GetView<ChatController> {
         foregroundColor: PlatformColors.title,
         actions: [
           CustomAppBarIcon(
-            padding: EdgeInsets.only(right: 24),
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
             image: Image.asset(
               'assets/icons/setting.png',
               width: 18.w,

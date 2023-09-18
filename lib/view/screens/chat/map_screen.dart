@@ -82,11 +82,13 @@ class MapScreen extends GetView<MapScreenController> {
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
                   print(naverMapController);
-                  NMapController.addOverlayAll(_nMarkerList.toSet());
+                  naverMapController.addOverlayAll(_nMarkerList.toSet());
+
+                  // 정보창 표시(마커 포함)
+                  controller.showInfoWindow(_nMarkerList, context);
                   print("네이버 맵 로딩됨!");
-                  controller.showInfoWindow(_nMarkerList, context); // 정보창 표시
-                  controller.addArrowheadPath(
-                      NMapController, _nMarkerList); // 경로 표시
+                  // 경로 표시
+                  controller.addArrowheadPath(naverMapController, _nMarkerList);
 
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
@@ -193,7 +195,7 @@ class MapScreen extends GetView<MapScreenController> {
               SizedBox(height: 11),
               Obx(() {
                 if (controller.dateRange.isEmpty) {
-                  return Text('날짜를 선택해주세요');
+                  return SizedBox.shrink();
                 }
 
                 return SingleChildScrollView(

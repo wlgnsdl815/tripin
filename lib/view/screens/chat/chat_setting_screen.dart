@@ -23,9 +23,7 @@ class ChatSettingScreen extends StatelessWidget {
             width: 12.w,
             height: 12.h,
           ),
-          padding: EdgeInsets.only(
-            left: 25,
-          ),
+          padding: EdgeInsets.only(left: 25),
           onTap: () {
             Get.back();
           },
