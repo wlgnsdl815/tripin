@@ -6,7 +6,10 @@ import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/utils/text_styles.dart';
 
 import 'package:tripin/view/page/find_friend_page.dart';
+import 'package:tripin/view/screens/profile_detail_screen.dart';
 import 'package:tripin/view/widget/app_friend_card.dart';
+
+import '../../utils/colors.dart';
 
 class FriendScreen extends GetView<FriendController> {
   const FriendScreen({super.key});
@@ -295,65 +298,67 @@ class FriendScreen extends GetView<FriendController> {
                                         top: 8, bottom: 8),
                                     child: Row(
                                       children: [
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              15,
-                                          child: AspectRatio(
-                                            aspectRatio: 1 / 1,
-                                            child: Container(
-                                              clipBehavior: Clip.antiAlias,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: Colors.grey,
-                                              ),
-                                              child: controller
+                                        GestureDetector(
+                                          onTap: () {
+                                            Get.to(() => ProfileDetailScreen(userModel: controller
+                                                .followingList[index]), arguments: [controller
+                                                .followingList[index]]);
+                                          },
+                                          child: SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                15,
+                                            child: AspectRatio(
+                                              aspectRatio: 1 / 1,
+                                              child: Container(
+                                                clipBehavior: Clip.antiAlias,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  color: Colors.grey,
+                                                ),
+                                                child: controller
+                                                            .followingList[index]
+                                                            .imgUrl
+                                                            .isNotEmpty
+                                                    ? Container(
+                                                        clipBehavior:
+                                                            Clip.antiAlias,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12)),
+                                                        child: Image.network(
+                                                          controller
                                                               .followingList[
                                                                   index]
-                                                              .imgUrl !=
-                                                          null &&
-                                                      controller
-                                                          .followingList[index]
-                                                          .imgUrl
-                                                          .isNotEmpty
-                                                  ? Container(
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
+                                                              .imgUrl,
+                                                          fit: BoxFit.fill,
+                                                        ))
+                                                    : Container(
+                                                        clipBehavior:
+                                                            Clip.antiAlias,
+                                                        decoration: BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(
-                                                                      12)),
-                                                      child: Image.network(
-                                                        controller
-                                                            .followingList[
-                                                                index]
-                                                            .imgUrl,
-                                                        fit: BoxFit.fill,
-                                                      ))
-                                                  : Container(
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        color: Colors.grey,
+                                                                  .circular(12),
+                                                          color: Colors.grey,
+                                                        ),
                                                       ),
-                                                    ),
 
-                                              // controller.followingList[index].imgUrl != null &&
-                                              //         friend.imgUrl.isNotEmpty
-                                              //     ? Image.network(friend.imgUrl)
-                                              //     : Container(
-                                              //         clipBehavior: Clip.antiAlias,
-                                              //         decoration: BoxDecoration(
-                                              //           borderRadius: BorderRadius.circular(12),
-                                              //           color: Colors.grey,
-                                              //         ),
-                                              //       ),
+                                                // controller.followingList[index].imgUrl != null &&
+                                                //         friend.imgUrl.isNotEmpty
+                                                //     ? Image.network(friend.imgUrl)
+                                                //     : Container(
+                                                //         clipBehavior: Clip.antiAlias,
+                                                //         decoration: BoxDecoration(
+                                                //           borderRadius: BorderRadius.circular(12),
+                                                //           color: Colors.grey,
+                                                //         ),
+                                                //       ),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -423,7 +428,7 @@ class FriendScreen extends GetView<FriendController> {
                       ),
                     ),
                   ],
-                ),
+              ),
               ),
             ),
           ),

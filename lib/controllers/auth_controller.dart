@@ -66,6 +66,7 @@ class AuthController extends GetxController {
       isSelected: false,
       message: '',
       following: [],
+      joinedTrip: [],
     );
 
     await DBService().saveUserInfo(userModel);
@@ -108,6 +109,7 @@ class AuthController extends GetxController {
       isSelected: false,
       message: '',
       following: [],
+      joinedTrip: [],
     );
 
     await DBService().saveUserInfo(userModel);
@@ -195,6 +197,7 @@ class AuthController extends GetxController {
       'isSelected': false,
       'message': '',
       'following': [],
+      'joinedTrip': [],
     });
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
   }

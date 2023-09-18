@@ -16,22 +16,22 @@ class DBService {
       fromFirestore: (snapshot, _) => UserModel.fromMap(snapshot.data()!),
       toFirestore: (user, _) => user.toMap());
 
+  final roomRef = FirebaseFirestore.instance.collection('chatRooms').withConverter(
+      fromFirestore: (snapshot, _) => ChatRoom.fromMap(snapshot.data()!),
+      toFirestore: (room, _) => room.toMap());
+
   // uid로 유저 정보 가져오기
   Future getUserInfoById(String uid) async {
     try {
       DocumentSnapshot<UserModel> res = await userRef.doc(uid).get();
-      if (res.exists) {
-        return res.data();
-      } else {
-        return null;
-      }
+      return res.data();
     } catch (e) {
-      log('null', name: 'db_service :: getUserInfoById');
+      log('$e', name: 'db_service :: getUserInfoById');
       return null;
     }
   }
 
-  Future saveUserInfo(UserModel user) async {
+  Future<void> saveUserInfo(UserModel user) async {
     DocumentSnapshot userDocSnapshot = await userRef.doc(user.uid).get();
 
     if (userDocSnapshot.exists) {
@@ -44,6 +44,17 @@ class DBService {
     } else {
       // 문서가 존재하지 않으면 생성
       await userRef.doc(user.uid).set(user);
+    }
+  }
+
+  // roomId로 채팅방 정보 가져오기
+  Future getRoomInfoById(String roomId) async {
+    try {
+      DocumentSnapshot<ChatRoom> res = await roomRef.doc(roomId).get();
+      return res.data();
+    } catch (e) {
+      log('$e', name: 'db_service :: getRoomInfoById');
+      return null;
     }
   }
 }
