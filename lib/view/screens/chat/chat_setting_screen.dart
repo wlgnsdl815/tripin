@@ -19,7 +19,7 @@ class ChatSettingScreen extends StatelessWidget {
         foregroundColor: PlatformColors.title,
         leading: CustomAppBarIcon(
           image: Image.asset(
-            'assets/icons/cancle.png',
+            'assets/icons/cancel.png',
             width: 12.w,
             height: 12.h,
           ),

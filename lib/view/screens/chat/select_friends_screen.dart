@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
@@ -7,6 +8,8 @@ import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
+import 'package:tripin/view/widget/custom_appbar_icon.dart';
+import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
@@ -20,20 +23,31 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
+        leading: CustomAppBarIcon(
+          padding: EdgeInsets.only(left: 25),
+          image: Image.asset(
+            'assets/icons/cancel.png',
+            width: 12.w,
+            height: 12.h,
+          ),
+          onTap: () {
             Get.back();
           },
-          // 아이콘 나중에 수정하기
-          icon: Icon(
-            Icons.close,
-            color: PlatformColors.title,
-          ),
         ),
-        title: Text(
-          '친구 선택',
-          style: AppTextStyle.body16M(),
-        ),
+        // IconButton(
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        //   // 아이콘 나중에 수정하기
+        //   icon: Icon(
+        //     Icons.close,
+        //     color: PlatformColors.title,
+        //   ),
+        // ),
+        // title: Text(
+        //   '친구 선택',
+        //   style: AppTextStyle.body16M(),
+        // ),
         actions: [
           Obx(
             () => TextButton(
