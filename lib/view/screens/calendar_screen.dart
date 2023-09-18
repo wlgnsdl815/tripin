@@ -17,7 +17,7 @@ class CalendarScreen extends GetView<CalendarController> {
 
   @override
   Widget build(BuildContext context) {
-    print(Get.find<SelectFriendsController>().rangeHighlightColor.value);
+    // print(Get.find<SelectFriendsController>().createChatRoom().toString());
 
     final MapScreenController _mapScreenController =
         Get.find<MapScreenController>();
