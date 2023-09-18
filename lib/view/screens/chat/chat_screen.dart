@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
@@ -7,6 +8,8 @@ import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
+import 'package:tripin/view/screens/chat/chat_setting_screen.dart';
+import 'package:tripin/view/widget/custom_appbar_icon.dart';
 
 class ChatScreen extends GetView<ChatController> {
   static const route = '/chat';
@@ -26,16 +29,34 @@ class ChatScreen extends GetView<ChatController> {
     return Scaffold(
       backgroundColor: PlatformColors.subtitle8,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
+        leading: CustomAppBarIcon(
+          padding: EdgeInsets.only(left: 0),
+          image: Image.asset(
+            'assets/icons/back.png',
+            width: 7.w,
+            height: 14.h,
+          ),
+          onTap: () {
             Get.back();
           },
-          icon: Icon(Icons.navigate_before),
         ),
         title: Text(_globalGetXController.roomId.value),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: PlatformColors.title,
+        actions: [
+          CustomAppBarIcon(
+            padding: EdgeInsets.only(right: 24),
+            image: Image.asset(
+              'assets/icons/setting.png',
+              width: 18.w,
+              height: 18.w,
+            ),
+            onTap: () {
+              Get.toNamed(ChatSettingScreen.route);
+            },
+          ),
+        ],
       ),
       body: StreamBuilder<Map<dynamic, dynamic>>(
         stream: controller.getMessage(_globalGetXController.roomId.value),

@@ -3,6 +3,7 @@ import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/view/page/find_friend_page.dart';
 import 'package:tripin/view/screens/calendar_screen.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
+import 'package:tripin/view/screens/chat/chat_setting_screen.dart';
 import 'package:tripin/view/screens/chat/map_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 import 'package:tripin/view/screens/home_screen.dart';
@@ -37,6 +38,10 @@ class AppRoutes {
     GetPage(
       name: AppScreens.map,
       page: () => MapScreen(),
+    ),
+    GetPage(
+      name: AppScreens.chatSetting,
+      page: () => ChatSettingScreen(),
     ),
   ];
 }

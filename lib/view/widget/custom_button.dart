@@ -12,6 +12,8 @@ class CustomButton extends StatefulWidget {
     this.textPadding,
     this.textMargin,
     this.borderColor,
+    this.buttonPadding,
+    this.boxBorderWidth,
   }) : super(key: key);
 
   final VoidCallback onTap;
@@ -22,6 +24,8 @@ class CustomButton extends StatefulWidget {
   final EdgeInsets? textPadding;
   final EdgeInsets? textMargin;
   final Color? borderColor;
+  final EdgeInsets? buttonPadding;
+  final double? boxBorderWidth;
 
   @override
   State<CustomButton> createState() => _CustomButtonState();
@@ -32,13 +36,14 @@ class _CustomButtonState extends State<CustomButton> {
   Widget build(BuildContext context) {
     return TextButton(
       style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.symmetric(
-          vertical: 16,
-        ),
+        padding: widget.buttonPadding ?? EdgeInsets.zero,
         backgroundColor: widget.backgroundColor ?? PlatformColors.primary,
         shape: RoundedRectangleBorder(
           borderRadius: widget.borderRadius ?? BorderRadius.circular(0),
-          side: BorderSide(color: widget.borderColor ?? Colors.transparent),
+          side: BorderSide(
+            color: widget.borderColor ?? Colors.transparent,
+            width: widget.boxBorderWidth ?? 1,
+          ),
         ),
       ),
       onPressed: widget.onTap,

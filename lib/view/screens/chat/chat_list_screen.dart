@@ -38,7 +38,7 @@ class ChatListScreen extends GetView<ChatListController> {
                     .setRoomId(controller.chatList[index].roomId);
                 controller.setRoomId(controller.chatList[index].roomId);
 
-                Get.offAndToNamed(AppScreens.chat);
+                Get.toNamed(AppScreens.chat);
               },
               child: ListTile(
                 title: Text(
