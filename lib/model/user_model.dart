@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-
 class UserModel {
   String uid; // uid
   String email; // 이메일
@@ -12,15 +10,14 @@ class UserModel {
   bool isSelected = false;
   List following;
 
-  UserModel({
-    required this.uid,
-    required this.email,
-    required this.nickName,
-    required this.imgUrl,
-    required this.message,
-    required this.isSelected,
-    required this.following
-  });
+  UserModel(
+      {required this.uid,
+      required this.email,
+      required this.nickName,
+      required this.imgUrl,
+      required this.message,
+      required this.isSelected,
+      required this.following});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -40,7 +37,7 @@ class UserModel {
       nickName: map['nickName'] ?? '',
       imgUrl: map['imgUrl'] ?? '',
       message: map['message'] ?? '',
-      isSelected: map['isSelected'] ?? false, 
+      isSelected: map['isSelected'] ?? false,
       following: map['following'] ?? [],
     );
   }

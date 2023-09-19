@@ -9,7 +9,6 @@ import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
-import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {

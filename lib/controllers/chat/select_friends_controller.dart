@@ -15,6 +15,7 @@ class SelectFriendsController extends GetxController {
   final AuthController _authController = Get.find<AuthController>();
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
+  RxString roomTitle = ''.obs;
 
   getUsers() async {
     final tempUsersData = [];
@@ -40,17 +41,23 @@ class SelectFriendsController extends GetxController {
     print('참가자: $participants');
     final firestoreInstance = FirebaseFirestore.instance;
 
-    // List<UserModel> participantModels = participants.map((participantId) {
-    //   return userData.firstWhere((user) => user.uid == participantId);
-    // }).toList();
-
     List<String> participantsUidList =
         participants.map((element) => element.uid).toList();
+
     // 현재 사용자의 UID를 participantsUidList에 추가
     String currentUserUid = _authController.userInfo.value!.uid;
     if (!participantsUidList.contains(currentUserUid)) {
       participantsUidList.add(currentUserUid);
     }
+
+    participants.value = userData
+        .where((user) => participantsUidList.contains(user.uid))
+        .toList();
+
+    List<String> defaultRoomTitle =
+        participants.map((e) => e.nickName).toList();
+
+    roomTitle.value = defaultRoomTitle.join(', ');
 
     ChatRoom newRoom = ChatRoom(
       roomId: '',
@@ -59,6 +66,8 @@ class SelectFriendsController extends GetxController {
       participantIdList: participantsUidList,
       city: '',
       dateRange: [],
+      roomTitle: roomTitle.value,
+      imgUrl: '',
     );
 
     // 새로운 채팅방 추가
