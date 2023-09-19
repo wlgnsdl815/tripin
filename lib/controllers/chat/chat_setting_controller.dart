@@ -24,5 +24,7 @@ class ChatSettingController extends GetxController {
     );
     _globalGetXController.setRoomTitle(chatTitleEdit.text);
   }
-  // 채팅방 나가기 (참가자 목록에서 해당 유저지우기)
+
+  // 채팅방 나가기 (참가자 목록, User - joinedTrip에서 해당 유저지우기)
+  leaveChatRoom() {}
 }

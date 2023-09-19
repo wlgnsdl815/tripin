@@ -270,7 +270,7 @@ class MapScreenController extends GetxController {
     nMarker.setIcon(overlayImage);
   }
 
-// markeList의 마커id와 NMarkerList의 마커id를 비교해서 각각 알맞게 띄워준다.
+// markerList의 마커id와 NMarkerList의 마커id를 비교해서 각각 알맞게 띄워준다.
   void showInfoWindow(List<NMarker> NMarkerList, BuildContext context) {
     for (NMarker nMarker in NMarkerList) {
       MarkerModel correspondingModel =

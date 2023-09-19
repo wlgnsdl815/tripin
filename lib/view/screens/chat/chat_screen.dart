@@ -40,7 +40,7 @@ class ChatScreen extends GetView<ChatController> {
             Get.back();
           },
         ),
-        title: Text(_globalGetXController.roomId.value),
+        title: Obx(() => Text(_globalGetXController.roomTitle.value)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: PlatformColors.title,

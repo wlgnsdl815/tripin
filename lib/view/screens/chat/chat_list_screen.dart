@@ -42,6 +42,8 @@ class ChatListScreen extends GetView<ChatListController> {
                 _globalGetXController
                     .setRoomId(controller.chatList[index].roomId);
                 controller.setRoomId(controller.chatList[index].roomId);
+                _globalGetXController
+                    .setRoomTitle(controller.chatList[index].roomTitle);
 
                 Get.toNamed(AppScreens.chat);
               },

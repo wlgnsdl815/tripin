@@ -11,7 +11,7 @@ class ChatRoom {
   int? endDate;
   String city;
   List dateRange;
-  String? roomTitle;
+  String roomTitle;
   String? imgUrl;
 
   ChatRoom({
@@ -24,7 +24,7 @@ class ChatRoom {
     this.endDate,
     required this.city,
     required this.dateRange,
-    this.roomTitle,
+    required this.roomTitle,
     this.imgUrl,
   });
 
@@ -43,7 +43,8 @@ class ChatRoom {
     };
   }
 
-  factory ChatRoom.fromMap(Map<String, dynamic> map, {List<UserModel>? participants}) {
+  factory ChatRoom.fromMap(Map<String, dynamic> map,
+      {List<UserModel>? participants}) {
     return ChatRoom(
       roomId: map['roomId'] as String,
       lastMessage: map['lastMessage'] as String,
