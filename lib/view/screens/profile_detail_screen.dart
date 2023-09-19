@@ -88,7 +88,51 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
             )
           ),
           // 내 여행 기록 리스트
-          Text('${controller.user.nickName}'),
+          Padding(
+            padding: const EdgeInsets.only(top: 24, left: 24, right: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('내 여행 기록', style: AppTextStyle.body16B(),),
+                Obx(() => Text('${controller.ongoingTrips.length}', style: AppTextStyle.body16B(),)),
+                SizedBox(height: 12),
+                Obx(
+                  () => Row(
+                    children: List.generate(
+                      controller.filterOptionList.length, (index) => GestureDetector(
+                        onTap: () {
+                          controller.filterIdx(index);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: controller.filterIdx == index ? PlatformColors.subtitle2 : Colors.white,
+                              borderRadius: BorderRadius.circular(22),
+                              border: controller.filterIdx == index ? null : Border.all(color: PlatformColors.subtitle6)
+                            ),
+                            child: Text(
+                              '${controller.filterOptionList[index]} ${
+                                  controller.filterOptionList[index] == '예정'
+                                    ? controller.upcomingTrips.length
+                                    : controller.completedTrips.length
+                              }',
+                              style: AppTextStyle.body14B(
+                                color: controller.filterIdx == index
+                                  ? Colors.white
+                                  : PlatformColors.subtitle
+                              ),
+                            )
+                          ),
+                        ),
+                      )
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );

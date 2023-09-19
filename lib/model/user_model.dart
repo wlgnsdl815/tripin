@@ -34,6 +34,7 @@ class UserModel {
       'imgUrl': imgUrl,
       'message': message,
       'isSelected': isSelected,
+      'following': following,
       'joinedTrip': joinedTrip ?? [],
     };
   }
