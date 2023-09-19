@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
@@ -32,6 +33,9 @@ class ChatListScreen extends GetView<ChatListController> {
           separatorBuilder: (context, index) => Divider(),
           itemCount: controller.chatList.length,
           itemBuilder: (context, index) {
+            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                controller.chatList[index].updatedAt);
+            String formattedTime = DateFormat('HH:mm').format(dateTime);
             print(controller.chatList.length);
             return InkWell(
               onTap: () {
@@ -43,7 +47,7 @@ class ChatListScreen extends GetView<ChatListController> {
               },
               child: ListTile(
                 title: Text(
-                    '${controller.chatList[index].roomTitle} ${controller.chatList[index].participants!.length}, ${controller.chatList[index].updatedAt}'),
+                    '${controller.chatList[index].roomTitle} ${controller.chatList[index].participants!.length}, ${formattedTime}'),
                 subtitle: Text(
                     '${controller.chatList[index].participants![0].email}'),
               ),

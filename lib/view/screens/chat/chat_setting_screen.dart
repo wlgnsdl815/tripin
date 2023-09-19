@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/chat/chat_setting_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
-class ChatSettingScreen extends StatelessWidget {
+class ChatSettingScreen extends GetView<ChatSettingController> {
   const ChatSettingScreen({super.key});
 
   static const route = '/chatSetting';
@@ -87,9 +88,16 @@ class ChatSettingScreen extends StatelessWidget {
                   height: 7.h,
                 ),
                 CustomTextFiledWithOutForm(
+                  controller: controller.chatTitleEdit,
                   hintText: '채팅방 이름',
                 ),
-                SizedBox(height: 335.h),
+                ElevatedButton(
+                  onPressed: () {
+                    controller.upDateChatRoomTitle();
+                  },
+                  child: Text('저장'),
+                ),
+                SizedBox(height: 300.h),
                 CustomButton(
                   backgroundColor: Colors.white,
                   onTap: () {},

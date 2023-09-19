@@ -60,6 +60,8 @@ class SelectFriendsController extends GetxController {
 
     roomTitle.value = defaultRoomTitle.join(', ');
 
+    _globalGetXController.setRoomTitle(roomTitle.value);
+
     ChatRoom newRoom = ChatRoom(
       roomId: '',
       lastMessage: '',
