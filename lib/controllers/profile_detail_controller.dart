@@ -9,10 +9,13 @@ import '../model/user_model.dart';
 
 class ProfileDetailController extends GetxController {
   UserModel user = Get.arguments[0];
-  RxList<ChatRoom?> joinedChatRoomList = <ChatRoom?>[].obs;
-  RxList<ChatRoom?> ongoingTrips = <ChatRoom?>[].obs;
-  RxList<ChatRoom?> upcomingTrips = <ChatRoom?>[].obs;
-  RxList<ChatRoom?> completedTrips = <ChatRoom?>[].obs;
+  RxList<ChatRoom?> joinedChatRoomList = <ChatRoom?>[].obs; // 참여중인 여행 전체 리스트
+  RxList<ChatRoom?> ongoingTrips = <ChatRoom?>[].obs;       // 진행중인 여행 리스트
+  RxList<ChatRoom?> upcomingTrips = <ChatRoom?>[].obs;      // 예정된 여행 리스트
+  RxList<ChatRoom?> completedTrips = <ChatRoom?>[].obs;     // 완료된 여행 리스트
+
+  List<String> filterOptionList = ['예정', '종료'];   // 필터링 옵션 리스트
+  RxInt filterIdx = 0.obs;  // 필터링 선택값
 
   // 참여중인 채팅방 리스트 가져오기
   Future<void> readJoinedChatRoom() async {
@@ -37,10 +40,14 @@ class ProfileDetailController extends GetxController {
           } else {
             upcomingTrips.add(room);
           }
+        } else {
+          upcomingTrips.add(room);
         }
       }
     }
   }
+
+  // 필터링
 
   @override
   void onInit() async {

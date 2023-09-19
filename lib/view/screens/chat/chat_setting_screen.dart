@@ -98,6 +98,7 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
                   child: Text('저장'),
                 ),
                 SizedBox(height: 300.h),
+
                 CustomButton(
                   backgroundColor: Colors.white,
                   onTap: () {},
