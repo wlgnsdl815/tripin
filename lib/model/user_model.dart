@@ -1,10 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-
-import 'chat_room_model.dart';
-
 class UserModel {
   String uid; // uid
   String email; // 이메일
@@ -46,7 +39,7 @@ class UserModel {
       nickName: map['nickName'] ?? '',
       imgUrl: map['imgUrl'] ?? '',
       message: map['message'] ?? '',
-      isSelected: map['isSelected'] ?? false, 
+      isSelected: map['isSelected'] ?? false,
       following: map['following'] ?? [],
       joinedTrip: map['joinedTrip'] ?? [],
     );

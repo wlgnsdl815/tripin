@@ -11,6 +11,8 @@ class ChatRoom {
   int? endDate;
   String city;
   List dateRange;
+  String? roomTitle;
+  String? imgUrl;
 
   ChatRoom({
     required this.roomId,
@@ -22,6 +24,8 @@ class ChatRoom {
     this.endDate,
     required this.city,
     required this.dateRange,
+    this.roomTitle,
+    this.imgUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,7 +37,9 @@ class ChatRoom {
       'startDate': startDate,
       'endDate': endDate,
       'city': city,
-      'dateRange': dateRange
+      'dateRange': dateRange,
+      'roomTitle': roomTitle,
+      'imgUrl': imgUrl,
     };
   }
 
@@ -47,6 +53,8 @@ class ChatRoom {
       startDate: map['startDate'] as int?, // startDate 추가
       endDate: map['endDate'] as int?, city: map['city'] ?? '',
       dateRange: map['dateRange'] ?? [],
+      roomTitle: map['roomTitle'] ?? '',
+      imgUrl: map['imgUrl'] ?? '',
     );
   }
 }

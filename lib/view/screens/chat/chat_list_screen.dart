@@ -43,7 +43,7 @@ class ChatListScreen extends GetView<ChatListController> {
               },
               child: ListTile(
                 title: Text(
-                    '${controller.chatList[index].roomId}, ${controller.chatList[index].participants!.length}, ${controller.chatList[index].updatedAt}'),
+                    '${controller.chatList[index].roomTitle} ${controller.chatList[index].participants!.length}, ${controller.chatList[index].updatedAt}'),
                 subtitle: Text(
                     '${controller.chatList[index].participants![0].email}'),
               ),
