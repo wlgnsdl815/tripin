@@ -1,6 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
 class UserModel {
   String uid; // uid
   String email; // 이메일
@@ -9,15 +6,18 @@ class UserModel {
   String message; // 상태 메세지
   bool isSelected = false;
   List following;
+  List? joinedTrip;
 
-  UserModel(
-      {required this.uid,
-      required this.email,
-      required this.nickName,
-      required this.imgUrl,
-      required this.message,
-      required this.isSelected,
-      required this.following});
+  UserModel({
+    required this.uid,
+    required this.email,
+    required this.nickName,
+    required this.imgUrl,
+    required this.message,
+    required this.isSelected,
+    required this.following,
+    this.joinedTrip,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -27,6 +27,7 @@ class UserModel {
       'imgUrl': imgUrl,
       'message': message,
       'isSelected': isSelected,
+      'joinedTrip': joinedTrip ?? [],
     };
   }
 
@@ -39,11 +40,7 @@ class UserModel {
       message: map['message'] ?? '',
       isSelected: map['isSelected'] ?? false,
       following: map['following'] ?? [],
+      joinedTrip: map['joinedTrip'] ?? [],
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

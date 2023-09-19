@@ -107,15 +107,18 @@ import 'package:tripin/view/screens/friend_screen.dart';
 class FriendController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Rxn<UserModel> friendUser = Rxn<UserModel>(null);
-  RxList<UserModel>followingList = <UserModel>[].obs;
+  RxList<UserModel> followingList = <UserModel>[].obs;
   Rx<User> get user => Get.find<AuthController>().user!.obs;
   final AuthController authController = Get.find<AuthController>();
   TextEditingController searchController = TextEditingController();
   TextEditingController textEditingController = TextEditingController();
   RxList<UserModel> friends = RxList<UserModel>([]);
-  final EditProfileController editProfileController = Get.find<
-      EditProfileController>(); 
-      // Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
+  final EditProfileController editProfileController =
+      Get.find<EditProfileController>();
+        final image = ''.obs;
+  final nickName = ''.obs;
+  final message = ''.obs;
+  // Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
 
   Future<UserModel?> searchUserByEmail(String email) async {
     try {
@@ -155,8 +158,7 @@ class FriendController extends GetxController {
     if (friendUser != null) {
       showUserDialog(friendUser.email);
       showUserList(friendUser.email);
-    } else {
-    }
+    } else {}
   }
 
   void showUserDialog(String userEmail) {
@@ -176,31 +178,41 @@ class FriendController extends GetxController {
     );
   }
 
- void addFriend(UserModel friend) {
-  FirebaseFirestore.instance
-  .collection('users')
-  .doc(FirebaseAuth.instance.currentUser!.uid)
-  .update({'following':FieldValue.arrayUnion([friend.uid])});
-   final isAlreadyAdded = friends.any((existingFriend) =>
-      existingFriend.email == friend.email);
-      if (!isAlreadyAdded) {
-    friends.add(friend);
-    update();
-  } else {
-  final snackBar = SnackBar(
-      content: Text('이미 추가된 친구입니다.'),
-    );
-    print('이미 추가된 친구입니다');
-    // ScaffoldMessenger로 SnackBar를 표시
-    ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
-  }  
+  void addFriend(UserModel friend) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'following': FieldValue.arrayUnion([friend.uid])
+    });
+    final isAlreadyAdded =
+        friends.any((existingFriend) => existingFriend.email == friend.email);
+    if (!isAlreadyAdded) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'following': FieldValue.arrayUnion([friend.uid])
+      });
+      friends.add(friend);
+      update();
+    } else {
+      final snackBar = SnackBar(
+        content: Text('이미 추가된 친구입니다.'),
+      );
+      print('이미 추가된 친구입니다');
+      // ScaffoldMessenger로 SnackBar를 표시
+      ScaffoldMessenger.of(Get.context!).showSnackBar(snackBar);
+    }
   }
 
-  void deleteFriend(UserModel friend){
-   FirebaseFirestore.instance
-    .collection('users')
-    .doc(FirebaseAuth.instance.currentUser!.uid)
-    .update({'following':FieldValue.arrayRemove([friend.uid])});
+  void deleteFriend(UserModel friend) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'following': FieldValue.arrayRemove([friend.uid])
+    });
     followingList.remove(friend);
     update();
   }
@@ -211,8 +223,8 @@ class FriendController extends GetxController {
 //     await prefs.setStringList('friends', friendList);
 //   }
 
- void   getFollowing() async {
-  await authController.getUserInfo(FirebaseAuth.instance.currentUser!.uid);
+  void getFollowing() async {
+    await authController.getUserInfo(FirebaseAuth.instance.currentUser!.uid);
     var uidList = authController.userInfo.value!.following;
     List<UserModel> following = [];
     for (var uid in uidList) {
@@ -221,9 +233,7 @@ class FriendController extends GetxController {
     }
     followingList(following);
     print('$followingList');
-    
   }
-
 
   Future<String?> getFriendImage(String email) async {
     try {
@@ -245,7 +255,6 @@ class FriendController extends GetxController {
       return null;
     }
   }
-  
 
   void showUserList(String userEmail) async {
     final nickNameToSearch = searchController.text;
@@ -255,13 +264,13 @@ class FriendController extends GetxController {
     if (friendUser != null) {
       addFriend(friendUser);
       Get.toNamed(FriendScreen.route, arguments: {'friend': friendUser});
-    } else {
-    }
+    } else {}
   }
-   @override
+
+  @override
   void onInit() {
     super.onInit();
     // 앱 시작 시 저장된 친구 목록을 읽어옴
     getFollowing();
   }
-  }
+}

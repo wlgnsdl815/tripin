@@ -16,6 +16,7 @@ import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
+import 'package:tripin/controllers/profile_detail_controller.dart';
 import 'package:tripin/firebase_options.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/app_routes.dart';
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => MapScreenController(), fenix: true);
           Get.lazyPut(() => CalendarController(), fenix: true);
           Get.lazyPut(() => HomeController(), fenix: true);
+          Get.lazyPut(() => ProfileDetailController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.login,

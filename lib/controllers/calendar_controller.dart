@@ -29,7 +29,7 @@ class CalendarController extends GetxController {
     print('일정이 Firestore에 추가되었습니다.');
   }
 
-  void readEvent() async {
+   void readEvent() async {
     var db = FirebaseFirestore.instance;
     QuerySnapshot res = await db
         .collection('users')
@@ -37,9 +37,19 @@ class CalendarController extends GetxController {
         .collection('calendar')
         .get();
 
+    res.docs.forEach((DocumentSnapshot doc) {
+      if (doc.exists) {
+        final color = doc.get('color') as String;
+        // 이제 color 변수를 사용하여 원하는 작업을 수행할 수 있습니다.
+        print('Color from Firestore: $color');
+      }
+    });
+
     List snapshotData =
         res.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
 
-    snapshotData.map((e) {});
+    snapshotData.map((e) {
+      // 원하는 작업 수행
+    });
   }
 }

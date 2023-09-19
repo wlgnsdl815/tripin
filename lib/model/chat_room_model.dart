@@ -6,7 +6,7 @@ class ChatRoom {
   String lastMessage; // 마지막 메시지
   int updatedAt; // 마지막 업데이트 시간 (타임스탬프)
   List<UserModel>? participants; // 참가자 리스트
-  List<String>? participantIdList; // 참가자 uid 리스트 (채팅방 생성용)
+  List<String>? participantIdList; // 참가자 uid 리스트 (채팅방 생성, 프로필 상세용)
   int? startDate;
   int? endDate;
   String city;
@@ -43,13 +43,13 @@ class ChatRoom {
     };
   }
 
-  factory ChatRoom.fromMap(
-      Map<String, dynamic> map, List<UserModel> participants) {
+  factory ChatRoom.fromMap(Map<String, dynamic> map, {List<UserModel>? participants}) {
     return ChatRoom(
       roomId: map['roomId'] as String,
       lastMessage: map['lastMessage'] as String,
       updatedAt: map['updatedAt'] as int,
       participants: participants,
+      participantIdList: map['participantIdList'],
       startDate: map['startDate'] as int?, // startDate 추가
       endDate: map['endDate'] as int?, city: map['city'] ?? '',
       dateRange: map['dateRange'] ?? [],

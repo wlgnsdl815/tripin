@@ -69,7 +69,7 @@ class ChatListController extends GetxController {
             participants.add(allParticipantsMap[participantUid]!);
           }
         }
-        ChatRoom chatRoom = ChatRoom.fromMap(chatData.data(), participants);
+        ChatRoom chatRoom = ChatRoom.fromMap(chatData.data(), participants: participants);
         tempChatRoomList.add(chatRoom);
       }
 

@@ -6,6 +6,7 @@ import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/enum_color.dart';
 import 'package:tripin/model/user_model.dart';
+import 'package:tripin/service/db_service.dart';
 
 class SelectFriendsController extends GetxController {
   RxList<UserModel> userData = <UserModel>[].obs;
@@ -80,6 +81,8 @@ class SelectFriendsController extends GetxController {
     });
 
     newRoom.roomId = docRef.id;
+
+    await DBService().saveJoinedRoomId(newRoom.roomId, participantsUidList);
 
     String randomColor = CalendarColors.getRandomColor();
     rangeHighlightColor.value = randomColor;
