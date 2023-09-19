@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
@@ -38,7 +39,7 @@ class ChatListScreen extends GetView<ChatListController> {
                     .setRoomId(controller.chatList[index].roomId);
                 controller.setRoomId(controller.chatList[index].roomId);
 
-                Get.offAndToNamed(AppScreens.chat);
+                Get.toNamed(AppScreens.chat);
               },
               child: ListTile(
                 title: Text(
@@ -48,6 +49,17 @@ class ChatListScreen extends GetView<ChatListController> {
               ),
             );
           },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: PlatformColors.primary,
+        onPressed: () {
+          Get.toNamed(AppScreens.selectFriends);
+        },
+        child: Image.asset(
+          'assets/icons/create_chat_room.png',
+          width: 25.w,
+          height: 25.h,
         ),
       ),
     );

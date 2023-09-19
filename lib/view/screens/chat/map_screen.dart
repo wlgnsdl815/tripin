@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:tripin/const/cities.dart';
@@ -81,17 +82,20 @@ class MapScreen extends GetView<MapScreenController> {
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
                   print(naverMapController);
-                  NMapController.addOverlayAll(_nMarkerList.toSet());
+                  naverMapController.addOverlayAll(_nMarkerList.toSet());
+
+                  // 정보창 표시(마커 포함)
+                  controller.showInfoWindow(_nMarkerList, context);
                   print("네이버 맵 로딩됨!");
-                  controller.showInfoWindow(_nMarkerList); // 정보창 표시
-                  controller.addArrowheadPath(
-                      NMapController, _nMarkerList); // 경로 표시
+                  // 경로 표시
+                  controller.addArrowheadPath(naverMapController, _nMarkerList);
 
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
                       print('탭한 마커 id: ${tappedMarker.info.id}');
                       _showBottomSheet(_nMarkerList, 'right');
-                      tappedMarker.setIconTintColor(Color(0xFF4D80EE));
+                      tappedMarker
+                          .setIconTintColor(Color(0xFF4D80EE).withOpacity(0.2));
                     });
                   }
                 },
@@ -191,45 +195,49 @@ class MapScreen extends GetView<MapScreenController> {
               SizedBox(height: 11),
               Obx(() {
                 if (controller.dateRange.isEmpty) {
-                  return Text('날짜를 선택해주세요');
+                  return SizedBox.shrink();
                 }
 
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children:
-                        List.generate(controller.dateRange.length, (index) {
-                      bool isSelected =
-                          index == controller.selectedDayIndex.value;
-                      return Padding(
-                        padding: EdgeInsets.only(
-                            right: (index < controller.dateRange.length - 1)
-                                ? 6
-                                : 0),
-                        child: CustomButton(
-                          onTap: () {
-                            controller.onDayButtonTap(index: index);
-                            controller.selectedDayIndex.value = index;
-                          },
-                          text: 'Day ${index + 1}',
-                          textStyle: AppTextStyle.body16M(
-                            color: isSelected
+                    children: List.generate(
+                      controller.dateRange.length,
+                      (index) {
+                        bool isSelected =
+                            index == controller.selectedDayIndex.value;
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              right: (index < controller.dateRange.length - 1)
+                                  ? 6
+                                  : 0),
+                          child: CustomButton(
+                            onTap: () {
+                              controller.onDayButtonTap(index: index);
+                              controller.selectedDayIndex.value = index;
+                            },
+                            text: 'Day ${index + 1}',
+                            textStyle: AppTextStyle.body16M(
+                              color: isSelected
+                                  ? PlatformColors.primary
+                                  : PlatformColors.subtitle2,
+                            ),
+                            textPadding: EdgeInsets.symmetric(
+                              horizontal: 17.w,
+                              vertical: 7.h,
+                            ),
+                            backgroundColor: isSelected
+                                ? PlatformColors.chatPrimaryLight
+                                : Colors.white,
+                            borderColor: isSelected
                                 ? PlatformColors.primary
-                                : PlatformColors.subtitle2,
+                                : PlatformColors.subtitle6,
+                            borderRadius: BorderRadius.circular(32.r),
+                            boxBorderWidth: 1.5,
                           ),
-                          textMargin: EdgeInsets.symmetric(
-                            horizontal: 24,
-                          ),
-                          backgroundColor: isSelected
-                              ? PlatformColors.chatPrimaryLight
-                              : Colors.white,
-                          borderColor: isSelected
-                              ? PlatformColors.primary
-                              : PlatformColors.subtitle6,
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                      );
-                    }),
+                        );
+                      },
+                    ),
                   ),
                 );
               }),
@@ -259,7 +267,7 @@ class MapScreen extends GetView<MapScreenController> {
               child: FloatingActionButton(
                 heroTag: 'leftButton',
                 onPressed: () async {
-                  Kpostal result = await Navigator.push(
+                  Kpostal? result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => KpostalView(
@@ -267,15 +275,19 @@ class MapScreen extends GetView<MapScreenController> {
                       ),
                     ),
                   );
-                  final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
-                    target:
-                        NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
-                    zoom: 16,
-                  );
-                  if (naverMapController != null) {
-                    print('update camera');
-                    naverMapController!.updateCamera(cameraUpdate);
-                  } // _showBottomSheet(_nMarkerList, 'left');
+                  if (result != null) {
+                    final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+                      target: NLatLng(
+                          result.kakaoLatitude!, result.kakaoLongitude!),
+                      zoom: 16,
+                    );
+                    if (naverMapController != null) {
+                      print('update camera');
+                      naverMapController!.updateCamera(cameraUpdate);
+                    } // _showBottomSheet(_nMarkerList, 'left');
+                  } else {
+                    print('장소 검색을 안하고 뒤로가기 함');
+                  }
                 },
               ),
             ),

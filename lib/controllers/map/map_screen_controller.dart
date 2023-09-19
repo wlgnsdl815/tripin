@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
+import 'package:tripin/utils/colors.dart';
 
 class MapScreenController extends GetxController {
   // roomId가 많이 쓰여서 멤버 변수로 만들었다.
@@ -251,17 +253,42 @@ class MapScreenController extends GetxController {
     }
   }
 
-  // markeList의 마커id와 NMarkerList의 마커id를 비교해서 각각 알맞게 띄워준다.
-  void showInfoWindow(List<NMarker> NMarkerList) {
+  // 마커 변경
+  Future<void> updateIcon(NMarker nMarker, BuildContext context) async {
+    NOverlayImage overlayImage = await NOverlayImage.fromWidget(
+      widget: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          boxShadow: [],
+          color: Colors.white,
+        ),
+      ),
+      size: Size(100, 100),
+      context: context,
+    );
+
+    nMarker.setIcon(overlayImage);
+  }
+
+// markeList의 마커id와 NMarkerList의 마커id를 비교해서 각각 알맞게 띄워준다.
+  void showInfoWindow(List<NMarker> NMarkerList, BuildContext context) {
     for (NMarker nMarker in NMarkerList) {
       MarkerModel correspondingModel =
           markerList.firstWhere((model) => model.id == nMarker.info.id);
 
-      final infoText = correspondingModel.order.toString();
-      final infoWindow =
-          NInfoWindow.onMarker(id: nMarker.info.id, text: infoText);
+      nMarker.setIcon(
+        NOverlayImage.fromAssetImage('assets/icons/map_pin.png'),
+      );
+      // 아이콘 업데이트
+      // updateIcon(nMarker, context);
+      nMarker.setAnchor(NPoint(0.42.w, 0.62.h));
+      nMarker.setSize(Size(70.w, 70.h));
 
-      nMarker.openInfoWindow(infoWindow);
+      final infoText = correspondingModel.order.toString();
+      // final infoWindow =
+      //     NInfoWindow.onMarker(id: nMarker.info.id, text: infoText);
+
+      // nMarker.openInfoWindow(infoWindow, align: NAlign.center);
     }
   }
 
@@ -271,11 +298,11 @@ class MapScreenController extends GetxController {
         NMarkerList.map((marker) => marker.position).toList();
 
     NArrowheadPathOverlay pathOverlay = NArrowheadPathOverlay(
-        id: 'pathOverlay',
-        coords: coords,
-        color: Colors.yellow,
-        outlineWidth: 1.0,
-        outlineColor: Colors.yellow);
+      id: 'pathOverlay',
+      coords: coords,
+      color: PlatformColors.primary.withOpacity(0.7),
+      width: 5.w,
+    );
 
     mapController.addOverlay(pathOverlay);
   }
