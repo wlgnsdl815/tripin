@@ -16,6 +16,9 @@ class CustomFormField extends StatefulWidget {
     this.isValid,
     this.validText = '',
     this.invalidText = '',
+    this.filled,
+    this.fillColor,
+    this.borderRadius,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -28,6 +31,9 @@ class CustomFormField extends StatefulWidget {
   final bool? isValid;
   final String? validText;
   final String? invalidText;
+  final bool? filled;
+  final Color? fillColor;
+  final BorderRadius? borderRadius;
   @override
   State<CustomFormField> createState() => _CustomFormFieldState();
 }
@@ -40,6 +46,8 @@ class _CustomFormFieldState extends State<CustomFormField> {
         TextFormField(
           obscureText: widget.obscureText,
           decoration: InputDecoration(
+            filled: widget.filled ?? false,
+            fillColor: widget.fillColor ?? PlatformColors.subtitle8,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: PlatformColors.subtitle5),
               borderRadius: BorderRadius.circular(8),
@@ -52,7 +60,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
                       : widget.isValid == true
                           ? PlatformColors.primary
                           : PlatformColors.negative),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
             ),
             hintText: widget.hintText,
             hintStyle:

@@ -281,7 +281,7 @@ class MapScreenController extends GetxController {
       );
       // 아이콘 업데이트
       // updateIcon(nMarker, context);
-      nMarker.setAnchor(NPoint(0.42.w, 0.62.h));
+      nMarker.setAnchor(NPoint(0.48.w, 0.66.h));
       nMarker.setSize(Size(70.w, 70.h));
 
       final infoText = correspondingModel.order.toString();

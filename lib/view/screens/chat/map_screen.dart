@@ -16,6 +16,7 @@ import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_date_picker.dart';
 import 'package:tripin/view/widget/custom_map_bottom_sheet.dart';
+import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class MapScreen extends GetView<MapScreenController> {
   static const route = '/map';
@@ -321,124 +322,143 @@ class MapScreen extends GetView<MapScreenController> {
 
   void _handleTap(NLatLng latLng, [String? caption]) async {
     String captionText = caption ?? '';
-    KakaoGeocodingModel tapLocationFromKaKao = await KaKaoGeocodingService()
-        .getGeoDataFromKakao(lat: latLng.latitude, lng: latLng.longitude);
-    if (controller.dateRange.isEmpty) {
-      Get.snackbar('알림', '날짜를 먼저 선택해주세요');
-      return;
-    }
 
-    // 캡션 텍스트(심볼 클릭시)가 있으면 캡션 텍스트를 넣어주고
-    if (captionText != '') {
-      controller.setPlaceText(captionText);
-    } else {
-      // 없으면 주소를 기본 값으로 넣어준다.
+    try {
+      KakaoGeocodingModel tapLocationFromKaKao = await KaKaoGeocodingService()
+          .getGeoDataFromKakao(lat: latLng.latitude, lng: latLng.longitude);
+      controller.placeTextController.text = captionText!;
+      print(tapLocationFromKaKao);
+      if (controller.dateRange.isEmpty) {
+        Get.snackbar('알림', '날짜를 먼저 선택해주세요');
+        return;
+      }
 
-      controller.setPlaceText(tapLocationFromKaKao.addressName!);
-    }
+      // 캡션 텍스트(심볼 클릭시)가 있으면 캡션 텍스트를 넣어주고
+      if (captionText != '') {
+        controller.setPlaceText(captionText);
+      } else {
+        // 없으면 주소를 기본 값으로 넣어준다.
 
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.5),
-                        color: PlatformColors.primary),
-                  ),
-                  Text(
-                    '메모',
-                    style: AppTextStyle.body15M(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 19),
-              Row(
-                children: [
-                  Text(
-                    captionText,
-                    style: AppTextStyle.body16M(),
-                  ),
-                  SizedBox(width: 4),
-                  Text(tapLocationFromKaKao.addressName!),
-                ],
-              ),
-              Divider(
-                color: PlatformColors.subtitle7,
-              ),
-              SizedBox(height: 8),
-              TextField(
-                maxLines: 5,
-                controller: controller.descriptionTextController,
-                decoration: InputDecoration(
-                  fillColor: PlatformColors.subtitle8,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: PlatformColors.subtitle7,
+        controller.setPlaceText(tapLocationFromKaKao.addressName!);
+      }
+
+      Get.dialog(
+        Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 핀 이미지 넣기
+                    // Image.asset(),
+                    Text(
+                      '메모',
+                      style: AppTextStyle.body15M(),
+                      textAlign: TextAlign.center,
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: PlatformColors.subtitle7,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: '메모를 입력해보세요!',
-                  hintStyle: TextStyle(color: PlatformColors.subtitle4),
-                  suffixIconConstraints: BoxConstraints(maxHeight: 30),
+                  ],
                 ),
-              ),
-              SizedBox(height: 13),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CustomButton(
-                    onTap: () {
-                      controller.descriptionTextController.clear();
-                      Get.back();
-                    },
-                    text: '취소',
-                    textPadding: EdgeInsets.symmetric(
-                      horizontal: 48,
+                SizedBox(height: 19),
+                TextField(
+                  controller: controller.placeTextController,
+                  cursorColor: Colors.black,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(bottom: 3),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: PlatformColors.primary,
+                      ),
                     ),
-                    textStyle: AppTextStyle.body12M(
-                      color: PlatformColors.subtitle7,
-                    ),
-                    borderRadius: BorderRadius.circular(44),
-                    borderColor: PlatformColors.subtitle7,
-                    backgroundColor: Colors.white,
+                    isDense: true,
                   ),
-                  CustomButton(
-                    onTap: () {
-                      controller.addMarkers(position: latLng);
-                    },
-                    text: '등록',
-                    textPadding: EdgeInsets.symmetric(
-                      horizontal: 48,
+                ),
+                // Text(
+                //   captionText,
+                //   overflow: TextOverflow.ellipsis,
+                //   style: AppTextStyle.body16M(),
+                // ),
+                // SizedBox(width: 10),
+                // Divider(
+                //   color: PlatformColors.subtitle7,
+                // ),
+                Text(tapLocationFromKaKao.addressName!),
+                SizedBox(height: 8),
+                TextField(
+                  maxLines: 5,
+                  controller: controller.descriptionTextController,
+                  decoration: InputDecoration(
+                    fillColor: PlatformColors.subtitle8,
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: PlatformColors.primary,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    textStyle: AppTextStyle.body12M(
-                      color: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: PlatformColors.subtitle7,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    borderRadius: BorderRadius.circular(44),
+                    hintText: '메모를 추가할 수 있어요!',
+                    hintStyle: TextStyle(color: PlatformColors.subtitle4),
+                    suffixIconConstraints: BoxConstraints(maxHeight: 30),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 13),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CustomButton(
+                      onTap: () {
+                        controller.descriptionTextController.clear();
+                        Get.back();
+                      },
+                      text: '취소',
+                      textPadding: EdgeInsets.symmetric(
+                        horizontal: 48,
+                      ),
+                      textStyle: AppTextStyle.body12M(
+                        color: PlatformColors.subtitle7,
+                      ),
+                      borderRadius: BorderRadius.circular(44),
+                      borderColor: PlatformColors.subtitle7,
+                      backgroundColor: Colors.white,
+                    ),
+                    CustomButton(
+                      onTap: () {
+                        controller.addMarkers(position: latLng);
+                      },
+                      text: '등록',
+                      textPadding: EdgeInsets.symmetric(
+                        horizontal: 48,
+                      ),
+                      textStyle: AppTextStyle.body12M(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(44),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      print(e);
+      Get.snackbar('알림', '주소를 가져오는데 실패했습니다. 다른 위치를 선택해주세요');
+    }
   }
 }

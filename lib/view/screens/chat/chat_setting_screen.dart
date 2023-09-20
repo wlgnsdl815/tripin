@@ -6,6 +6,7 @@ import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 import 'package:tripin/view/widget/custom_button.dart';
+import 'package:tripin/view/widget/custom_formfield.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class ChatSettingScreen extends GetView<ChatSettingController> {
@@ -14,6 +15,7 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
   static const route = '/chatSetting';
   @override
   Widget build(BuildContext context) {
+    controller.chatTitleEdit.text = controller.computedRoomTitle;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -87,9 +89,18 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
                 SizedBox(
                   height: 7.h,
                 ),
-                CustomTextFiledWithOutForm(
+                // CustomTextFiledWithOutForm(
+                //   controller: controller.chatTitleEdit,
+                //   hintText: '채팅방 이름',
+                // ),
+                CustomFormField(
                   controller: controller.chatTitleEdit,
-                  hintText: '채팅방 이름',
+                  validText: '15자 이내로 입력해주세요',
+                  isValid: false,
+                  filled: true,
+                  hintText: '채팅방 이름을 변경해보세요!',
+                  fillColor: PlatformColors.subtitle8,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -97,8 +108,7 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
                   },
                   child: Text('저장'),
                 ),
-                SizedBox(height: 300.h),
-
+                SizedBox(height: 100.h),
                 CustomButton(
                   backgroundColor: Colors.white,
                   onTap: () {},

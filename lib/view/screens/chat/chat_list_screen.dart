@@ -30,12 +30,13 @@ class ChatListScreen extends GetView<ChatListController> {
       ),
       body: Obx(
         () => ListView.separated(
-          separatorBuilder: (context, index) => Divider(),
+          separatorBuilder: (context, index) => Divider(
+            color: PlatformColors.subtitle7,
+          ),
           itemCount: controller.chatList.length,
           itemBuilder: (context, index) {
-            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-                controller.chatList[index].updatedAt);
-            String formattedTime = DateFormat('HH:mm').format(dateTime);
+            String formattedTime = _dateFormatting(index);
+
             print(controller.chatList.length);
             return InkWell(
               onTap: () {
@@ -47,11 +48,72 @@ class ChatListScreen extends GetView<ChatListController> {
 
                 Get.toNamed(AppScreens.chat);
               },
-              child: ListTile(
-                title: Text(
-                    '${controller.chatList[index].roomTitle} ${controller.chatList[index].participants!.length}, ${formattedTime}'),
-                subtitle: Text(
-                    '${controller.chatList[index].participants![0].email}'),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 66.w,
+                        height: 66.h,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: PlatformColors.primary),
+                      ),
+                      SizedBox(width: 13.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: 160.w,
+                                  ),
+                                  child: Text(
+                                    '${controller.chatList[index].roomTitle}',
+                                    style: AppTextStyle.body15M(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 5.w),
+                                Image.asset(
+                                  'assets/icons/person.png',
+                                  width: 9.w,
+                                  height: 9.h,
+                                ),
+                                SizedBox(width: 2.w),
+                                Text(
+                                    '${controller.chatList[index].participants!.length}'),
+                                Spacer(),
+                                Text(
+                                  '${formattedTime}',
+                                  style: AppTextStyle.body12M(
+                                    color: PlatformColors.subtitle5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text('날짜들어갈 공간'),
+                              ],
+                            ),
+                            Text(
+                              '${controller.chatList[index].lastMessage}',
+                              style: AppTextStyle.body13R(
+                                color: PlatformColors.subtitle,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             );
           },
@@ -69,5 +131,22 @@ class ChatListScreen extends GetView<ChatListController> {
         ),
       ),
     );
+  }
+
+  String _dateFormatting(int index) {
+    DateTime now = DateTime.now();
+    DateTime todayMidnight = DateTime(now.year, now.month, now.day);
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+        controller.chatList[index].updatedAt);
+    String formattedTime;
+
+    if (dateTime.isBefore(todayMidnight)) {
+      // 하루 이상 지났으면 날짜형식
+      formattedTime = DateFormat('M월 d일').format(dateTime);
+    } else {
+      // 하루 내이므로 시간 형식
+      formattedTime = DateFormat('HH:mm').format(dateTime);
+    }
+    return formattedTime;
   }
 }
