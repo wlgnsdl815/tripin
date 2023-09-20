@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
+import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
@@ -25,6 +26,8 @@ class ChatScreen extends GetView<ChatController> {
         Get.find<GlobalGetXController>();
     print(
         '_globalGetXController in ChatScreen roomId: ${_globalGetXController.roomId}');
+    final ChatListController _chatListController =
+        Get.find<ChatListController>();
 
     return Scaffold(
       backgroundColor: PlatformColors.subtitle8,
@@ -230,56 +233,59 @@ class ChatScreen extends GetView<ChatController> {
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 6),
-                                                      child: Text(formattedTime,
-                                                          style: AppTextStyle.body12M(
-                                                              color: PlatformColors
-                                                                  .subtitle4)),
+                                                      child: Text(
+                                                        formattedTime,
+                                                        style: AppTextStyle.body12M(
+                                                            color:
+                                                                PlatformColors
+                                                                    .subtitle4),
+                                                      ),
                                                     ),
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 11,
-                                                            vertical: 8),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius: isMe
-                                                            ? const BorderRadius
-                                                                .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            10),
-                                                              )
-                                                            : const BorderRadius
-                                                                .only(
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        10),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                        color: isMe
-                                                            ? PlatformColors
-                                                                .chatPrimaryLight
-                                                            : Colors.white,
-                                                        border: Border.all(
-                                                            color: PlatformColors
-                                                                .subtitle7)),
-                                                    child: Text(
-                                                      message.text,
-                                                      style: AppTextStyle
-                                                          .body13M(),
-                                                      maxLines: null,
+                                                  Expanded(
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 11,
+                                                              vertical: 8),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: isMe
+                                                              ? const BorderRadius
+                                                                  .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                )
+                                                              : const BorderRadius
+                                                                  .only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                ),
+                                                          color: isMe
+                                                              ? PlatformColors
+                                                                  .chatPrimaryLight
+                                                              : Colors.white,
+                                                          border: Border.all(
+                                                              color: PlatformColors
+                                                                  .subtitle7)),
+                                                      child: Text(
+                                                        message.text,
+                                                        style: AppTextStyle
+                                                            .body13M(),
+                                                        maxLines: null,
+                                                      ),
                                                     ),
                                                   ),
                                                   if (!isMe && showTime)
@@ -287,10 +293,13 @@ class ChatScreen extends GetView<ChatController> {
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           horizontal: 6),
-                                                      child: Text(formattedTime,
-                                                          style: AppTextStyle.body12M(
-                                                              color: PlatformColors
-                                                                  .subtitle4)),
+                                                      child: Text(
+                                                        formattedTime,
+                                                        style: AppTextStyle.body12M(
+                                                            color:
+                                                                PlatformColors
+                                                                    .subtitle4),
+                                                      ),
                                                     ),
                                                   if (isMe) SizedBox(width: 12),
                                                 ],

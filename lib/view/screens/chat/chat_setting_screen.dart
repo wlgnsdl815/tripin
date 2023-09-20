@@ -7,7 +7,6 @@ import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_formfield.dart';
-import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class ChatSettingScreen extends GetView<ChatSettingController> {
   const ChatSettingScreen({super.key});
@@ -43,7 +42,13 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
             ),
             padding: EdgeInsets.only(right: 24.w),
             onTap: () {
-              Get.back();
+              if (controller.isInputValid.value) {
+                controller.upDateChatRoomTitle();
+                Get.back();
+              } else {
+                Get.snackbar('알림', '채팅방 이름을 확인해주세요');
+              }
+              ;
             },
           ),
         ],
@@ -89,26 +94,29 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
                 SizedBox(
                   height: 7.h,
                 ),
-                // CustomTextFiledWithOutForm(
-                //   controller: controller.chatTitleEdit,
-                //   hintText: '채팅방 이름',
-                // ),
-                CustomFormField(
-                  controller: controller.chatTitleEdit,
-                  validText: '15자 이내로 입력해주세요',
-                  isValid: false,
-                  filled: true,
-                  hintText: '채팅방 이름을 변경해보세요!',
-                  fillColor: PlatformColors.subtitle8,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    controller.upDateChatRoomTitle();
+                Obx(
+                  () {
+                    return CustomFormField(
+                      controller: controller.chatTitleEdit,
+                      validText: '15자 이내로 입력해주세요',
+                      invalidText:
+                          controller.isInputValid.value ? '' : '15자 이내로 입력해주세요',
+                      filled: true,
+                      hintText: '채팅방 이름을 변경해보세요!',
+                      fillColor: PlatformColors.subtitle8,
+                      borderRadius: BorderRadius.circular(10),
+                      isValid: controller.isInputValid.value,
+                      onChanged: (value) {
+                        if (value.length > 15) {
+                          controller.isInputValid.value = false;
+                        } else {
+                          controller.isInputValid.value = true;
+                        }
+                      },
+                    );
                   },
-                  child: Text('저장'),
                 ),
-                SizedBox(height: 100.h),
+                SizedBox(height: 300.h),
                 CustomButton(
                   backgroundColor: Colors.white,
                   onTap: () {},

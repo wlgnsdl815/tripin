@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -9,7 +10,6 @@ import 'package:tripin/model/user_model.dart';
 class ChatListController extends GetxController {
   RxString roomId = ''.obs;
   RxList<ChatRoom> chatList = <ChatRoom>[].obs;
-
   StreamSubscription? chatRoomsStreamSubscription; // 스트림 구독 객체
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
@@ -69,7 +69,8 @@ class ChatListController extends GetxController {
             participants.add(allParticipantsMap[participantUid]!);
           }
         }
-        ChatRoom chatRoom = ChatRoom.fromMap(chatData.data(), participants: participants);
+        ChatRoom chatRoom =
+            ChatRoom.fromMap(chatData.data(), participants: participants);
         tempChatRoomList.add(chatRoom);
       }
 

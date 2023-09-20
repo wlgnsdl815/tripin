@@ -27,8 +27,6 @@ class CustomDatePicker extends StatelessWidget {
         type: SFCalendarType.range,
         todayMark: true,
         getSelectedDate: (start, end, selectedDateList, selectedOne) {
-          // print(controller.dateRange.isNotEmpty);
-          // print(controller.dateRange.first);
           if (start != null && end != null) {
             if (_mapScreenController.dateRange.isNotEmpty) {
               alertDialog(

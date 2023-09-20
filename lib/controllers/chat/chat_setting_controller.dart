@@ -7,8 +7,8 @@ class ChatSettingController extends GetxController {
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
   final TextEditingController chatTitleEdit = TextEditingController();
-
   RxString roomTitle = ''.obs;
+  RxBool isInputValid = true.obs;
 
   String get computedRoomTitle => _globalGetXController.roomTitle.value;
 

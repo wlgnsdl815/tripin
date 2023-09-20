@@ -17,6 +17,7 @@ class ChatListScreen extends GetView<ChatListController> {
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
     var currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+
     print('리스트를 보여줄 때 현재 유저: $currentUserUid');
     return Scaffold(
       appBar: AppBar(
@@ -58,8 +59,10 @@ class ChatListScreen extends GetView<ChatListController> {
                         width: 66.w,
                         height: 66.h,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: PlatformColors.primary),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.transparent,
+                        ),
+                        child: Image.asset('assets/icons/chat_default.png'),
                       ),
                       SizedBox(width: 13.w),
                       Expanded(
@@ -99,11 +102,33 @@ class ChatListScreen extends GetView<ChatListController> {
                             ),
                             Row(
                               children: [
-                                Text('날짜들어갈 공간'),
+                                Image.asset(
+                                  'assets/icons/location.png',
+                                  width: 10.w,
+                                  height: 10.h,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  '${controller.chatList[index].city}',
+                                  style: AppTextStyle.body14M(
+                                    color: PlatformColors.subtitle2,
+                                  ),
+                                ),
+                                if (controller.chatList[index].startDate !=
+                                        null &&
+                                    controller.chatList[index].endDate != null)
+                                  Text(
+                                    ' • ${DateFormat('y.MM.dd').format(controller.chatList[index].startDate!)} - ${DateFormat('MM.dd').format(controller.chatList[index].endDate!)}',
+                                    style: AppTextStyle.body14M(
+                                      color: PlatformColors.subtitle2,
+                                    ),
+                                  ),
                               ],
                             ),
                             Text(
                               '${controller.chatList[index].lastMessage}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: AppTextStyle.body13R(
                                 color: PlatformColors.subtitle,
                               ),

@@ -17,6 +17,7 @@ class SelectFriendsController extends GetxController {
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
   RxString roomTitle = ''.obs;
+  Rxn<ChatRoom?> currentChatRoom = Rxn();
 
   getUsers() async {
     final tempUsersData = [];
@@ -67,7 +68,7 @@ class SelectFriendsController extends GetxController {
       lastMessage: '',
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       participantIdList: participantsUidList,
-      city: '',
+      city: '미정',
       dateRange: [],
       roomTitle: roomTitle.value,
       imgUrl: '',
@@ -111,7 +112,9 @@ class SelectFriendsController extends GetxController {
     _globalGetXController.setRoomId(roomId.value);
     print(
         'getxController in Select Friends Controller: ${_globalGetXController.roomId}');
-    return roomId.value = docRef.id;
+
+    currentChatRoom.value = newRoom;
+    return newRoom.roomId;
   }
 
   upDateCity(String roomId, String selectedCity) async {

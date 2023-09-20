@@ -16,10 +16,15 @@ class ChatController extends GetxController {
   final TextEditingController messageController = TextEditingController();
   final SelectFriendsController _selectFriendsController =
       Get.find<SelectFriendsController>();
+  RxString _senderFromChatController = ''.obs;
+  RxString _senderUidFromChatController = ''.obs;
 
   final functions = FirebaseFunctions.instance;
   final ScrollController scrollController = ScrollController();
   RxList<ChatMessage> messageList = <ChatMessage>[].obs;
+
+  String get senderFromChatController => _senderFromChatController.value;
+  String get senderUidFromChatController => _senderUidFromChatController.value;
 
   // Firebase 초기화 메서드
   FirebaseDatabase _initFirebase() {
@@ -32,6 +37,8 @@ class ChatController extends GetxController {
   // 메시지 전송 메서드
   void sendMessage(
       String sender, String text, String roomId, String senderUid) async {
+    _senderFromChatController.value = sender;
+    _senderUidFromChatController.value = senderUid;
     print('sendMessage 메서드 호출됨');
     // 채팅방의 모든 참여자 가져오기
     List<String> participants =

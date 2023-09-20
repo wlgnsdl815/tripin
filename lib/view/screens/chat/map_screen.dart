@@ -329,6 +329,7 @@ class MapScreen extends GetView<MapScreenController> {
       controller.placeTextController.text = captionText!;
       print(tapLocationFromKaKao);
       if (controller.dateRange.isEmpty) {
+        print(controller.dateRange);
         Get.snackbar('알림', '날짜를 먼저 선택해주세요');
         return;
       }
@@ -380,15 +381,6 @@ class MapScreen extends GetView<MapScreenController> {
                     isDense: true,
                   ),
                 ),
-                // Text(
-                //   captionText,
-                //   overflow: TextOverflow.ellipsis,
-                //   style: AppTextStyle.body16M(),
-                // ),
-                // SizedBox(width: 10),
-                // Divider(
-                //   color: PlatformColors.subtitle7,
-                // ),
                 Text(tapLocationFromKaKao.addressName!),
                 SizedBox(height: 8),
                 TextField(

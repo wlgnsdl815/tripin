@@ -6,11 +6,11 @@ import 'package:tripin/utils/colors.dart';
 class CustomFormField extends StatefulWidget {
   const CustomFormField({
     Key? key,
+    // this.validator,
     required this.controller,
     this.obscureText = false,
     this.hintText,
     this.hintStyle,
-    // this.validator,
     this.onChanged,
     this.icon,
     this.isValid,
@@ -19,6 +19,8 @@ class CustomFormField extends StatefulWidget {
     this.filled,
     this.fillColor,
     this.borderRadius,
+    this.maxLines,
+    this.maxLength,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -34,6 +36,9 @@ class CustomFormField extends StatefulWidget {
   final bool? filled;
   final Color? fillColor;
   final BorderRadius? borderRadius;
+  final int? maxLines;
+  final int? maxLength;
+
   @override
   State<CustomFormField> createState() => _CustomFormFieldState();
 }
@@ -44,6 +49,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
     return Column(
       children: [
         TextFormField(
+          maxLines: widget.maxLines ?? 1,
           obscureText: widget.obscureText,
           decoration: InputDecoration(
             filled: widget.filled ?? false,

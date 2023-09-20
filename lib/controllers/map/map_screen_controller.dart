@@ -5,6 +5,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/model/user_model.dart';
@@ -36,6 +37,7 @@ class MapScreenController extends GetxController {
 
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
+  final ChatController _chatController = Get.find<ChatController>();
 
   List<MarkerModel> get currentDayMarkers {
     return markerList
@@ -51,7 +53,7 @@ class MapScreenController extends GetxController {
   void onInit() async {
     super.onInit();
     await getMyLocation();
-    print('roomId: ${_globalGetXController.roomId.value}');
+    print('roomId22222: ${_globalGetXController.roomId.value}');
 
     if (_globalGetXController.roomId.value != null &&
         _globalGetXController.roomId.value.isNotEmpty) {
@@ -61,6 +63,7 @@ class MapScreenController extends GetxController {
           .doc(_globalGetXController.roomId.value)
           .snapshots()
           .listen((snapshot) {
+        print('dateRange: $dateRange');
         if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
           List<int> timestamps = List<int>.from(snapshot.data()!['dateRange']);
           dateRange.value = timestamps
@@ -164,6 +167,23 @@ class MapScreenController extends GetxController {
       );
 
       await ref.set(newMarker.toMap());
+      if (descriptionTextController.text == '') {
+        _chatController.sendMessage(
+          _chatController.senderFromChatController,
+          "[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.",
+          _globalGetXController.roomId.value,
+          _chatController.senderUidFromChatController,
+        );
+      } else {
+        _chatController.sendMessage(
+          _chatController.senderFromChatController,
+          """[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.
+
+[메모] ${descriptionTextController.text}""",
+          _globalGetXController.roomId.value,
+          _chatController.senderUidFromChatController,
+        );
+      }
 
       placeTextController.clear();
       descriptionTextController.clear();
@@ -200,32 +220,6 @@ class MapScreenController extends GetxController {
     description.value = snapshotData['descriptions'].last;
     descriptionTextController.clear();
   }
-
-  // 파이어베이스에서 마커를 가져와서 markerList에 담아주고 NMarker 객체로 변환해서 리스트에 다시 담아준다.
-  // getMarkers() async {
-  //   print('roomId: $roomId');
-  //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-  //       .collection('chatRooms')
-  //       .doc(roomId)
-  //       .collection('markers')
-  //       .orderBy('order') //order 순서로 정렬
-  //       .get();
-
-  //   List<MarkerModel> markers = querySnapshot.docs
-  //       .map((doc) => MarkerModel.fromMap(doc.data() as Map<String, dynamic>))
-  //       .toList();
-
-  //   markerList.value = markers;
-  //   print(markerList.last.title);
-
-  //   // NMarker 객체로 변환 후 nMarkerList에 담아준다.
-  //   nMarkerList.value = markerList.value
-  //       .map((markerModel) =>
-  //           NMarker(id: markerModel.id, position: markerModel.position))
-  //       .toList();
-
-  //   print('Firestore에서 가져온 마커 리스트: ${nMarkerList.value}');
-  // }
 
   Future<void> deleteMarker({
     required String markerId,
