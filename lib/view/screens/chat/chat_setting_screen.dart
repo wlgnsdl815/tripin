@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/chat_setting_controller.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
@@ -14,7 +16,10 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
   static const route = '/chatSetting';
   @override
   Widget build(BuildContext context) {
+    final GlobalGetXController _globalGetXController =
+        Get.find<GlobalGetXController>();
     controller.chatTitleEdit.text = controller.computedRoomTitle;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -61,23 +66,37 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              Container(
-                width: 110.w,
-                height: 110.h,
-                decoration: BoxDecoration(
-                  color: PlatformColors.primary,
-                  borderRadius: BorderRadius.circular(16.7.r),
+              Obx(
+                () => Container(
+                  width: 110.w,
+                  height: 110.h,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(16.7.r),
+                  ),
+                  child: _globalGetXController.roomImageUrl.value == ''
+                      ? Image.asset('assets/icons/chat_default.png')
+                      : Image.network(
+                          _globalGetXController.roomImageUrl.value,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Positioned(
                 bottom: -7.h,
                 right: -5.w,
                 child: GestureDetector(
-                  onTap: () {},
-                  child: Image.asset('assets/icons/circle_camera.png'),
+                  onTap: () {
+                    controller.upDateChatRoomImage();
+                    print('object');
+                  },
+                  child: Image.asset(
+                    'assets/icons/circle_camera.png',
+                    width: 34.w,
+                    height: 34.h,
+                  ),
                 ),
-                width: 34.w,
-                height: 34.h,
               ),
             ],
           ),

@@ -13,6 +13,9 @@ class ChatListController extends GetxController {
   StreamSubscription? chatRoomsStreamSubscription; // 스트림 구독 객체
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
+  RxString chatRoomImageUrl = ''.obs;
+
+  setChatRoomImageUrl(String url) {}
 
   setRoomId(String id) {
     roomId.value = id;

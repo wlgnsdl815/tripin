@@ -46,6 +46,11 @@ class ChatListScreen extends GetView<ChatListController> {
                 controller.setRoomId(controller.chatList[index].roomId);
                 _globalGetXController
                     .setRoomTitle(controller.chatList[index].roomTitle);
+                if (controller.chatList[index].imgUrl != null) {
+                  _globalGetXController
+                      .setRoomImageUrl(controller.chatList[index].imgUrl!);
+                  print(controller.chatList[index].imgUrl);
+                }
 
                 Get.toNamed(AppScreens.chat);
               },
@@ -58,11 +63,17 @@ class ChatListScreen extends GetView<ChatListController> {
                       Container(
                         width: 66.w,
                         height: 66.h,
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.transparent,
                         ),
-                        child: Image.asset('assets/icons/chat_default.png'),
+                        child: controller.chatList[index].imgUrl == ''
+                            ? Image.asset('assets/icons/chat_default.png')
+                            : Image.network(
+                                controller.chatList[index].imgUrl!,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       SizedBox(width: 13.w),
                       Expanded(
