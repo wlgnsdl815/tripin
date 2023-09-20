@@ -33,20 +33,6 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
             Get.back();
           },
         ),
-        // IconButton(
-        //   onPressed: () {
-        //     Get.back();
-        //   },
-        //   // 아이콘 나중에 수정하기
-        //   icon: Icon(
-        //     Icons.close,
-        //     color: PlatformColors.title,
-        //   ),
-        // ),
-        // title: Text(
-        //   '친구 선택',
-        //   style: AppTextStyle.body16M(),
-        // ),
         actions: [
           Obx(
             () => TextButton(
@@ -116,7 +102,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                               } else {
                                 controller.participants
                                     .add(controller.userData[index]);
-                                print(controller.participants.value);
+                                print(controller.participants);
                               }
                             },
                             icon: Icon(

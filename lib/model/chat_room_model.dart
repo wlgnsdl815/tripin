@@ -45,8 +45,17 @@ class ChatRoom {
 
   factory ChatRoom.fromMap(Map<String, dynamic> map,
       {List<UserModel>? participants}) {
-    DateTime? startDate = DateTime.fromMillisecondsSinceEpoch(map['startDate']);
-    DateTime? endDate = DateTime.fromMillisecondsSinceEpoch(map['endDate']);
+    DateTime? startDate;
+    DateTime? endDate;
+
+    if (map['startDate'] != null) {
+      startDate = DateTime.fromMillisecondsSinceEpoch(map['startDate']);
+    }
+
+    if (map['endDate'] != null) {
+      endDate = DateTime.fromMillisecondsSinceEpoch(map['endDate']);
+    }
+
     return ChatRoom(
       roomId: map['roomId'] as String,
       lastMessage: map['lastMessage'] as String,
