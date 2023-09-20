@@ -65,23 +65,26 @@ class AppFriend extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
-                  child: Text(nickName),
+                  child: Text(nickName, style: style,),
                 ),
               ],
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width / 2.5,
-            height: MediaQuery.of(context).size.height / 20,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(80),
-                bottom: Radius.circular(80),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width / 2.5,
+              height: MediaQuery.of(context).size.height / 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(80),
+                  bottom: Radius.circular(80),
+                ),
+                border: Border.all(color: color),
               ),
-              border: Border.all(color: color),
-            ),
-            child: Center(
-              child: Text(message),
+              child: Center(
+                child: Text(message, style: TextStyle(color: color),),
+              ),
             ),
           ),
         ],

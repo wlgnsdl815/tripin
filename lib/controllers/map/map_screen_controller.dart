@@ -27,8 +27,6 @@ class MapScreenController extends GetxController {
   Rxn<NLatLng> selectedCityLatLng = Rxn();
   ExpansionTileController expansionTileController = ExpansionTileController();
   RxInt selectedDayIndex = 0.obs;
-  Rxn<DateTime> startDate = Rxn(); // 시작 날짜
-  Rxn<DateTime> endDate = Rxn(); // 종료 날짜
   RxString currentUserNickName = ''.obs;
 
   List<MarkerModel> get currentDayMarkers {
@@ -274,6 +272,8 @@ class MapScreenController extends GetxController {
       'dateRange': newDateRange,
     });
     print('dateRange 업데이트: $newDateRange');
+
+    
   }
 
   onDayButtonTap({required int index}) {

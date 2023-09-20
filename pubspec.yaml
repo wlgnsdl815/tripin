@@ -48,6 +48,7 @@ dependencies:
   shared_preferences: ^2.2.1
   flutter_calendar_carousel: ^2.4.2
   table_calendar: ^3.0.9
+  cr_calendar: ^1.2.1
   intl: ^0.18.1
   kakao_flutter_sdk_user: ^1.4.1
   sfac_design_flutter: ^1.0.0+1

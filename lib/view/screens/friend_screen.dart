@@ -25,20 +25,8 @@ class FriendScreen extends GetView<FriendController> {
           title: Text(
             '',
             textAlign: TextAlign.left,
+            style: AppTextStyle.header18(),
           ),
-          actions: [
-            Icon(Icons.group_add_sharp),
-            TextButton(
-                onPressed: () {
-                  Get.toNamed(
-                    FindFriendPage.route,
-                  );
-                },
-                child: Text(
-                  '친구 추가',
-                  style: TextStyle(color: Colors.black),
-                ))
-          ],
         ),
         body: Stack(children: [
           Container(
@@ -54,9 +42,15 @@ class FriendScreen extends GetView<FriendController> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 84, 16, 16),
                   child: SizedBox(
-                    child: Text(
-                      '지금, 소중한 사람들과 함께\n여행을 만들어보세요:)',
-                      style: AppTextStyle.header18(color: Colors.white),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '지금, 소중한 사람들과 함께\n여행을 만들어보세요:)',
+                          style: AppTextStyle.header18(color: Colors.white),
+                        ),
+                        // Icon(Icons.search, color: PlatformColors.subtitle8,size: 32,)
+                      ],
                     ),
                   ),
                 ),
@@ -71,9 +65,10 @@ class FriendScreen extends GetView<FriendController> {
                     nickName:
                         Get.find<AuthController>().userInfo.value?.nickName ??
                             '로딩중...',
-                    style: AppTextStyle.header15(color: Colors.white),
-                    message: Get.find<AuthController>().userInfo.value?.message ??
-                        '로딩중...',
+                    style: AppTextStyle.header20(color: Colors.white),
+                    message:
+                        Get.find<AuthController>().userInfo.value?.message ??
+                            '로딩중...',
                     color: PlatformColors.subtitle8,
                   ),
                 )
@@ -172,14 +167,59 @@ class FriendScreen extends GetView<FriendController> {
             child: Container(
               color: PlatformColors.subtitle8,
               height: MediaQuery.of(context).size.height - 347.675,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('친구'),
-                    Obx(
-                      () => Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 14,
+                    decoration: BoxDecoration(color: PlatformColors.subtitle7),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '친구',
+                                style: AppTextStyle.body16B(
+                                    color: PlatformColors.subtitle2),
+                                textAlign: TextAlign.left,
+                              ),
+                              Obx(() => Text(
+                                  controller.followingList.length.toString(),
+                                  style: AppTextStyle.body16B(
+                                      color: PlatformColors.subtitle2))),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.person_add_alt_outlined,
+                                color: PlatformColors.primary,
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    Get.toNamed(
+                                      FindFriendPage.route,
+                                    );
+                                  },
+                                  child: Text(
+                                    '친구 추가',
+                                    style: AppTextStyle.body14B(
+                                        color: PlatformColors.primary),
+                                  ))
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Obx(
+                    () => Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: ListView.builder(
@@ -209,7 +249,7 @@ class FriendScreen extends GetView<FriendController> {
                                       builder: (context) {
                                         return AlertDialog(
                                           content: Text("친구가 삭제되었습니다."),
-                                          actions: <Widget>[
+                                          actions: [
                                             ElevatedButton(
                                                 onPressed: () => Get.back(),
                                                 child: Text("확인")),
@@ -271,123 +311,86 @@ class FriendScreen extends GetView<FriendController> {
                                             ),
                                           );
                                         });
-                                    // return await showDialog(
-                                    //     context: context,
-                                    //     builder: (BuildContext) {
-                                    //       return AlertDialog(
-                                    //         title: Text("경고"),
-                                    //         content: Text("친구를 삭제하시겠습니까?"),
-                                    //         actions: <Widget>[
-                                    //           ElevatedButton(
-                                    //               onPressed: () =>
-                                    //                   Navigator.of(context).pop(true),
-                                    //               child: Text("확인")),
-                                    //           OutlinedButton(
-                                    //             onPressed: () =>
-                                    //                 Navigator.of(context).pop(false),
-                                    //             child: Text("취소"),
-                                    //           ),
-                                    //         ],
-                                    //       );
-                                    //     });
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 8, bottom: 8),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 8, 40, 8),
                                     child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              15,
-                                          child: AspectRatio(
-                                            aspectRatio: 1 / 1,
-                                            child: Container(
-                                              clipBehavior: Clip.antiAlias,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: Colors.grey,
-                                              ),
-                                              child: controller
-                                                              .followingList[
-                                                                  index]
-                                                              .imgUrl !=
-                                                          null &&
-                                                      controller
-                                                          .followingList[index]
-                                                          .imgUrl
-                                                          .isNotEmpty
-                                                  ? Container(
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      12)),
-                                                      child: Image.network(
-                                                        controller
-                                                            .followingList[
-                                                                index]
-                                                            .imgUrl,
-                                                        fit: BoxFit.fill,
-                                                      ))
-                                                  : Container(
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        color: Colors.grey,
-                                                      ),
+                                        Row(
+                                          // mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  15,
+                                              child: AspectRatio(
+                                                aspectRatio: 1 / 1,
+                                                child: Container(
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      color: Colors.transparent,
                                                     ),
-
-                                              // controller.followingList[index].imgUrl != null &&
-                                              //         friend.imgUrl.isNotEmpty
-                                              //     ? Image.network(friend.imgUrl)
-                                              //     : Container(
-                                              //         clipBehavior: Clip.antiAlias,
-                                              //         decoration: BoxDecoration(
-                                              //           borderRadius: BorderRadius.circular(12),
-                                              //           color: Colors.grey,
-                                              //         ),
-                                              //       ),
+                                                    child: controller
+                                                                    .followingList[
+                                                                        index]
+                                                                    .imgUrl !=
+                                                                null &&
+                                                            controller
+                                                                .followingList[
+                                                                    index]
+                                                                .imgUrl
+                                                                .isNotEmpty
+                                                        ? Container(
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20)),
+                                                            child:
+                                                                Image.network(
+                                                              controller
+                                                                  .followingList[
+                                                                      index]
+                                                                  .imgUrl,
+                                                              fit: BoxFit.fill,
+                                                            ))
+                                                        : Container(
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            child: Image(
+                                                              image: AssetImage(
+                                                                'assets/images/profile_image.png',
+                                                              ),
+                                                              fit: BoxFit.fill,
+                                                            ))),
+                                              ),
                                             ),
-                                          ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0),
+                                              child: Text(
+                                                controller.followingList[index]
+                                                    .nickName,
+                                                style: AppTextStyle.body16R(),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
-                                          child: Text(controller
-                                              .followingList[index].nickName),
-                                        ),
-                                        // Container(
-                                        //   width: MediaQuery.of(context)
-                                        //           .size
-                                        //           .width /
-                                        //       3,
-                                        //   height: MediaQuery.of(context)
-                                        //           .size
-                                        //           .height /
-                                        //       30,
-                                        //   decoration: BoxDecoration(
-                                        //     borderRadius: BorderRadius.vertical(
-                                        //       top: Radius.circular(80),
-                                        //       bottom: Radius.circular(80),
-                                        //     ),
-                                        //     border: Border.all(
-                                        //         color: PlatformColors.subtitle),
-                                        //   ),
-                                        //   child: Center(
-                                        //     child: Text( controller
-                                        //                     .followingList[
-                                        //                         index]
-                                        //                     .message,),
-                                        //   ),
-                                        // ),
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: MediaQuery.of(context)
@@ -401,7 +404,7 @@ class FriendScreen extends GetView<FriendController> {
                                               bottom: Radius.circular(80),
                                             ),
                                             border: Border.all(
-                                                color: PlatformColors.subtitle),
+                                                color: PlatformColors.primary),
                                           ),
                                           child: Center(
                                             child: Padding(
@@ -423,17 +426,11 @@ class FriendScreen extends GetView<FriendController> {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-          // ElevatedButton(
-          //   onPressed: () => Get.find<AuthController>().logOut(),
-          //   child: Text('로그아웃'),
-          // ),
-          // SizedBox(height: 20),
-          // // 선택한 텍스트를 표시하는 부분
         ]));
   }
 }

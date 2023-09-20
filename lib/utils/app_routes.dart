@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:tripin/utils/app_screens.dart';
+import 'package:tripin/view/page/event_detail_page.dart';
 import 'package:tripin/view/page/find_friend_page.dart';
 import 'package:tripin/view/screens/calendar_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
@@ -28,5 +29,10 @@ class AppRoutes {
       name: AppScreens.calender,
       page: () => CalendarScreen(),
     ),
+                GetPage(
+      name: AppScreens.eventDetail,
+      page: () => EventDetailPage(),
+    ),
+
   ];
 }

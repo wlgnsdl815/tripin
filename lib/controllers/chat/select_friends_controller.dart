@@ -113,6 +113,7 @@ class SelectFriendsController extends GetxController {
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
     });
+    
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }
 
