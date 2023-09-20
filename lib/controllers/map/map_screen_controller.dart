@@ -27,8 +27,6 @@ class MapScreenController extends GetxController {
   Rxn<NLatLng> selectedCityLatLng = Rxn();
   ExpansionTileController expansionTileController = ExpansionTileController();
   RxInt selectedDayIndex = 0.obs;
-  Rxn<DateTime> startDate = Rxn(); // 시작 날짜
-  Rxn<DateTime> endDate = Rxn(); // 종료 날짜
   RxString currentUserNickName = ''.obs;
   Rxn<DateTimeRange> dateRangeFromFirebase = Rxn();
   RxString description = ''.obs;

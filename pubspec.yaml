@@ -47,6 +47,10 @@ dependencies:
   get: ^4.6.5
   google_sign_in: any
   image_picker: any
+  shared_preferences: ^2.2.1
+  flutter_calendar_carousel: ^2.4.2
+  table_calendar: ^3.0.9
+  cr_calendar: ^1.2.1
   intl: ^0.18.1
   kakao_flutter_sdk_user: ^1.4.1
   kpostal: ^0.5.1
