@@ -11,9 +11,14 @@ import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 import 'package:tripin/view/screens/home_screen.dart';
 import 'package:tripin/view/screens/login_screen.dart';
+import 'package:tripin/view/screens/splash_screen.dart';
 
 class AppRoutes {
   static final routes = [
+    GetPage(
+      name: AppScreens.splash,
+      page: () => SplashScreen(),
+    ),
     GetPage(
       name: AppScreens.home,
       page: () => HomeScreen(),

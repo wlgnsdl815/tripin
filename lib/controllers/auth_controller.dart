@@ -23,7 +23,7 @@ class AuthController extends GetxController {
         getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
         Get.offAllNamed(AppScreens.home);
       } else {
-        Get.offAllNamed(AppScreens.login);
+        Get.offAllNamed(AppScreens.splash);
       }
     });
   }
