@@ -11,25 +11,28 @@ class CalendarController extends GetxController {
   RxList<Event> events = <Event>[].obs;
   List<DateTime> selectedDates = [];
   // final CrCalendarController calendarController = CrCalendarController();
+  Rxn startDate = Rxn();
+  Rxn endDate = Rxn();
 
-  void addCheckList({required String title}) async {
-    final SelectFriendsController _selectFriendsController =
-        Get.find<SelectFriendsController>();
 
-    // print('${_selectFriendsController.roomId.value}');
-    // await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(FirebaseAuth.instance.currentUser!.uid)
-    //     .collection('calendar')
-    //     .doc(_selectFriendsController.roomId.value)
-    //     .set(eventData.toMap());
-    // .collection('chatRooms')
-    // .doc(_selectFriendsController.roomId.value)
-    // .collection('calendar')
-    // .doc()
-    // .set(eventData.toMap());
-    print('일정이 Firestore에 추가되었습니다.');
-  }
+  // void addCheckList({required String title}) async {
+  //   final SelectFriendsController _selectFriendsController =
+  //       Get.find<SelectFriendsController>();
+
+  //   // print('${_selectFriendsController.roomId.value}');
+  //   // await FirebaseFirestore.instance
+  //   //     .collection('users')
+  //   //     .doc(FirebaseAuth.instance.currentUser!.uid)
+  //   //     .collection('calendar')
+  //   //     .doc(_selectFriendsController.roomId.value)
+  //   //     .set(eventData.toMap());
+  //   // .collection('chatRooms')
+  //   // .doc(_selectFriendsController.roomId.value)
+  //   // .collection('calendar')
+  //   // .doc()
+  //   // .set(eventData.toMap());
+  //   print('일정이 Firestore에 추가되었습니다.');
+  // }
 
   void readEvent() async {
     var db = FirebaseFirestore.instance;
@@ -55,6 +58,15 @@ class CalendarController extends GetxController {
     });
   }
 
+
+  //   void _setTexts(int year, int month) {
+  //       // final _appbarTitleNotifier = ValueNotifier<String>('');
+  // // final _monthNameNotifier = ValueNotifier<String>('');
+  //   final date = DateTime(year, month);
+  //   // _appbarTitleNotifier.value = date.format(kAppBarDateFormat);
+  //   _monthNameNotifier.value = date.month.toString();
+  // }
+
   Future<void> fetchChatRoomData() async {
     final CollectionReference chatRoomsCollection =
         FirebaseFirestore.instance.collection('chatRooms');
@@ -77,6 +89,8 @@ class CalendarController extends GetxController {
         print('Room ID: $roomId');
         print('Last Message: $lastMessage');
         // 필요한 작업 수행...
+        this.startDate.value = startDate;
+        this.endDate.value = endDate;
       }
     } catch (e) {
       print('Error fetching chat room data: $e');
