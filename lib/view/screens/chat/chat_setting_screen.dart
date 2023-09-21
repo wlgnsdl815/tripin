@@ -140,8 +140,6 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
                   backgroundColor: Colors.white,
                   onTap: () {
                     controller.leaveChatRoom();
-                    final HomeController _homeController =
-                        Get.find<HomeController>();
                     Get.until((route) => route.isFirst);
                   },
                   text: '채팅방 나가기',

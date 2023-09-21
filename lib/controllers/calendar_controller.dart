@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cr_calendar/cr_calendar.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +10,7 @@ import 'package:tripin/utils/colors.dart';
 class CalendarController extends GetxController {
   RxList<Event> events = <Event>[].obs;
   List<DateTime> selectedDates = [];
-  final CrCalendarController calendarController = CrCalendarController();
+  // final CrCalendarController calendarController = CrCalendarController();
 
   void addCheckList({required String title}) async {
     final SelectFriendsController _selectFriendsController =

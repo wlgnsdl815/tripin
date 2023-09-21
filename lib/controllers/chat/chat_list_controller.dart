@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -8,83 +7,62 @@ import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
 
 class ChatListController extends GetxController {
-  RxString roomId = ''.obs;
-  RxList<ChatRoom> chatList = <ChatRoom>[].obs;
-  StreamSubscription? chatRoomsStreamSubscription; // 스트림 구독 객체
-  final GlobalGetXController _globalGetXController =
-      Get.find<GlobalGetXController>();
-  RxString chatRoomImageUrl = ''.obs;
+  final roomId = ''.obs;
+  final chatList = <ChatRoom>[].obs;
+  StreamSubscription? chatRoomsStreamSubscription;
+  final _globalGetXController = Get.find<GlobalGetXController>();
 
-  // setChatList(List<ChatRoom> list) {
-  //   chatList.value = list;
-  // }
-
-  setRoomId(String id) {
+  void setRoomId(String id) {
     roomId.value = id;
-    print('setRoomId: ${roomId.value}');
     _globalGetXController.setRoomId(id);
-    print(
-        'GlobalGeXController in ChatList roomId: ${_globalGetXController.roomId}');
   }
 
-  getChatList() {
-    final firestoreInstance = FirebaseFirestore.instance;
-    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+  void _updateChatList(QuerySnapshot querySnapshot) async {
+    Set<String> allParticipantUids = {};
 
-    // 스트림 구독 시작
-    chatRoomsStreamSubscription = firestoreInstance
+    for (var chatData in querySnapshot.docs) {
+      List<String> participantUidList =
+          List<String>.from(chatData['participants']);
+      allParticipantUids.addAll(participantUidList);
+    }
+
+    if (allParticipantUids.isEmpty) {
+      chatList.clear();
+      return;
+    }
+
+    final allParticipantsSnapshots = await FirebaseFirestore.instance
+        .collection('users')
+        .where(FieldPath.documentId, whereIn: allParticipantUids.toList())
+        .get();
+
+    Map<String, UserModel> allParticipantsMap = {
+      for (var doc in allParticipantsSnapshots.docs)
+        doc.id: UserModel.fromMap(doc.data() as Map<String, dynamic>)
+    };
+
+    List<ChatRoom> tempChatRoomList = [
+      for (var chatData in querySnapshot.docs)
+        ChatRoom.fromMap(
+          chatData.data() as Map<String, dynamic>,
+          participants: [
+            for (var uid in List<String>.from(chatData['participants']))
+              if (allParticipantsMap[uid] != null) allParticipantsMap[uid]!
+          ],
+        )
+    ];
+
+    chatList.assignAll(tempChatRoomList);
+  }
+
+  void getChatList() {
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    chatRoomsStreamSubscription = FirebaseFirestore.instance
         .collection('chatRooms')
         .where('participants', arrayContains: currentUserUid)
         .orderBy('updatedAt', descending: true)
         .snapshots()
-        .listen((querySnapshot) async {
-      // 콜백 시작
-      Set<String> allParticipantUids = {};
-
-      for (var chatData in querySnapshot.docs) {
-        List<String> participantUidList =
-            List<String>.from(chatData['participants']);
-        allParticipantUids.addAll(participantUidList);
-      }
-      if (allParticipantUids.isEmpty) {
-        return;
-      }
-      // 한번의 쿼리로 모든 참가자의 정보를 가져옴, 반복 쿼리를 피해 성능을 향상
-      final allParticipantsSnapshots = await firestoreInstance
-          .collection('users')
-          .where(FieldPath.documentId, whereIn: allParticipantUids.toList())
-          .get();
-      // 참가자의 정보를 map에 저장하여 쉽게 액세스
-      Map<String, UserModel> allParticipantsMap = {};
-      for (var doc in allParticipantsSnapshots.docs) {
-        UserModel user = UserModel.fromMap(doc.data());
-        allParticipantsMap[doc.id] = user;
-      }
-
-      List<ChatRoom> tempChatRoomList = [];
-      if (tempChatRoomList.length == 1) {
-        print("Only one chat room left: ${tempChatRoomList[0].roomId}");
-      }
-
-      // 채팅방의 정보를 구축
-      // 참가자의 정보는 이미 가져온 map에서 가져옴
-      for (var chatData in querySnapshot.docs) {
-        List<UserModel> participants = [];
-        List<String> participantUidList =
-            List<String>.from(chatData['participants']);
-        for (var participantUid in participantUidList) {
-          if (allParticipantsMap[participantUid] != null) {
-            participants.add(allParticipantsMap[participantUid]!);
-          }
-        }
-        ChatRoom chatRoom =
-            ChatRoom.fromMap(chatData.data(), participants: participants);
-        tempChatRoomList.add(chatRoom);
-      }
-      print('tempChatRoomList: ${tempChatRoomList.length}');
-      chatList.assignAll(tempChatRoomList);
-      print('chatList: ${chatList.length}');
-    }); // 콜백 종료
+        .listen(_updateChatList);
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'package:cr_calendar/cr_calendar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
@@ -33,33 +32,34 @@ class CalendarScreen extends GetView<CalendarController> {
           IconButton(onPressed: () {}, icon: Icon(Icons.search))
         ],
       ),
-      body: CrCalendar(
-        controller: controller.calendarController,
-        eventsTopPadding: 32,
-        maxEventLines: 3,
-        // forceSixWeek: true,
-        // dayItemBuilder: ,
-        // weekDaysBuilder: (day) => Container(
-        //   height: 40,
-        //   child: Center(
-        //     child: Text(
-        //       describeEnum(day).substring(0, 1).toUpperCase(),
-        //       style: TextStyle(
-        //         color: Colors.purple.withOpacity(0.9),
-        //       ),
-        //     ),
-        //   ),
-        // ),
-        // eventBuilder: (drawer) => EventWidget(drawer: drawer),
-        // onDayClicked: _showDayEventsInModalSheet,
-        minDate: DateTime.now().subtract(const Duration(days: 1000)),
-        maxDate: DateTime.now().add(const Duration(days: 180)),
-        initialDate: DateTime.now(),
-        onDayClicked: (events, day) {
-          print(day);
-          print(events);
-        },
-      ),
+      // body:
+      // CrCalendar(
+      //   controller: controller.calendarController,
+      //   eventsTopPadding: 32,
+      //   maxEventLines: 3,
+      // forceSixWeek: true,
+      // dayItemBuilder: ,
+      // weekDaysBuilder: (day) => Container(
+      //   height: 40,
+      //   child: Center(
+      //     child: Text(
+      //       describeEnum(day).substring(0, 1).toUpperCase(),
+      //       style: TextStyle(
+      //         color: Colors.purple.withOpacity(0.9),
+      //       ),
+      //     ),
+      //   ),
+      // ),
+      // eventBuilder: (drawer) => EventWidget(drawer: drawer),
+      // onDayClicked: _showDayEventsInModalSheet,
+      //   minDate: DateTime.now().subtract(const Duration(days: 1000)),
+      //   maxDate: DateTime.now().add(const Duration(days: 180)),
+      //   initialDate: DateTime.now(),
+      //   onDayClicked: (events, day) {
+      //     print(day);
+      //     print(events);
+      //   },
+      // ),
 
       // CalendarCarousel(
       //   weekFormat: false,

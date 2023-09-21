@@ -68,56 +68,34 @@ class ChatSettingController extends GetxController {
 
   // 채팅방 나가기 (참가자 목록, User - joinedTrip에서 해당 유저지우기)
   leaveChatRoom() async {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('chatRooms')
-        .doc('${_globalGetXController.roomId}')
-        .get();
+    CollectionReference chatRooms =
+        FirebaseFirestore.instance.collection('chatRooms');
+    DocumentReference roomDoc =
+        chatRooms.doc(_globalGetXController.roomId.value);
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    DocumentReference userDoc = users.doc(userInfo.value!.uid);
 
-    if (snapshot.exists) {
-      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      List participants = data['participants'];
+    DocumentSnapshot snapshot = await roomDoc.get();
 
-      // 변경된 participants 리스트로 Firestore 문서 업데이트
-      await FirebaseFirestore.instance
-          .collection('chatRooms')
-          .doc('${_globalGetXController.roomId}')
-          .update({
-        'participants': FieldValue.arrayRemove([userInfo.value!.uid]),
-      });
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc('${userInfo.value!.uid}')
-          .update({
-        'joinedTrip':
-            FieldValue.arrayRemove([_globalGetXController.roomId.value]),
-      });
-
-      // DB 업데이트 후 다시 participants 정보 가져오기
-      DocumentSnapshot updatedSnapshot = await FirebaseFirestore.instance
-          .collection('chatRooms')
-          .doc('${_globalGetXController.roomId}')
-          .get();
-
-      List updatedParticipants =
-          (updatedSnapshot.data() as Map<String, dynamic>)['participants'] ??
-              [];
-
-      // 참가자 리스트가 비어 있다면 방 삭제
-      if (updatedParticipants.isEmpty) {
-        await FirebaseFirestore.instance
-            .collection('chatRooms')
-            .doc('${_globalGetXController.roomId}')
-            .delete();
-        print('방이 삭제되었습니다.');
-        return;
-      }
-    } else {
+    if (!snapshot.exists) {
       print('해당 채팅방 문서가 존재하지 않습니다.');
+      return;
+    }
+
+    // 참가자 리스트에서 현재 사용자를 제거
+    await roomDoc.update({
+      'participants': FieldValue.arrayRemove([userInfo.value!.uid])
+    });
+    await userDoc.update({
+      'joinedTrip': FieldValue.arrayRemove([_globalGetXController.roomId.value])
+    });
+
+    List updatedParticipants = snapshot.get('participants') ?? [];
+
+    // 참가자 리스트가 비어 있다면 방 삭제
+    if (updatedParticipants.isEmpty) {
+      await roomDoc.delete();
+      print('방이 삭제되었습니다.');
     }
   }
-
-  // fetchUpdatedChatRooms() async{
-  //   await FirebaseFirestore.instance.
-  // }
 }

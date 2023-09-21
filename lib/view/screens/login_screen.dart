@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/utils/colors.dart';
+import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/sign_up_screen.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_formfield.dart';
@@ -110,9 +111,8 @@ class LoginScreen extends GetView<LoginController> {
                           },
                           child: Text(
                             '비밀번호 찾기',
-                            style: TextStyle(
-                              color: PlatformColors.subtitle4,
-                            ),
+                            style: AppTextStyle.body15B(
+                                color: PlatformColors.subtitle5),
                           ),
                         ),
                         Container(
@@ -124,16 +124,22 @@ class LoginScreen extends GetView<LoginController> {
                           onPressed: () {
                             Get.to(() => SignUpScreen());
                           },
-                          child: Text('회원가입'),
+                          child: Text(
+                            '회원가입',
+                            style: AppTextStyle.body15B(
+                                color: PlatformColors.primary),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   Obx(() => CustomButton(
                         text: '이메일로 로그인',
+                        textPadding: EdgeInsets.all(16),
                         backgroundColor: controller.email.isNotEmpty
                             ? PlatformColors.primary
                             : PlatformColors.subtitle4,
+                        borderRadius: BorderRadius.circular(53),
                         onTap: () {
                           if (_formKey.currentState!.validate()) {
                             controller.loginWithEmail();
