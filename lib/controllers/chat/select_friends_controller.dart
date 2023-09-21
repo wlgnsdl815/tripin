@@ -10,6 +10,7 @@ import 'package:tripin/service/db_service.dart';
 
 class SelectFriendsController extends GetxController {
   RxList<UserModel> userData = <UserModel>[].obs;
+  Rx<DateTime> startDay = DateTime.now().obs;
   RxString rangeHighlightColor = ''.obs;
   RxList<UserModel> participants = <UserModel>[].obs;
   RxString roomId = ''.obs;

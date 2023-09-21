@@ -174,10 +174,10 @@ class FriendScreen extends GetView<FriendController> {
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 14,
+                    height: MediaQuery.of(context).size.height / 18,
                     decoration: BoxDecoration(color: PlatformColors.subtitle7),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.only(left: 16, right: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -379,7 +379,8 @@ class FriendScreen extends GetView<FriendController> {
                                                                 'assets/images/profile_image.png',
                                                               ),
                                                               fit: BoxFit.fill,
-                                                            ))),
+                                                            ))
+                                                            ),
                                               ),
                                             ),
                                             Padding(
