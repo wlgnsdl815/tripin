@@ -4,6 +4,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:get/get.dart';
 import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
@@ -142,7 +143,8 @@ class CalendarScreen extends GetView<CalendarController> {
 //         Get.find<ProfileDetailController>().joinedChatRoomList[0]!.startDate ?? 0)
 //     : DateTime.now(),       
 // rangeStartDay: controller.startDate.value,
-rangeStartDay: DateTime.now().add(Duration(days: 2)),
+// rangeStartDay: DateTime.now().add(Duration(days: 2)),
+// rangeStartDay: Get.find<AuthController>().userInfo.value.joinedTrip.,
      rangeEndDay: DateTime.now().add(Duration(days: 5)),
         rangeSelectionMode: RangeSelectionMode.toggledOff,
         calendarStyle: CalendarStyle(
