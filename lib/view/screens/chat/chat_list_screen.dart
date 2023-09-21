@@ -44,14 +44,14 @@ class ChatListScreen extends GetView<ChatListController> {
             return InkWell(
               onTap: () {
                 _globalGetXController
-                    .setRoomId(controller.chatList[index]!.roomId);
-                controller.setRoomId(controller.chatList[index]!.roomId);
+                    .setRoomId(controller.chatList[index].roomId);
+                controller.setRoomId(controller.chatList[index].roomId);
                 _globalGetXController
-                    .setRoomTitle(controller.chatList[index]!.roomTitle);
-                if (controller.chatList[index]!.imgUrl != null) {
+                    .setRoomTitle(controller.chatList[index].roomTitle);
+                if (controller.chatList[index].imgUrl != null) {
                   _globalGetXController
-                      .setRoomImageUrl(controller.chatList[index]!.imgUrl!);
-                  print(controller.chatList[index]!.imgUrl);
+                      .setRoomImageUrl(controller.chatList[index].imgUrl!);
+                  print(controller.chatList[index].imgUrl);
                 }
 
                 Get.toNamed(AppScreens.chat);
@@ -70,10 +70,10 @@ class ChatListScreen extends GetView<ChatListController> {
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.transparent,
                         ),
-                        child: controller.chatList[index]!.imgUrl == ''
+                        child: controller.chatList[index].imgUrl == ''
                             ? Image.asset('assets/icons/chat_default.png')
                             : Image.network(
-                                controller.chatList[index]!.imgUrl!,
+                                controller.chatList[index].imgUrl!,
                                 fit: BoxFit.cover,
                               ),
                       ),
@@ -89,7 +89,7 @@ class ChatListScreen extends GetView<ChatListController> {
                                     maxWidth: 160.w,
                                   ),
                                   child: Text(
-                                    '${controller.chatList[index]!.roomTitle}',
+                                    '${controller.chatList[index].roomTitle}',
                                     style: AppTextStyle.body15M(),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -103,7 +103,7 @@ class ChatListScreen extends GetView<ChatListController> {
                                 ),
                                 SizedBox(width: 2.w),
                                 Text(
-                                    '${controller.chatList[index]!.participants!.length}'),
+                                    '${controller.chatList[index].participants!.length}'),
                                 Spacer(),
                                 Text(
                                   '${formattedTime}',
@@ -122,16 +122,16 @@ class ChatListScreen extends GetView<ChatListController> {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  '${controller.chatList[index]!.city}',
+                                  '${controller.chatList[index].city}',
                                   style: AppTextStyle.body14M(
                                     color: PlatformColors.subtitle2,
                                   ),
                                 ),
-                                if (controller.chatList[index]!.startDate !=
+                                if (controller.chatList[index].startDate !=
                                         null &&
-                                    controller.chatList[index]!.endDate != null)
+                                    controller.chatList[index].endDate != null)
                                   Text(
-                                    ' • ${DateFormat('y.MM.dd').format(controller.chatList[index]!.startDate!)} - ${DateFormat('MM.dd').format(controller.chatList[index]!.endDate!)}',
+                                    ' • ${DateFormat('y.MM.dd').format(controller.chatList[index].startDate!)} - ${DateFormat('MM.dd').format(controller.chatList[index].endDate!)}',
                                     style: AppTextStyle.body14M(
                                       color: PlatformColors.subtitle2,
                                     ),
@@ -139,7 +139,7 @@ class ChatListScreen extends GetView<ChatListController> {
                               ],
                             ),
                             Text(
-                              '${controller.chatList[index]!.lastMessage}',
+                              '${controller.chatList[index].lastMessage}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyle.body13R(
@@ -175,7 +175,7 @@ class ChatListScreen extends GetView<ChatListController> {
     DateTime now = DateTime.now();
     DateTime todayMidnight = DateTime(now.year, now.month, now.day);
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-        controller.chatList[index]!.updatedAt);
+        controller.chatList[index].updatedAt);
     String formattedTime;
 
     if (dateTime.isBefore(todayMidnight)) {

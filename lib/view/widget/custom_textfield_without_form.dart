@@ -11,6 +11,7 @@ class CustomTextFiledWithOutForm extends StatelessWidget {
   final Color? borderSideColor;
   final BorderRadius? borderRadius;
   final Widget? prefixIcon;
+  final ValueChanged? onChanged;
 
   const CustomTextFiledWithOutForm({
     Key? key,
@@ -23,11 +24,13 @@ class CustomTextFiledWithOutForm extends StatelessWidget {
     this.borderSideColor,
     this.borderRadius,
     this.prefixIcon,
+    this.onChanged,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onChanged: onChanged,
       maxLines: maxLines ?? 1,
       controller: controller,
       decoration: InputDecoration(

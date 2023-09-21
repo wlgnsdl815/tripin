@@ -12,7 +12,6 @@ import '../auth_controller.dart';
 class ChatListController extends GetxController {
   final roomId = ''.obs;
   final chatList = <ChatRoom>[].obs;
-  // final chatList = Get.find<AuthController>().userInfo.value!.joinedTrip!;
   StreamSubscription? chatRoomsStreamSubscription;
   final _globalGetXController = Get.find<GlobalGetXController>();
 
@@ -71,7 +70,8 @@ class ChatListController extends GetxController {
 
   // 참여중인 채팅방들 객체로 변환해서 가져오기
   Future<List<ChatRoom?>> readJoinedChatRoom(List joinedTrip) async {
-    List<ChatRoom?> chatRoomList = await Future.wait(joinedTrip.map((roomId) async {
+    List<ChatRoom?> chatRoomList =
+        await Future.wait(joinedTrip.map((roomId) async {
       return await DBService().getRoomInfoById(roomId);
     }));
     return chatRoomList;

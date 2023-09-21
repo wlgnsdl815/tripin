@@ -7,9 +7,9 @@ import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
-import 'package:tripin/view/screens/chat/chat_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
+import 'package:tripin/view/widget/list_profile_container.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
   const SelectFriendsScreen({super.key});
@@ -63,9 +63,30 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            Obx(
+              () => Container(
+                height: 50.0, // 적절한 높이로 설정
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: controller.participants.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ListProfileContainer(
+                        index: index,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
             CustomTextFiledWithOutForm(
+              controller: controller.searchFriendController,
               prefixIcon: Icon(Icons.search),
               hintText: '친구 이름 또는 이메일 검색',
+              onChanged: (value) {
+                controller.searchFriend();
+              },
             ),
             SizedBox(height: 20),
             Expanded(
@@ -81,19 +102,28 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                     return ListTile(
                       title: Text(controller.userData[index].nickName),
                       leading: Container(
+                        clipBehavior: Clip.antiAlias,
                         width: 47,
                         height: 47,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(19),
                           color: PlatformColors.primary,
                         ),
+                        child: controller.userData[index].imgUrl == ''
+                            ? Image.asset(
+                                'assets/icons/chat_default.png',
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                controller.userData[index].imgUrl,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       trailing: Obx(
                         () {
                           bool isSelected = controller.participants.any(
                               (user) =>
                                   user.uid == controller.userData[index].uid);
-
                           return IconButton(
                             onPressed: () {
                               if (isSelected) {
@@ -106,8 +136,10 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                               }
                             },
                             icon: Icon(
-                              Icons.circle,
-                              color: isSelected ? Colors.blue : Colors.grey,
+                              Icons.check_circle,
+                              color: isSelected
+                                  ? PlatformColors.primary
+                                  : PlatformColors.subtitle6,
                             ),
                           );
                         },
