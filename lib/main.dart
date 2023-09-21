@@ -21,8 +21,6 @@ import 'package:tripin/firebase_options.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/app_routes.dart';
 import 'package:tripin/utils/app_screens.dart';
-import 'package:tripin/view/screens/splash_screen.dart';
-
 import 'controllers/home_controller.dart';
 
 void main() async {
