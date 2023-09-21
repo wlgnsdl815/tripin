@@ -174,8 +174,8 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
                       itemBuilder: (context, index) {
                         return ProfileTripTile(
                           trip: controller.filterIdx == 0
-                            ? controller.upcomingTrips[index]!
-                            : controller.completedTrips[index]!
+                            ? controller.upcomingTrips[index]
+                            : controller.completedTrips[index]
                         );
                       },
                       separatorBuilder: (context, index) => SizedBox(height: 14),

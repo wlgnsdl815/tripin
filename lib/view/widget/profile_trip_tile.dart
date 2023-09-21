@@ -4,9 +4,9 @@ import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/utils/colors.dart';
 
 class ProfileTripTile extends StatelessWidget {
-  const ProfileTripTile({super.key, required this.trip});
+  const ProfileTripTile({super.key, this.trip});
 
-  final ChatRoom trip;
+  final ChatRoom? trip;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ProfileTripTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: PlatformColors.subtitle8
       ),
-      child: Text('${trip.roomTitle ?? 'test'}'),
+      child: Text('${trip != null ? trip!.roomTitle : 'null'}'),
     );
   }
 }

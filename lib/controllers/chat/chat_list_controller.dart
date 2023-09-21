@@ -6,9 +6,13 @@ import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
 
+import '../../service/db_service.dart';
+import '../auth_controller.dart';
+
 class ChatListController extends GetxController {
   final roomId = ''.obs;
   final chatList = <ChatRoom>[].obs;
+  // final chatList = Get.find<AuthController>().userInfo.value!.joinedTrip!;
   StreamSubscription? chatRoomsStreamSubscription;
   final _globalGetXController = Get.find<GlobalGetXController>();
 
@@ -63,6 +67,14 @@ class ChatListController extends GetxController {
         .orderBy('updatedAt', descending: true)
         .snapshots()
         .listen(_updateChatList);
+  }
+
+  // 참여중인 채팅방들 객체로 변환해서 가져오기
+  Future<List<ChatRoom?>> readJoinedChatRoom(List joinedTrip) async {
+    List<ChatRoom?> chatRoomList = await Future.wait(joinedTrip.map((roomId) async {
+      return await DBService().getRoomInfoById(roomId);
+    }));
+    return chatRoomList;
   }
 
   @override

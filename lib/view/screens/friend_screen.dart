@@ -74,93 +74,6 @@ class FriendScreen extends GetView<FriendController> {
                     color: PlatformColors.subtitle8,
                   ),
                 )
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height / 9,
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Padding(
-                //         padding: const EdgeInsets.all(8.0),
-                //         child: Row(
-                //           children: [
-                //             AspectRatio(
-                //               aspectRatio: 1 / 1,
-                //               child: FutureBuilder<String?>(
-                //                 future: Get.find<AuthController>()
-                //                     .getUserProfilePhotoUrl(),
-                //                 builder: (context, snapshot) {
-                //                   if (snapshot.hasError) {
-                //                     return Text('오류 발생: ${snapshot.error}');
-                //                   } else if (!snapshot.hasData ||
-                //                       snapshot.data == null) {
-                //                     return SizedBox();
-                //                   } else {
-                //                     return AspectRatio(
-                //                       aspectRatio: 1 / 1,
-                //                       child: Padding(
-                //                         padding: const EdgeInsets.all(8.0),
-                //                         child: Container(
-                //                           clipBehavior: Clip.antiAlias,
-                //                           decoration: BoxDecoration(
-                //                             borderRadius:
-                //                                 BorderRadius.circular(20),
-                //                             color: Colors.grey,
-                //                           ),
-                //                           child: Image.network(
-                //                             Get.find<AuthController>()
-                //                                     .userInfo
-                //                                     .value
-                //                                     ?.imgUrl ??
-                //                                 '로딩중...',
-                //                             fit: BoxFit.fill,
-                //                           ),
-                //                         ),
-                //                       ),
-                //                     );
-                //                   }
-                //                 },
-                //               ),
-                //             ),
-                //             Obx(
-                //               () => Padding(
-                //                 padding: const EdgeInsets.only(left: 8),
-                //                 child: Text(
-                //                   Get.find<AuthController>()
-                //                           .userInfo
-                //                           .value
-                //                           ?.nickName ??
-                //                       '로딩중...',
-                //                   style: AppTextStyle.header15(
-                //                       color: Colors.white),
-                //                 ),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //       Obx(
-                //         () => Container(
-                //           width: MediaQuery.of(context).size.width / 2.5,
-                //           height: MediaQuery.of(context).size.height / 20,
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.vertical(
-                //               top: Radius.circular(80),
-                //               bottom: Radius.circular(80),
-                //             ),
-                //             border: Border.all(color: PlatformColors.subtitle8),
-                //           ),
-                //           child: Center(
-                //             child: Text(Get.find<AuthController>()
-                //                     .userInfo
-                //                     .value
-                //                     ?.message ??
-                //                 '로딩중...'),
-                //           ),
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -174,10 +87,10 @@ class FriendScreen extends GetView<FriendController> {
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 14,
+                    height: MediaQuery.of(context).size.height / 18,
                     decoration: BoxDecoration(color: PlatformColors.subtitle7),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.only(left: 16, right: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -317,110 +230,117 @@ class FriendScreen extends GetView<FriendController> {
                                   child: Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(8, 8, 40, 8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  15,
-                                              child: AspectRatio(
-                                                aspectRatio: 1 / 1,
-                                                child: Container(
-                                                    clipBehavior:
-                                                        Clip.antiAlias,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                      color: Colors.transparent,
-                                                    ),
-                                                    child: controller
-                                                                    .followingList[
-                                                                        index]
-                                                                    .imgUrl !=
-                                                                null &&
-                                                            controller
-                                                                .followingList[
-                                                                    index]
-                                                                .imgUrl
-                                                                .isNotEmpty
-                                                        ? Container(
-                                                            clipBehavior:
-                                                                Clip.antiAlias,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20)),
-                                                            child:
-                                                                Image.network(
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        Get.to(ProfileDetailScreen(userModel: controller.followingList[index]), arguments: [controller
+                                            .followingList[
+                                        index]]);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            // mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    15,
+                                                child: AspectRatio(
+                                                  aspectRatio: 1 / 1,
+                                                  child: Container(
+                                                      clipBehavior:
+                                                          Clip.antiAlias,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                20),
+                                                        color: Colors.transparent,
+                                                      ),
+                                                      child: controller
+                                                                      .followingList[
+                                                                          index]
+                                                                      .imgUrl !=
+                                                                  null &&
                                                               controller
                                                                   .followingList[
                                                                       index]
-                                                                  .imgUrl,
-                                                              fit: BoxFit.fill,
-                                                            ))
-                                                        : Container(
-                                                            clipBehavior:
-                                                                Clip.antiAlias,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                            child: Image(
-                                                              image: AssetImage(
-                                                                'assets/images/profile_image.png',
-                                                              ),
-                                                              fit: BoxFit.fill,
-                                                            ))),
+                                                                  .imgUrl
+                                                                  .isNotEmpty
+                                                          ? Container(
+                                                              clipBehavior:
+                                                                  Clip.antiAlias,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20)),
+                                                              child:
+                                                                  Image.network(
+                                                                controller
+                                                                    .followingList[
+                                                                        index]
+                                                                    .imgUrl,
+                                                                fit: BoxFit.fill,
+                                                              ))
+                                                          : Container(
+                                                              clipBehavior:
+                                                                  Clip.antiAlias,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5)),
+                                                              child: Image(
+                                                                image: AssetImage(
+                                                                  'assets/images/profile_image.png',
+                                                                ),
+                                                                fit: BoxFit.fill,
+                                                              ))),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 16.0),
+                                                child: Text(
+                                                  controller.followingList[index]
+                                                      .nickName,
+                                                  style: AppTextStyle.body16R(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            constraints: BoxConstraints(
+                                              maxWidth: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  3, // 최대 너비 설정
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(80),
+                                                bottom: Radius.circular(80),
+                                              ),
+                                              border: Border.all(
+                                                  color: PlatformColors.primary),
+                                            ),
+                                            child: Center(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  controller.followingList[index]
+                                                      .message,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 16.0),
-                                              child: Text(
-                                                controller.followingList[index]
-                                                    .nickName,
-                                                style: AppTextStyle.body16R(),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                3, // 최대 너비 설정
-                                          ),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(80),
-                                              bottom: Radius.circular(80),
-                                            ),
-                                            border: Border.all(
-                                                color: PlatformColors.primary),
-                                          ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                controller.followingList[index]
-                                                    .message,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

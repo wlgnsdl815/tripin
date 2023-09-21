@@ -52,9 +52,7 @@ dependencies:
   kpostal: ^0.5.1
   lottie: ^2.6.0
   sfac_design_flutter: ^1.0.0+1
-  shared_preferences: ^2.2.1
-  table_calendar: ^3.0.9
-
+  
 dev_dependencies:
   build_runner: ^2.4.6
   envied_generator: ^0.3.0+3
