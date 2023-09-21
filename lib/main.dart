@@ -10,7 +10,6 @@ import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
-import 'package:tripin/controllers/chat/chat_setting_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/edit_profile_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
@@ -22,6 +21,7 @@ import 'package:tripin/firebase_options.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/app_routes.dart';
 import 'package:tripin/utils/app_screens.dart';
+import 'package:tripin/view/screens/splash_screen.dart';
 
 import 'controllers/home_controller.dart';
 
@@ -55,7 +55,6 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) => GetMaterialApp(
-        // showPerformanceOverlay: true,
         theme: ThemeData(fontFamily: "Pretendard"),
         initialBinding: BindingsBuilder(() {
           Get.put(AuthController());
@@ -70,7 +69,6 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => CalendarController(), fenix: true);
           Get.lazyPut(() => HomeController(), fenix: true);
           Get.lazyPut(() => ProfileDetailController(), fenix: true);
-          Get.lazyPut(() => ChatSettingController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.login,

@@ -9,8 +9,10 @@ import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 import 'package:tripin/view/screens/home_screen.dart';
 import 'package:tripin/view/screens/login_screen.dart';
+import 'package:tripin/view/screens/splash_screen.dart';
 
 class AppScreens {
+  static const splash = SplashScreen.route;
   static const home = HomeScreen.route;
   static const login = LoginScreen.route;
   static const friend = FriendScreen.route;

@@ -50,6 +50,7 @@ dependencies:
   intl: ^0.18.1
   kakao_flutter_sdk_user: ^1.4.1
   kpostal: ^0.5.1
+  lottie: ^2.6.0
   sfac_design_flutter: ^1.0.0+1
   shared_preferences: ^2.2.1
   table_calendar: ^3.0.9
