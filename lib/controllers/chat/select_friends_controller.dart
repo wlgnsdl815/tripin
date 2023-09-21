@@ -18,8 +18,10 @@ class SelectFriendsController extends GetxController {
       Get.find<GlobalGetXController>();
   RxString roomTitle = ''.obs;
   Rxn<ChatRoom?> currentChatRoom = Rxn();
+  Rxn<UserModel> userInfo = Get.find<AuthController>().userInfo; // 로그인한 유저 정보
 
   getUsers() async {
+    List curUserFollowing = userInfo.value!.following;
     final tempUsersData = [];
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('users').get();
@@ -31,10 +33,13 @@ class SelectFriendsController extends GetxController {
         .map(
           (e) => UserModel.fromMap(e.data()!),
         )
-        .toList();
+        .toList()
+        .where((user) => curUserFollowing.contains(user.uid))
+        .toList(); // 친구 목록 필터링
+
     userData.assignAll(usersData);
 
-    print('파베에 등록된 유저 리스트: ${usersData}');
+    print('파베에 등록된 친구 리스트: ${usersData}');
   }
 
   Future<String> createChatRoom() async {
@@ -136,7 +141,7 @@ class SelectFriendsController extends GetxController {
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
     });
-    
+
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }
 

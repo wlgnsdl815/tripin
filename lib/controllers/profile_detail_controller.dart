@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -11,23 +10,22 @@ import '../model/user_model.dart';
 class ProfileDetailController extends GetxController {
   UserModel user = Get.arguments[0];
   RxList<ChatRoom?> joinedChatRoomList = <ChatRoom?>[].obs; // 참여중인 여행 전체 리스트
-  RxList<ChatRoom?> ongoingTrips = <ChatRoom?>[].obs;       // 진행중인 여행 리스트
-  RxList<ChatRoom?> upcomingTrips = <ChatRoom?>[].obs;      // 예정된 여행 리스트
-  RxList<ChatRoom?> completedTrips = <ChatRoom?>[].obs;     // 완료된 여행 리스트
-  RxBool isLoading = false.obs;   // 로딩중 상태
+  RxList<ChatRoom?> ongoingTrips = <ChatRoom?>[].obs; // 진행중인 여행 리스트
+  RxList<ChatRoom?> upcomingTrips = <ChatRoom?>[].obs; // 예정된 여행 리스트
+  RxList<ChatRoom?> completedTrips = <ChatRoom?>[].obs; // 완료된 여행 리스트
+  RxBool isLoading = false.obs; // 로딩중 상태
 
-  RxInt filterIdx = 0.obs;        // 필터링 선택값
-  List<String> filterOptionList = ['예정', '종료'];   // 필터링 옵션 리스트
+  RxInt filterIdx = 0.obs; // 필터링 선택값
+  List<String> filterOptionList = ['예정', '종료']; // 필터링 옵션 리스트
 
   // 참여중인 채팅방 리스트 가져오기
   Future<void> readJoinedChatRoom() async {
     isLoading(true);
     if (user.joinedTrip != null) {
-      List<ChatRoom?> chatRoomList = await Future.wait(
-        user.joinedTrip!.map((roomId) async {
-          return await DBService().getRoomInfoById(roomId);
-        })
-      );
+      List<ChatRoom?> chatRoomList =
+          await Future.wait(user.joinedTrip!.map((roomId) async {
+        return await DBService().getRoomInfoById(roomId);
+      }));
       joinedChatRoomList(chatRoomList);
 
       // 여행 리스트 분류
@@ -36,7 +34,8 @@ class ProfileDetailController extends GetxController {
         if (room != null && room.startDate != null && room.endDate != null) {
           if (room.endDate!.isBefore(now)) {
             completedTrips.add(room);
-          } else if (room.startDate!.isBefore(now) && room.endDate!.isAfter(now)) {
+          } else if (room.startDate!.isBefore(now) &&
+              room.endDate!.isAfter(now)) {
             ongoingTrips.add(room);
           } else {
             upcomingTrips.add(room);
