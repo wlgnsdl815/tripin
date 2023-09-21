@@ -57,21 +57,28 @@ class FindFriendPage extends GetView<FriendController> {
                             aspectRatio: 1 / 1,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: 
-                              friendUser.imgUrl != null &&
+                              child: friendUser.imgUrl != null &&
                                       friendUser.imgUrl.isNotEmpty
                                   ? Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20)
-                                    ),
-                                    child: Image.network(friendUser.imgUrl, fit: BoxFit.fill,),
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Image.network(
+                                        friendUser.imgUrl,
+                                        fit: BoxFit.fill,
+                                      ),
                                     )
                                   : Container(
                                       clipBehavior: Clip.antiAlias,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Image(
+                                        image: AssetImage(
+                                          'assets/images/profile_image.png',
+                                        ),
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
                             ),
