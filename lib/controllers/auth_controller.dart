@@ -108,8 +108,8 @@ class AuthController extends GetxController {
       imgUrl: user.photoURL ?? '',
       isSelected: false,
       message: '',
-      following: [],
-      joinedTrip: [],
+      following: userInfo.value!.following,
+      joinedTrip: userInfo.value!.joinedTrip,
     );
 
     await DBService().saveUserInfo(userModel);
@@ -196,8 +196,8 @@ class AuthController extends GetxController {
       'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
       'isSelected': false,
       'message': '',
-      'following': [],
-      'joinedTrip': [],
+      'following': userInfo.value!.following,
+      'joinedTrip': userInfo.value!.joinedTrip,
     });
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
   }
