@@ -46,7 +46,7 @@ class MapScreen extends GetView<MapScreenController> {
         elevation: 0.0,
         title: Obx(
           () => Text(
-            '지도 페이지 - Day ${controller.selectedDayIndex.value + 1}',
+            '${_globalGetXController.roomTitle}',
           ),
         ),
         backgroundColor: PlatformColors.primary,
