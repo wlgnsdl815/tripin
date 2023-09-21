@@ -12,6 +12,7 @@ class CustomTextFiledWithOutForm extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Widget? prefixIcon;
   final ValueChanged? onChanged;
+  final Color? cursorColor;
 
   const CustomTextFiledWithOutForm({
     Key? key,
@@ -25,6 +26,7 @@ class CustomTextFiledWithOutForm extends StatelessWidget {
     this.borderRadius,
     this.prefixIcon,
     this.onChanged,
+    this.cursorColor,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,7 @@ class CustomTextFiledWithOutForm extends StatelessWidget {
       onChanged: onChanged,
       maxLines: maxLines ?? 1,
       controller: controller,
+      cursorColor: cursorColor ?? PlatformColors.primary,
       decoration: InputDecoration(
         fillColor: fillColor ?? PlatformColors.subtitle8,
         filled: filled ?? true,

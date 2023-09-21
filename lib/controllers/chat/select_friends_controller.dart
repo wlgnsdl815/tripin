@@ -22,6 +22,7 @@ class SelectFriendsController extends GetxController {
   Rxn<ChatRoom?> currentChatRoom = Rxn();
   Rxn<UserModel> userInfo = Get.find<AuthController>().userInfo; // 로그인한 유저 정보
   final TextEditingController searchFriendController = TextEditingController();
+  RxDouble containerHeight = 0.0.obs;
 
   getUsers() async {
     List curUserFollowing = userInfo.value!.following;

@@ -19,6 +19,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
   @override
   Widget build(BuildContext context) {
     final _chatListController = Get.find<ChatListController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -60,35 +61,65 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
         elevation: 0.0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Obx(
-              () => Container(
-                height: 50.0, // 적절한 높이로 설정
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: controller.participants.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ListProfileContainer(
-                        index: index,
+            Obx(() {
+              double targetHeight =
+                  controller.participants.isNotEmpty ? 80.h : 0.0;
+              controller.containerHeight.value = targetHeight;
+
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                height: controller.containerHeight.value,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '선택 ',
+                          style: AppTextStyle.body16M(
+                              color: PlatformColors.subtitle),
+                        ),
+                        Text(
+                          '${controller.participants.length}',
+                          style: AppTextStyle.body16M(
+                              color: PlatformColors.primary),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    Container(
+                      height: 47.0.h,
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) =>
+                            SizedBox(width: 16.w),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.participants.length,
+                        itemBuilder: (context, index) {
+                          return ListProfileContainer(index: index);
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ),
-            ),
+              );
+            }),
+            SizedBox(height: 20.h),
             CustomTextFiledWithOutForm(
+              borderSideColor: Colors.transparent,
               controller: controller.searchFriendController,
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Icon(
+                Icons.search,
+                color: PlatformColors.primary,
+              ),
               hintText: '친구 이름 또는 이메일 검색',
               onChanged: (value) {
                 controller.searchFriend();
               },
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 20.h),
             Expanded(
               child: Obx(
                 () => ListView.builder(
@@ -100,25 +131,9 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                       return SizedBox();
                     }
                     return ListTile(
+                      contentPadding: EdgeInsets.zero,
                       title: Text(controller.userData[index].nickName),
-                      leading: Container(
-                        clipBehavior: Clip.antiAlias,
-                        width: 47,
-                        height: 47,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(19),
-                          color: PlatformColors.primary,
-                        ),
-                        child: controller.userData[index].imgUrl == ''
-                            ? Image.asset(
-                                'assets/icons/chat_default.png',
-                                fit: BoxFit.cover,
-                              )
-                            : Image.network(
-                                controller.userData[index].imgUrl,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
+                      leading: ListProfileContainer(index: index),
                       trailing: Obx(
                         () {
                           bool isSelected = controller.participants.any(
@@ -132,7 +147,6 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                               } else {
                                 controller.participants
                                     .add(controller.userData[index]);
-                                print(controller.participants);
                               }
                             },
                             icon: Icon(
