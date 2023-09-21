@@ -217,12 +217,6 @@ class FriendController extends GetxController {
     update();
   }
 
-//    void saveFriends() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     List<String> friendList = friends.map((friend) => friend.toJson()).toList();
-//     await prefs.setStringList('friends', friendList);
-//   }
-
   void getFollowing() async {
     await authController.getUserInfo(FirebaseAuth.instance.currentUser!.uid);
     var uidList = authController.userInfo.value!.following;
@@ -233,27 +227,6 @@ class FriendController extends GetxController {
     }
     followingList(following);
     print('$followingList');
-  }
-
-  Future<String?> getFriendImage(String email) async {
-    try {
-      // Firestore에서 사용자 문서를 가져옵니다.
-      final userDoc = await _firestore.collection('users').doc(email).get();
-
-      if (userDoc.exists) {
-        // 사용자 문서에서 이미지 URL 필드를 가져옵니다.
-        final imageUrl = userDoc.get('imageUrl');
-
-        if (imageUrl != null && imageUrl.isNotEmpty) {
-          // 이미지 URL이 있는 경우 반환합니다.
-          return imageUrl;
-        }
-      }
-      return null; // 이미지 URL을 찾지 못한 경우 null 반환
-    } catch (e) {
-      print('이미지 URL 가져오기 오류: $e');
-      return null;
-    }
   }
 
   void showUserList(String userEmail) async {
