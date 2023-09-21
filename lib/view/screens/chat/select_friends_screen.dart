@@ -7,7 +7,6 @@ import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
-import 'package:tripin/view/screens/chat/chat_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
@@ -87,6 +86,15 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                           borderRadius: BorderRadius.circular(19),
                           color: PlatformColors.primary,
                         ),
+                        child: controller.userInfo.value!.imgUrl != ''
+                            ? Image.asset(
+                                'assets/icons/chat_default.png',
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                controller.userInfo.value!.imgUrl,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       trailing: Obx(
                         () {
