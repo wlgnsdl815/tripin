@@ -16,7 +16,6 @@ import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_date_picker.dart';
 import 'package:tripin/view/widget/custom_map_bottom_sheet.dart';
-import 'package:tripin/view/widget/custom_textfield_without_form.dart';
 
 class MapScreen extends GetView<MapScreenController> {
   static const route = '/map';
@@ -50,6 +49,7 @@ class MapScreen extends GetView<MapScreenController> {
             '지도 페이지 - Day ${controller.selectedDayIndex.value + 1}',
           ),
         ),
+        backgroundColor: PlatformColors.primary,
       ),
       body: Stack(
         children: [
@@ -111,10 +111,23 @@ class MapScreen extends GetView<MapScreenController> {
                 child: ExpansionTile(
                   controller: controller.expansionTileController,
                   backgroundColor: Colors.white,
-                  title: Obx(
-                    () => Text(
-                      controller.selectedCity.value,
-                    ),
+                  title: Row(
+                    children: [
+                      Image.asset(
+                        'assets/icons/location2.png',
+                        width: 14.w,
+                        height: 16.h,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Obx(
+                        () => Text(
+                          controller.selectedCity.value,
+                          style: AppTextStyle.body17M(),
+                        ),
+                      ),
+                    ],
                   ),
                   children: [
                     Container(
@@ -122,7 +135,8 @@ class MapScreen extends GetView<MapScreenController> {
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Table(
-                          border: TableBorder.all(),
+                          border:
+                              TableBorder.all(color: PlatformColors.subtitle7),
                           children: List.generate(
                             6,
                             (row) {
@@ -157,12 +171,23 @@ class MapScreen extends GetView<MapScreenController> {
                                       child: Container(
                                         color: controller.selectedCity.value ==
                                                 citiesName[index]
-                                            ? Colors.amber
+                                            ? PlatformColors.primary
                                             : Colors.transparent,
                                         padding: EdgeInsets.all(8.0),
                                         child: Center(
-                                          child: Text(
-                                            citiesName[index],
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0,
+                                            ),
+                                            child: Text(
+                                              citiesName[index],
+                                              style: AppTextStyle.body13M(
+                                                  color: controller.selectedCity
+                                                              .value ==
+                                                          citiesName[index]
+                                                      ? Colors.white
+                                                      : PlatformColors.title),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -252,44 +277,67 @@ class MapScreen extends GetView<MapScreenController> {
             alignment: Alignment.bottomRight,
             // 오른쪽 버튼
             child: FloatingActionButton(
+              backgroundColor: PlatformColors.primary,
               heroTag: 'rightButton',
               onPressed: () async {
                 _showBottomSheet(_nMarkerList, 'right');
                 await controller.onDayButtonTap(
                     index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
               },
+              child: Image.asset(
+                'assets/icons/list.png',
+                width: 21.w,
+                height: 13.h,
+              ),
             ),
           ),
           Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30.0),
-              // 왼쪽 버튼
-              child: FloatingActionButton(
-                heroTag: 'leftButton',
-                onPressed: () async {
-                  Kpostal? result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => KpostalView(
-                        kakaoKey: Env.kakaoJSKey,
-                      ),
+            alignment:
+                Alignment.bottomRight + Alignment(0.w, -0.2.h), // 이 부분을 수정
+            child: FloatingActionButton(
+              heroTag: 'searchButton',
+              backgroundColor: Colors.white,
+              onPressed: () async {
+                Kpostal? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => KpostalView(
+                      kakaoKey: Env.kakaoJSKey,
                     ),
+                  ),
+                );
+                if (result != null) {
+                  final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+                    target:
+                        NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
+                    zoom: 16,
                   );
-                  if (result != null) {
-                    final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
-                      target: NLatLng(
-                          result.kakaoLatitude!, result.kakaoLongitude!),
-                      zoom: 16,
-                    );
-                    if (naverMapController != null) {
-                      print('update camera');
-                      naverMapController!.updateCamera(cameraUpdate);
-                    } // _showBottomSheet(_nMarkerList, 'left');
-                  } else {
-                    print('장소 검색을 안하고 뒤로가기 함');
-                  }
-                },
+                  if (naverMapController != null) {
+                    print('update camera');
+                    naverMapController!.updateCamera(cameraUpdate);
+                  } // _showBottomSheet(_nMarkerList, 'left');
+                } else {
+                  print('장소 검색을 안하고 뒤로가기 함');
+                }
+              },
+              child: Image.asset(
+                'assets/icons/search.png',
+                width: 21.w,
+                height: 21.h,
+              ),
+            ),
+          ),
+          Align(
+            alignment:
+                Alignment.bottomLeft + Alignment(0.2.w, -0.2.h), // 이 부분을 수정
+            child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              heroTag: 'current_location_Button',
+              onPressed: () async {},
+              child: Image.asset(
+                'assets/icons/current_location.png',
+                width: 25.w,
+                height: 25.h,
               ),
             ),
           ),

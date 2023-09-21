@@ -101,7 +101,6 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                           bool isSelected = controller.participants.any(
                               (user) =>
                                   user.uid == controller.userData[index].uid);
-
                           return IconButton(
                             onPressed: () {
                               if (isSelected) {
@@ -114,8 +113,10 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                               }
                             },
                             icon: Icon(
-                              Icons.circle,
-                              color: isSelected ? Colors.blue : Colors.grey,
+                              Icons.check_circle,
+                              color: isSelected
+                                  ? PlatformColors.primary
+                                  : PlatformColors.subtitle6,
                             ),
                           );
                         },
