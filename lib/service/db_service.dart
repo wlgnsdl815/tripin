@@ -16,9 +16,11 @@ class DBService {
       fromFirestore: (snapshot, _) => UserModel.fromMap(snapshot.data()!),
       toFirestore: (user, _) => user.toMap());
 
-  final roomRef = FirebaseFirestore.instance.collection('chatRooms').withConverter(
-      fromFirestore: (snapshot, _) => ChatRoom.fromMap(snapshot.data()!),
-      toFirestore: (room, _) => room.toMap());
+  final roomRef = FirebaseFirestore.instance
+      .collection('chatRooms')
+      .withConverter(
+          fromFirestore: (snapshot, _) => ChatRoom.fromMap(snapshot.data()!),
+          toFirestore: (room, _) => room.toMap());
 
   // uid로 유저 정보 가져오기
   Future getUserInfoById(String uid) async {
@@ -49,7 +51,8 @@ class DBService {
   }
 
   // 채팅방 생성 시 초대된 유저들의 joinedTrip 리스트에 roomId 추가
-  Future<void> saveJoinedRoomId(String roomId, List<String> participantsUidList) async {
+  Future<void> saveJoinedRoomId(
+      String roomId, List<String> participantsUidList) async {
     if (participantsUidList.isNotEmpty) {
       for (var uid in participantsUidList) {
         DocumentSnapshot userDocSnapshot = await userRef.doc(uid).get();

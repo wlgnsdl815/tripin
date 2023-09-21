@@ -20,11 +20,16 @@ class ChatController extends GetxController {
   RxString _senderUidFromChatController = ''.obs;
 
   final functions = FirebaseFunctions.instance;
-  final ScrollController scrollController = ScrollController();
+  // final ScrollController scrollController = ScrollController();
   RxList<ChatMessage> messageList = <ChatMessage>[].obs;
 
   String get senderFromChatController => _senderFromChatController.value;
   String get senderUidFromChatController => _senderUidFromChatController.value;
+
+  // ScrollController 인스턴스 생성 메서드
+  ScrollController createScrollController() {
+    return ScrollController();
+  }
 
   // Firebase 초기화 메서드
   FirebaseDatabase _initFirebase() {

@@ -12,6 +12,8 @@ import 'package:tripin/utils/text_styles.dart';
 class ChatListScreen extends GetView<ChatListController> {
   const ChatListScreen({super.key});
 
+  static const route = '/chatList';
+
   @override
   Widget build(BuildContext context) {
     final GlobalGetXController _globalGetXController =

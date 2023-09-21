@@ -24,6 +24,8 @@ class ChatScreen extends GetView<ChatController> {
     final AuthController _authController = Get.find<AuthController>();
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
+    final scrollController = controller.createScrollController();
+
     print(
         '_globalGetXController in ChatScreen roomId: ${_globalGetXController.roomId}');
     final ChatListController _chatListController =
@@ -82,15 +84,17 @@ class ChatScreen extends GetView<ChatController> {
             //     .map((e) => ChatMessage.fromMap(e.value))
             //     .toList();
 
-            controller.readMessage(messages, messages.entries);
+            Future.delayed(Duration.zero, () {
+              controller.readMessage(messages, messages.entries);
+            });
 
             // // timestamp 속성을 기준으로 메시지 리스트 정렬
             // messageList.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (controller.scrollController.hasClients) {
-                controller.scrollController.animateTo(
-                  controller.scrollController.position.maxScrollExtent + 100,
+              if (scrollController.hasClients) {
+                scrollController.animateTo(
+                  scrollController.position.maxScrollExtent + 100,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.ease,
                 );
@@ -103,7 +107,7 @@ class ChatScreen extends GetView<ChatController> {
                   child: Stack(
                     children: [
                       Obx(() => ListView.separated(
-                            controller: controller.scrollController,
+                            controller: scrollController,
                             itemCount: controller.messageList.length + 1,
                             separatorBuilder: (context, index) =>
                                 SizedBox(height: 7),

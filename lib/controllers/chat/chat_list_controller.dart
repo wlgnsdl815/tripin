@@ -15,7 +15,9 @@ class ChatListController extends GetxController {
       Get.find<GlobalGetXController>();
   RxString chatRoomImageUrl = ''.obs;
 
-  setChatRoomImageUrl(String url) {}
+  // setChatList(List<ChatRoom> list) {
+  //   chatList.value = list;
+  // }
 
   setRoomId(String id) {
     roomId.value = id;
@@ -60,6 +62,9 @@ class ChatListController extends GetxController {
       }
 
       List<ChatRoom> tempChatRoomList = [];
+      if (tempChatRoomList.length == 1) {
+        print("Only one chat room left: ${tempChatRoomList[0].roomId}");
+      }
 
       // 채팅방의 정보를 구축
       // 참가자의 정보는 이미 가져온 map에서 가져옴
@@ -76,8 +81,9 @@ class ChatListController extends GetxController {
             ChatRoom.fromMap(chatData.data(), participants: participants);
         tempChatRoomList.add(chatRoom);
       }
-
-      chatList.assignAll(tempChatRoomList); // addAll 대신 assignAll 사용
+      print('tempChatRoomList: ${tempChatRoomList.length}');
+      chatList.assignAll(tempChatRoomList);
+      print('chatList: ${chatList.length}');
     }); // 콜백 종료
   }
 

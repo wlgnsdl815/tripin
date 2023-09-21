@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/chat_setting_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
@@ -138,7 +138,12 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
                 SizedBox(height: 300.h),
                 CustomButton(
                   backgroundColor: Colors.white,
-                  onTap: () {},
+                  onTap: () {
+                    controller.leaveChatRoom();
+                    final HomeController _homeController =
+                        Get.find<HomeController>();
+                    Get.until((route) => route.isFirst);
+                  },
                   text: '채팅방 나가기',
                   textStyle: AppTextStyle.body16M(color: Colors.red),
                   borderColor: PlatformColors.subtitle6,
