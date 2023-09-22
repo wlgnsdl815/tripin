@@ -10,7 +10,7 @@ import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
 
 class SelectFriendsController extends GetxController {
-  RxList<UserModel> userData = <UserModel>[].obs; // 필터링 된 유저
+  RxList<UserModel> userData = <UserModel>[].obs; // 필터링 된 현재 유저의 친구목록
   Rx<DateTime> startDay = DateTime.now().obs;
   RxString rangeHighlightColor = ''.obs;
   RxList<UserModel> participants = <UserModel>[].obs;
@@ -22,6 +22,7 @@ class SelectFriendsController extends GetxController {
   Rxn<ChatRoom?> currentChatRoom = Rxn();
   Rxn<UserModel> userInfo = Get.find<AuthController>().userInfo; // 로그인한 유저 정보
   final TextEditingController searchFriendController = TextEditingController();
+  RxDouble containerHeight = 0.0.obs;
 
   getUsers() async {
     List curUserFollowing = userInfo.value!.following;
@@ -37,6 +38,8 @@ class SelectFriendsController extends GetxController {
         .toList(); // 친구 목록 필터링
 
     userData.assignAll(usersData);
+    print('usersData: $usersData');
+    print('참가자: $participants');
   }
 
   Future<String> createChatRoom() async {
@@ -60,10 +63,10 @@ class SelectFriendsController extends GetxController {
     List<String> defaultRoomTitle =
         participants.map((e) => e.nickName).toList();
 
-    // 사용자 데이터 업데이트
-    participants.value = userData
-        .where((user) => participantsUidList.contains(user.uid))
-        .toList();
+    // // 사용자 데이터 업데이트
+    // participants.value = userData
+    //     .where((user) => participantsUidList.contains(user.uid))
+    //     .toList();
 
     roomTitle.value = defaultRoomTitle.join(', ');
 

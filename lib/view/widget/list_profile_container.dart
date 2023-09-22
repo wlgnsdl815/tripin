@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/model/user_model.dart';
 import 'package:tripin/utils/colors.dart';
 
 class ListProfileContainer extends StatelessWidget {
-  final int index;
+  final UserModel user;
+
   const ListProfileContainer({
-    super.key,
-    required this.index,
-  });
+    Key? key,
+    required this.user,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final SelectFriendsController selectFriendsController =
-        Get.find<SelectFriendsController>();
     return Container(
       clipBehavior: Clip.antiAlias,
       width: 47,
@@ -22,13 +22,13 @@ class ListProfileContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(19),
         color: PlatformColors.primary,
       ),
-      child: selectFriendsController.userData[index].imgUrl == ''
+      child: user.imgUrl == ''
           ? Image.asset(
               'assets/icons/chat_default.png',
               fit: BoxFit.cover,
             )
           : Image.network(
-              selectFriendsController.userData[index].imgUrl,
+              user.imgUrl,
               fit: BoxFit.cover,
             ),
     );
