@@ -98,7 +98,9 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.participants.length,
                         itemBuilder: (context, index) {
-                          return ListProfileContainer(index: index);
+                          return ListProfileContainer(
+                            user: controller.participants[index],
+                          );
                         },
                       ),
                     ),
@@ -132,8 +134,13 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                     }
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(controller.userData[index].nickName),
-                      leading: ListProfileContainer(index: index),
+                      title: Text(
+                        controller.userData[index].nickName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      leading: ListProfileContainer(
+                          user: controller.userData[index]),
                       trailing: Obx(
                         () {
                           bool isSelected = controller.participants.any(

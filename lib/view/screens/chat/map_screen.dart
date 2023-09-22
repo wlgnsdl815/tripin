@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:tripin/const/cities.dart';
+import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
@@ -15,7 +16,7 @@ import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_date_picker.dart';
-import 'package:tripin/view/widget/custom_map_bottom_sheet.dart';
+import 'package:tripin/view/widget/map_bottom_sheet.dart';
 
 class MapScreen extends GetView<MapScreenController> {
   static const route = '/map';
@@ -28,11 +29,13 @@ class MapScreen extends GetView<MapScreenController> {
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
     late NaverMapController naverMapController;
+    final NLatLng? positionFromMessage = Get.arguments;
 
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
+    final ChatController _chatController = Get.find<ChatController>();
     print(
         '_globalGetXController in Map Screen roomId: ${_globalGetXController.roomId}');
 
@@ -70,15 +73,24 @@ class MapScreen extends GetView<MapScreenController> {
                   _handleTap(latLng);
                 },
                 options: NaverMapViewOptions(
-                  initialCameraPosition: _nMarkerList.isEmpty
-                      ? NCameraPosition(
-                          target: controller.myPosition.value,
-                          zoom: 15,
-                        )
-                      : NCameraPosition(
-                          target: _nMarkerList.last.position,
-                          zoom: 15,
-                        ),
+                  initialCameraPosition:
+                      // 채팅방에서 넘어오면 해당 핀의 위치로
+                      positionFromMessage == null
+                          ? _nMarkerList.isEmpty // 일정이 없으면 사용자 위치
+                              ? NCameraPosition(
+                                  target: controller.myPosition.value,
+                                  zoom: 15,
+                                )
+                              : NCameraPosition(
+                                  // 마커가 있으면 마지막 마커
+                                  target: _nMarkerList.last.position,
+                                  zoom: 15,
+                                )
+                          : NCameraPosition(
+                              // 채팅으로 넘어온 핀의 위치
+                              target: positionFromMessage,
+                              zoom: 15,
+                            ),
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
@@ -307,15 +319,21 @@ class MapScreen extends GetView<MapScreenController> {
                   ),
                 );
                 if (result != null) {
-                  final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+                  // final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+                  //   target:
+                  //       NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
+                  //   zoom: 15,
+                  // );
+
+                  // if (naverMapController != null) {
+                  //   print('update camera');
+                  //   naverMapController.updateCamera(cameraUpdate);
+                  // }
+                  controller.cameraScrollTo(
+                    naverMapController: naverMapController,
                     target:
                         NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
-                    zoom: 16,
                   );
-                  if (naverMapController != null) {
-                    print('update camera');
-                    naverMapController!.updateCamera(cameraUpdate);
-                  } // _showBottomSheet(_nMarkerList, 'left');
                 } else {
                   print('장소 검색을 안하고 뒤로가기 함');
                 }
@@ -333,7 +351,18 @@ class MapScreen extends GetView<MapScreenController> {
             child: FloatingActionButton(
               backgroundColor: Colors.white,
               heroTag: 'current_location_Button',
-              onPressed: () async {},
+              onPressed: () {
+                // // 사용자 현재위치로 카메라 업데이트
+                // final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+                //   target: controller.myPosition.value,
+                //   zoom: 15,
+                // );
+                // naverMapController.updateCamera(cameraUpdate);
+                controller.cameraScrollTo(
+                  naverMapController: naverMapController,
+                  target: controller.myPosition.value,
+                );
+              },
               child: Image.asset(
                 'assets/icons/current_location.png',
                 width: 25.w,
@@ -360,7 +389,7 @@ class MapScreen extends GetView<MapScreenController> {
               },
             ),
           ),
-          CustomMapBottomSheet(),
+          MapBottomSheet(),
         ],
       ),
       isDismissible: true,

@@ -24,7 +24,7 @@ class MapScreenController extends GetxController {
   RxBool isMarkerTapped = false.obs;
   RxList<DateTime> dateRange = <DateTime>[].obs;
   RxList<int> timeStamps = <int>[].obs;
-  RxString selectedCity = '도시 선택'.obs;
+  RxString selectedCity = '미정'.obs;
   Rxn<NLatLng> selectedCityLatLng = Rxn();
   ExpansionTileController expansionTileController = ExpansionTileController();
   RxInt selectedDayIndex = 0.obs;
@@ -32,6 +32,7 @@ class MapScreenController extends GetxController {
   Rxn<DateTimeRange> dateRangeFromFirebase = Rxn();
   RxString description = ''.obs;
   RxString placeText = ''.obs;
+  // Rxn<NLatLng> currentMarkerPosition = Rxn();
 
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
@@ -167,21 +168,24 @@ class MapScreenController extends GetxController {
       await ref.set(newMarker.toMap());
       if (descriptionTextController.text == '') {
         _chatController.sendMessage(
-          _chatController.senderFromChatController,
-          "[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.",
-          _globalGetXController.roomId.value,
-          _chatController.senderUidFromChatController,
-        );
+            _chatController.senderFromChatController,
+            "[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.",
+            _globalGetXController.roomId.value,
+            _chatController.senderUidFromChatController,
+            true,
+            position);
       } else {
         _chatController.sendMessage(
-          _chatController.senderFromChatController,
-          """[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.
+            _chatController.senderFromChatController,
+            """[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.
 
 [메모] ${descriptionTextController.text}""",
-          _globalGetXController.roomId.value,
-          _chatController.senderUidFromChatController,
-        );
+            _globalGetXController.roomId.value,
+            _chatController.senderUidFromChatController,
+            true,
+            position);
       }
+      print('메세지 전송 $position');
 
       placeTextController.clear();
       descriptionTextController.clear();
@@ -385,5 +389,16 @@ class MapScreenController extends GetxController {
     var currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     UserModel currentUser = await DBService().getUserInfoById(currentUserUid);
     currentUserNickName.value = currentUser.nickName;
+  }
+
+  // 카메라 이동
+  cameraScrollTo(
+      {required NaverMapController naverMapController,
+      required NLatLng target}) {
+    final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
+      target: target,
+      zoom: 15,
+    );
+    naverMapController.updateCamera(cameraUpdate);
   }
 }

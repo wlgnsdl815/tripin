@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -6,10 +7,12 @@ import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
+import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_setting_screen.dart';
+import 'package:tripin/view/screens/chat/map_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 
 class ChatScreen extends GetView<ChatController> {
@@ -25,6 +28,8 @@ class ChatScreen extends GetView<ChatController> {
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
     final scrollController = controller.createScrollController();
+    final MapScreenController _mapScreenController =
+        Get.find<MapScreenController>();
 
     print(
         '_globalGetXController in ChatScreen roomId: ${_globalGetXController.roomId}');
@@ -194,8 +199,9 @@ class ChatScreen extends GetView<ChatController> {
                                             height: 32,
                                             clipBehavior: Clip.antiAlias,
                                             decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
                                             child: (!isMe && showUserName)
                                                 ? Image.network(
                                                     message.sender!.imgUrl
@@ -221,9 +227,10 @@ class ChatScreen extends GetView<ChatController> {
                                                       const EdgeInsets.only(
                                                           bottom: 8.0),
                                                   child: Text(
-                                                      message.sender!.nickName,
-                                                      style: AppTextStyle
-                                                          .body12R()),
+                                                    message.sender!.nickName,
+                                                    style:
+                                                        AppTextStyle.body12R(),
+                                                  ),
                                                 ),
                                               Row(
                                                 crossAxisAlignment:
@@ -239,55 +246,85 @@ class ChatScreen extends GetView<ChatController> {
                                                           horizontal: 6),
                                                       child: Text(
                                                         formattedTime,
-                                                        style: AppTextStyle.body12M(
-                                                            color:
-                                                                PlatformColors
-                                                                    .subtitle4),
+                                                        style: AppTextStyle
+                                                            .body12M(
+                                                          color: PlatformColors
+                                                              .subtitle4,
+                                                        ),
                                                       ),
                                                     ),
-                                                  Expanded(
+                                                  GestureDetector(
+                                                    onTap: message.isMap
+                                                        ? () {
+                                                            Get.toNamed(
+                                                              MapScreen.route,
+                                                              arguments: message
+                                                                  .position,
+                                                            );
+                                                          }
+                                                        : null,
                                                     child: Container(
+                                                      constraints:
+                                                          BoxConstraints(
+                                                        maxWidth: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width /
+                                                            1.5,
+                                                      ),
                                                       padding:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 11,
                                                               vertical: 8),
                                                       decoration: BoxDecoration(
-                                                          borderRadius: isMe
-                                                              ? const BorderRadius
-                                                                  .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                )
-                                                              : const BorderRadius
-                                                                  .only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          10),
+                                                        borderRadius: isMe
+                                                            ? const BorderRadius
+                                                                .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        10),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        10),
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            10),
+                                                              )
+                                                            : const BorderRadius
+                                                                .only(
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                  10,
                                                                 ),
-                                                          color: isMe
-                                                              ? PlatformColors
-                                                                  .chatPrimaryLight
-                                                              : Colors.white,
-                                                          border: Border.all(
-                                                              color: PlatformColors
-                                                                  .subtitle7)),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        10),
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            10),
+                                                              ),
+                                                        color: message.isMap
+                                                            ? PlatformColors
+                                                                .primary
+                                                            : isMe
+                                                                ? PlatformColors
+                                                                    .chatPrimaryLight
+                                                                : Colors.white,
+                                                        border: Border.all(
+                                                          color: PlatformColors
+                                                              .subtitle7,
+                                                        ),
+                                                      ),
                                                       child: Text(
                                                         message.text,
-                                                        style: AppTextStyle
-                                                            .body13M(),
+                                                        softWrap: true,
+                                                        style: AppTextStyle.body13M(
+                                                            color: message.isMap
+                                                                ? Colors.white
+                                                                : PlatformColors
+                                                                    .title),
                                                         maxLines: null,
                                                       ),
                                                     ),
@@ -350,10 +387,16 @@ class ChatScreen extends GetView<ChatController> {
                                 Image.asset('assets/icons/map.png',
                                     width: 15, height: 15),
                                 SizedBox(width: 8),
-                                Text(
-                                  '여행 일정과 장소를 선택해주세요',
-                                  style: AppTextStyle.body13B(
-                                      color: PlatformColors.primary),
+                                Obx(
+                                  () => Text(
+                                    _mapScreenController.dateRange.isEmpty
+                                        ? '여행 일정과 장소를 선택해주세요'
+                                        : '일정 ${DateFormat('y.MM.dd').format(_mapScreenController.dateRange.first)} ~ ${DateFormat('MM.dd').format(_mapScreenController.dateRange.last)} l 장소 ${_mapScreenController.selectedCity}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyle.body13B(
+                                        color: PlatformColors.primary),
+                                  ),
                                 ),
                                 Spacer(),
                                 Icon(
@@ -409,6 +452,8 @@ class ChatScreen extends GetView<ChatController> {
                                       controller.messageController.text,
                                       _globalGetXController.roomId.value,
                                       _authController.userInfo.value!.uid,
+                                      false,
+                                      null,
                                     );
                                   },
                                   icon: Image.asset(

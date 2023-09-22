@@ -38,7 +38,8 @@ class AuthController extends GetxController {
     try {
       UserModel? res = await DBService().getUserInfoById(uid);
       if (res != null) {
-        List<ChatRoom?> chatRoomList = await Get.find<ChatListController>().readJoinedChatRoom(res.joinedRoomIdList);
+        List<ChatRoom?> chatRoomList = await Get.find<ChatListController>()
+            .readJoinedChatRoom(res.joinedRoomIdList);
         res.joinedTrip = chatRoomList;
 
         log('$res', name: 'getUserInfo :: res');
