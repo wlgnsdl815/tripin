@@ -273,11 +273,12 @@ class MapScreenController extends GetxController {
           markerList.firstWhere((model) => model.id == nMarker.info.id);
 
       nMarker.setIcon(
-        NOverlayImage.fromAssetImage('assets/icons/map_pin.png'),
+        NOverlayImage.fromAssetImage(
+            'assets/pins_on_map/${correspondingModel.order}.png'),
       );
       // 아이콘 업데이트
       // updateIcon(nMarker, context);
-      nMarker.setAnchor(NPoint(0.48.w, 0.66.h));
+      nMarker.setAnchor(NPoint(0.46.w, 0.66.h));
       nMarker.setSize(Size(70.w, 70.h));
 
       final infoText = correspondingModel.order.toString();
