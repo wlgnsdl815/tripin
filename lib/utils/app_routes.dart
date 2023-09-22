@@ -11,6 +11,7 @@ import 'package:tripin/view/screens/chat/select_friends_screen.dart';
 import 'package:tripin/view/screens/friend_screen.dart';
 import 'package:tripin/view/screens/home_screen.dart';
 import 'package:tripin/view/screens/login_screen.dart';
+import 'package:tripin/view/screens/my_page_screen.dart';
 import 'package:tripin/view/screens/splash_screen.dart';
 
 class AppRoutes {
@@ -63,5 +64,10 @@ class AppRoutes {
       name: AppScreens.eventDetail,
       page: () => EventDetailPage(),
     ),
+        GetPage(
+      name: AppScreens.myPage,
+      page: () => MyPageScreen(),
+    ),
+
   ];
 }

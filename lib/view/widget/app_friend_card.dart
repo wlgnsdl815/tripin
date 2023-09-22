@@ -43,7 +43,17 @@ class AppFriend extends StatelessWidget {
                       } else if (snapshot.hasError) {
                         return Text('오류 발생: ${snapshot.error}');
                       } else if (!snapshot.hasData || snapshot.data == null) {
-                        return SizedBox();
+                        return AspectRatio(
+                          aspectRatio: 1 / 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)
+                              ),
+                              child: Image(image: AssetImage('assets/icons/chat_default.png'))),
+                          ));
                       } else {
                         return AspectRatio(
                           aspectRatio: 1 / 1,
@@ -70,20 +80,24 @@ class AppFriend extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              width: MediaQuery.of(context).size.width / 2.5,
-              height: MediaQuery.of(context).size.height / 20,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(80),
-                  bottom: Radius.circular(80),
+          Visibility(
+            visible: message.isNotEmpty,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: 
+              Container(
+                width: MediaQuery.of(context).size.width / 2.5,
+                height: MediaQuery.of(context).size.height / 20,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(80),
+                    bottom: Radius.circular(80),
+                  ),
+                  border: Border.all(color: color),
                 ),
-                border: Border.all(color: color),
-              ),
-              child: Center(
-                child: Text(message, style: TextStyle(color: color),),
+                child: Center(
+                  child: Text(message, style: TextStyle(color: color),),
+                ),
               ),
             ),
           ),

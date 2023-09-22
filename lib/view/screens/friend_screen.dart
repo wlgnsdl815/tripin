@@ -231,10 +231,14 @@ class FriendScreen extends GetView<FriendController> {
                                     padding:
                                         const EdgeInsets.fromLTRB(8, 8, 40, 8),
                                     child: GestureDetector(
-                                      onTap: (){
-                                        Get.to(ProfileDetailScreen(userModel: controller.followingList[index]), arguments: [controller
-                                            .followingList[
-                                        index]]);
+                                      onTap: () {
+                                        Get.to(
+                                            ProfileDetailScreen(
+                                                userModel: controller
+                                                    .followingList[index]),
+                                            arguments: [
+                                              controller.followingList[index]
+                                            ]);
                                       },
                                       child: Row(
                                         mainAxisAlignment:
@@ -255,9 +259,10 @@ class FriendScreen extends GetView<FriendController> {
                                                           Clip.antiAlias,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                20),
-                                                        color: Colors.transparent,
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        color:
+                                                            Colors.transparent,
                                                       ),
                                                       child: controller
                                                                       .followingList[
@@ -270,34 +275,36 @@ class FriendScreen extends GetView<FriendController> {
                                                                   .imgUrl
                                                                   .isNotEmpty
                                                           ? Container(
-                                                              clipBehavior:
-                                                                  Clip.antiAlias,
+                                                              clipBehavior: Clip
+                                                                  .antiAlias,
                                                               decoration: BoxDecoration(
                                                                   borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20)),
+                                                                      BorderRadius.circular(
+                                                                          20)),
                                                               child:
                                                                   Image.network(
                                                                 controller
                                                                     .followingList[
                                                                         index]
                                                                     .imgUrl,
-                                                                fit: BoxFit.fill,
+                                                                fit:
+                                                                    BoxFit.fill,
                                                               ))
                                                           : Container(
-                                                              clipBehavior:
-                                                                  Clip.antiAlias,
+                                                              clipBehavior: Clip
+                                                                  .antiAlias,
                                                               decoration: BoxDecoration(
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
-                                                                              5)),
+                                                                              20)),
                                                               child: Image(
-                                                                image: AssetImage(
-                                                                  'assets/images/profile_image.png',
+                                                                image:
+                                                                    AssetImage(
+                                                                  'assets/icons/chat_default.png',
                                                                 ),
-                                                                fit: BoxFit.fill,
+                                                                fit:
+                                                                    BoxFit.fill,
                                                               ))),
                                                 ),
                                               ),
@@ -305,40 +312,55 @@ class FriendScreen extends GetView<FriendController> {
                                                 padding: const EdgeInsets.only(
                                                     left: 16.0),
                                                 child: Text(
-                                                  controller.followingList[index]
+                                                  controller
+                                                      .followingList[index]
                                                       .nickName,
                                                   style: AppTextStyle.body16R(),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          Container(
-                                            constraints: BoxConstraints(
-                                              maxWidth: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  3, // 최대 너비 설정
-                                            ),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.vertical(
-                                                top: Radius.circular(80),
-                                                bottom: Radius.circular(80),
-                                              ),
-                                              border: Border.all(
-                                                  color: PlatformColors.primary),
-                                            ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  controller.followingList[index]
-                                                      .message,
-                                                  overflow: TextOverflow.ellipsis,
+                                          // if (controller.followingList[index]
+                                          //             .message !=
+                                          //         null &&
+                                          //     controller.followingList[index]
+                                          //         .message.isNotEmpty)
+                                            Visibility(
+                                              visible: controller.followingList[index].message.isNotEmpty && controller.followingList[index]
+                                                      .message !=
+                                                  null,
+                                              child: Container(
+                                                constraints: BoxConstraints(
+                                                  maxWidth: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      3,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.vertical(
+                                                    top: Radius.circular(80),
+                                                    bottom: Radius.circular(80),
+                                                  ),
+                                                  border: Border.all(
+                                                    color: PlatformColors.primary,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8.0),
+                                                    child: Text(
+                                                      controller
+                                                          .followingList[index]
+                                                          .message,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          )
+                                            ), //   Container(),
                                         ],
                                       ),
                                     ),
