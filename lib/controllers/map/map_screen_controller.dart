@@ -418,7 +418,7 @@ class MapScreenController extends GetxController {
 
     cameraScrollTo(
         naverMapController: nMapController.value!,
-        target: markerList.first.position);
+        target: nMarkerList.first.position);
 
     // 필터링 된 마커리스트로 다시 그린다.
     showMarkers();
