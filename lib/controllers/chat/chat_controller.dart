@@ -42,7 +42,7 @@ class ChatController extends GetxController {
 
   // 메시지 전송 메서드
   void sendMessage(String sender, String text, String roomId, String senderUid,
-      bool isMap, NLatLng? position) async {
+      bool isMap, NLatLng? position, int? dateIndex) async {
     _senderFromChatController.value = sender;
     _senderUidFromChatController.value = senderUid;
     print('sendMessage 메서드 호출됨');
@@ -79,6 +79,7 @@ class ChatController extends GetxController {
       isRead: initialReadUser,
       isMap: isMap,
       position: position,
+      dateIndex: dateIndex,
     );
 
     DatabaseReference newMessageRef = ref.push();

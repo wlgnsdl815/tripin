@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +11,6 @@ import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_setting_screen.dart';
-import 'package:tripin/view/screens/chat/map_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 
 class ChatScreen extends GetView<ChatController> {
@@ -257,9 +255,15 @@ class ChatScreen extends GetView<ChatController> {
                                                     onTap: message.isMap
                                                         ? () {
                                                             Get.toNamed(
-                                                              MapScreen.route,
-                                                              arguments: message
-                                                                  .position,
+                                                              AppScreens.map,
+                                                              arguments: {
+                                                                'position':
+                                                                    message
+                                                                        .position,
+                                                                'dateIndex':
+                                                                    message
+                                                                        .dateIndex,
+                                                              },
                                                             );
                                                           }
                                                         : null,
@@ -453,6 +457,7 @@ class ChatScreen extends GetView<ChatController> {
                                       _globalGetXController.roomId.value,
                                       _authController.userInfo.value!.uid,
                                       false,
+                                      null,
                                       null,
                                     );
                                   },

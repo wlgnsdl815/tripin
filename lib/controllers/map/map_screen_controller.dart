@@ -32,7 +32,7 @@ class MapScreenController extends GetxController {
   Rxn<DateTimeRange> dateRangeFromFirebase = Rxn();
   RxString description = ''.obs;
   RxString placeText = ''.obs;
-  // Rxn<NLatLng> currentMarkerPosition = Rxn();
+  Rxn<NaverMapController> nMapController = Rxn();
 
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
@@ -91,7 +91,7 @@ class MapScreenController extends GetxController {
     markerList.value = markers..sort((a, b) => a.order.compareTo(b.order));
 
     // selectedDayIndex에 해당하는 마커만 필터링
-    nMarkerList.value = markerList.value
+    nMarkerList.value = markerList
         .where((marker) => marker.dateIndex == selectedDayIndex.value)
         .map(
           (markerModel) => NMarker(
@@ -100,7 +100,7 @@ class MapScreenController extends GetxController {
           ),
         )
         .toList();
-    print("Markers from Firestore: ${markerList.value.length}");
+    print("Markers from Firestore: ${markerList.length}");
   }
 
   Future<Position> getMyLocation() async {
@@ -168,22 +168,26 @@ class MapScreenController extends GetxController {
       await ref.set(newMarker.toMap());
       if (descriptionTextController.text == '') {
         _chatController.sendMessage(
-            _chatController.senderFromChatController,
-            "[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.",
-            _globalGetXController.roomId.value,
-            _chatController.senderUidFromChatController,
-            true,
-            position);
+          _chatController.senderFromChatController,
+          "[지도] '핀${markerList.length}: ${placeText}'이(가) 추가되었습니다.",
+          _globalGetXController.roomId.value,
+          _chatController.senderUidFromChatController,
+          true,
+          position,
+          selectedDayIndex.value,
+        );
       } else {
         _chatController.sendMessage(
-            _chatController.senderFromChatController,
-            """[지도] '핀${markerList.length + 1}: ${placeText}'이(가) 추가되었습니다.
+          _chatController.senderFromChatController,
+          """[지도] '핀${markerList.length}: ${placeText}'이(가) 추가되었습니다.
 
 [메모] ${descriptionTextController.text}""",
-            _globalGetXController.roomId.value,
-            _chatController.senderUidFromChatController,
-            true,
-            position);
+          _globalGetXController.roomId.value,
+          _chatController.senderUidFromChatController,
+          true,
+          position,
+          selectedDayIndex.value,
+        );
       }
       print('메세지 전송 $position');
 
@@ -191,6 +195,15 @@ class MapScreenController extends GetxController {
       descriptionTextController.clear();
       Get.back();
 
+      // 새로 만든 부분
+      // nMapController가 연결되면
+      if (nMapController.value != null) {
+        showMarkers();
+        cameraScrollTo(
+          naverMapController: nMapController.value!,
+          target: position,
+        );
+      }
       print('timeStamps length: ${timeStamps.length}');
       print('index: $selectedDayIndex.value');
       print('userNickName: $currentUserNickName');
@@ -198,6 +211,27 @@ class MapScreenController extends GetxController {
     } else {
       print('Error: Invalid index for timeStamps list.');
     }
+  }
+
+  void showMarkers() {
+    nMapController.value!.addOverlayAll(nMarkerList.toSet());
+
+    // 마커 아이디에 맞게 정보창을 띄운다.
+    for (NMarker nMarker in nMarkerList) {
+      MarkerModel correspondingModel =
+          markerList.firstWhere((model) => model.id == nMarker.info.id);
+
+      nMarker.setIcon(
+        NOverlayImage.fromAssetImage(
+            'assets/pins_on_map/${correspondingModel.order}.png'),
+      );
+      // 아이콘 업데이트
+      nMarker.setAnchor(NPoint(0.46.w, 0.66.h));
+      nMarker.setSize(Size(70.w, 70.h));
+    }
+    print("네이버 맵 로딩됨!");
+    // 경로 표시
+    addArrowheadPath(nMapController.value!, nMarkerList);
   }
 
   upDateAndGetDescription(String markerId) async {
@@ -273,18 +307,13 @@ class MapScreenController extends GetxController {
           markerList.firstWhere((model) => model.id == nMarker.info.id);
 
       nMarker.setIcon(
-        NOverlayImage.fromAssetImage('assets/icons/map_pin.png'),
+        NOverlayImage.fromAssetImage(
+            'assets/pins_on_map/${correspondingModel.order}.png'),
       );
       // 아이콘 업데이트
       // updateIcon(nMarker, context);
-      nMarker.setAnchor(NPoint(0.48.w, 0.66.h));
+      nMarker.setAnchor(NPoint(0.46.w, 0.66.h));
       nMarker.setSize(Size(70.w, 70.h));
-
-      final infoText = correspondingModel.order.toString();
-      // final infoWindow =
-      //     NInfoWindow.onMarker(id: nMarker.info.id, text: infoText);
-
-      // nMarker.openInfoWindow(infoWindow, align: NAlign.center);
     }
   }
 
@@ -317,7 +346,6 @@ class MapScreenController extends GetxController {
         dateRange.map((date) => date.millisecondsSinceEpoch).toList();
 
     timeStamps.value = _timestamps;
-    print(timeStamps.value);
 
     // Firestore에 업데이트
     updateDateRangeInFirestore(_timestamps);
@@ -344,6 +372,7 @@ class MapScreenController extends GetxController {
     }
   }
 
+  // 파이어베이스에서 날짜 범위 가져옴
   getDatesFromFirebase() async {
     print(_globalGetXController.roomId.value);
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -376,13 +405,23 @@ class MapScreenController extends GetxController {
     print("onDayButtonTap called with index: $index");
     selectedDayIndex.value = index;
 
+    // 화면에 보이던 오버레이(마커, 경로) 삭제. 삭제하고 마커만 다시 그린다
+    nMapController.value!.clearOverlays();
+
     // 선택된 날짜가 변경되면 마커 목록을 업데이트합니다.
-    nMarkerList.value = markerList.value
+    nMarkerList.value = markerList
         .where((marker) => marker.dateIndex == selectedDayIndex.value)
         .map((markerModel) =>
             NMarker(id: markerModel.id, position: markerModel.position))
         .toList();
-    print("Updated nMarkerList: ${nMarkerList.value.length}");
+    print("Updated nMarkerList: ${nMarkerList.length}");
+
+    cameraScrollTo(
+        naverMapController: nMapController.value!,
+        target: markerList.first.position);
+
+    // 필터링 된 마커리스트로 다시 그린다.
+    showMarkers();
   }
 
   getCurrentUserNickName() async {
@@ -392,9 +431,11 @@ class MapScreenController extends GetxController {
   }
 
   // 카메라 이동
-  cameraScrollTo(
-      {required NaverMapController naverMapController,
-      required NLatLng target}) {
+  cameraScrollTo({
+    required NaverMapController naverMapController,
+    required NLatLng target,
+    int? index,
+  }) {
     final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
       target: target,
       zoom: 15,
