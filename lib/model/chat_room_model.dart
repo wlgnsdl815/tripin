@@ -10,7 +10,7 @@ class ChatRoom {
   DateTime? startDate;
   DateTime? endDate;
   String city;
-  List dateRange;
+  List<DateTime> dateRange;
   String roomTitle;
   String? imgUrl;
 
@@ -45,8 +45,10 @@ class ChatRoom {
 
   factory ChatRoom.fromMap(Map<String, dynamic> map,
       {List<UserModel>? participants}) {
+      List? intDateRange = map['dateRange'];
     DateTime? startDate;
     DateTime? endDate;
+    List<DateTime> dateRange = [];
 
     if (map['startDate'] != null) {
       startDate = DateTime.fromMillisecondsSinceEpoch(map['startDate']);
@@ -55,6 +57,13 @@ class ChatRoom {
     if (map['endDate'] != null) {
       endDate = DateTime.fromMillisecondsSinceEpoch(map['endDate']);
     }
+
+    if (intDateRange != null) {
+      intDateRange.forEach((element) { 
+        dateRange.add(DateTime.fromMillisecondsSinceEpoch(element));
+      });
+    }
+
 
     return ChatRoom(
       roomId: map['roomId'] as String,
@@ -65,7 +74,7 @@ class ChatRoom {
       startDate: startDate, // startDate 추가
       endDate: endDate,
       city: map['city'] ?? '',
-      dateRange: map['dateRange'] ?? [],
+      dateRange: dateRange,
       roomTitle: map['roomTitle'] ?? '',
       imgUrl: map['imgUrl'] ?? '',
     );
