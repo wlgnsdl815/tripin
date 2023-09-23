@@ -91,7 +91,7 @@ class MapScreenController extends GetxController {
     markerList.value = markers..sort((a, b) => a.order.compareTo(b.order));
 
     // selectedDayIndex에 해당하는 마커만 필터링
-    nMarkerList.value = markerList.value
+    nMarkerList.value = markerList
         .where((marker) => marker.dateIndex == selectedDayIndex.value)
         .map(
           (markerModel) => NMarker(
@@ -100,7 +100,7 @@ class MapScreenController extends GetxController {
           ),
         )
         .toList();
-    print("Markers from Firestore: ${markerList.value.length}");
+    print("Markers from Firestore: ${markerList.length}");
   }
 
   Future<Position> getMyLocation() async {
@@ -314,12 +314,6 @@ class MapScreenController extends GetxController {
       // updateIcon(nMarker, context);
       nMarker.setAnchor(NPoint(0.46.w, 0.66.h));
       nMarker.setSize(Size(70.w, 70.h));
-
-      final infoText = correspondingModel.order.toString();
-      // final infoWindow =
-      //     NInfoWindow.onMarker(id: nMarker.info.id, text: infoText);
-
-      // nMarker.openInfoWindow(infoWindow, align: NAlign.center);
     }
   }
 
@@ -352,7 +346,6 @@ class MapScreenController extends GetxController {
         dateRange.map((date) => date.millisecondsSinceEpoch).toList();
 
     timeStamps.value = _timestamps;
-    print(timeStamps.value);
 
     // Firestore에 업데이트
     updateDateRangeInFirestore(_timestamps);
@@ -379,6 +372,7 @@ class MapScreenController extends GetxController {
     }
   }
 
+  // 파이어베이스에서 날짜 범위 가져옴
   getDatesFromFirebase() async {
     print(_globalGetXController.roomId.value);
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -415,12 +409,16 @@ class MapScreenController extends GetxController {
     nMapController.value!.clearOverlays();
 
     // 선택된 날짜가 변경되면 마커 목록을 업데이트합니다.
-    nMarkerList.value = markerList.value
+    nMarkerList.value = markerList
         .where((marker) => marker.dateIndex == selectedDayIndex.value)
         .map((markerModel) =>
             NMarker(id: markerModel.id, position: markerModel.position))
         .toList();
-    print("Updated nMarkerList: ${nMarkerList.value.length}");
+    print("Updated nMarkerList: ${nMarkerList.length}");
+
+    cameraScrollTo(
+        naverMapController: nMapController.value!,
+        target: markerList.first.position);
 
     // 필터링 된 마커리스트로 다시 그린다.
     showMarkers();

@@ -68,7 +68,6 @@ class MapScreen extends GetView<MapScreenController> {
                 return Center(child: CircularProgressIndicator()); // 로딩 중 표시
               }
               return NaverMap(
-                // key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                 onSymbolTapped: (symbolInfo) async {
                   _handleTap(symbolInfo.position, symbolInfo.caption);
                 },

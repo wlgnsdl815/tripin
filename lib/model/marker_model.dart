@@ -37,6 +37,9 @@ class MarkerModel {
 
   // 모델 객체를 Firestore 문서로 변환
   Map<String, dynamic> toMap() {
+    if (descriptions.length == 1 && descriptions[0] == '') {
+      descriptions.clear();
+    }
     return {
       'id': id,
       'latitude': position.latitude,

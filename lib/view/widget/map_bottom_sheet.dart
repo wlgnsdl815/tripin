@@ -140,27 +140,20 @@ class MapBottomSheet extends GetView<MapScreenController> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  constraints: BoxConstraints(maxWidth: 210),
-                                  child: Text(
-                                    '${marker.title}',
-                                    style: AppTextStyle.header20(),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    '장소삭제',
-                                    style: AppTextStyle.body14M(
-                                      color: PlatformColors.primary,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: Text(
+                              '${marker.title}',
+                              style: AppTextStyle.header20(),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              '장소삭제',
+                              style: AppTextStyle.body14M(
+                                color: PlatformColors.primary,
+                              ),
                             ),
                           ),
                         ],
@@ -202,34 +195,55 @@ class MapBottomSheet extends GetView<MapScreenController> {
                                 );
                               } else {
                                 return Container(
-                                  decoration: BoxDecoration(
-                                    color: PlatformColors.subtitle8,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ...updatedMarker.descriptions
-                                            .where((desc) =>
-                                                desc.trim().isNotEmpty)
-                                            .map(
-                                              (desc) => Text(
-                                                desc,
+                                  child: ListView.separated(
+                                    separatorBuilder: (context, index) =>
+                                        SizedBox(height: 11.h),
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount:
+                                        updatedMarker.descriptions.length,
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: PlatformColors.subtitle8,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w, vertical: 10.h),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                updatedMarker
+                                                    .descriptions[index],
                                                 style: AppTextStyle.body14M(),
                                               ),
-                                            )
-                                            .toList(),
-                                        SizedBox(height: 5.h),
-                                        Text(
-                                          updatedMarker.userNickName,
-                                          style: AppTextStyle.body13M(
-                                              color: PlatformColors.subtitle2),
+                                              SizedBox(height: 5.h),
+                                              Text(
+                                                updatedMarker.userNickName,
+                                                style: AppTextStyle.body13M(
+                                                    color: PlatformColors
+                                                        .subtitle2),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    },
+
+                                    // children: [
+                                    //   ...updatedMarker.descriptions
+                                    //       .where((desc) =>
+                                    //           desc.trim().isNotEmpty)
+                                    //       .map(
+                                    //         (desc) =>
+                                    //       )
+                                    //       .toList(),
+                                    //   SizedBox(height: 5.h),
+                                    // ],
                                   ),
                                 );
                               }

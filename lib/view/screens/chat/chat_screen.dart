@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +11,6 @@ import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/chat/chat_setting_screen.dart';
-import 'package:tripin/view/screens/chat/map_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 
 class ChatScreen extends GetView<ChatController> {
