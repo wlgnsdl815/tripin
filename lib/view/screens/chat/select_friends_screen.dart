@@ -69,42 +69,50 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
               double targetHeight =
                   controller.participants.isNotEmpty ? 80.h : 0.0;
               controller.containerHeight.value = targetHeight;
-
               return AnimatedContainer(
-                duration: Duration(milliseconds: 300),
+                duration: Duration(milliseconds: 200),
                 height: controller.containerHeight.value,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          '선택 ',
-                          style: AppTextStyle.body16M(
-                              color: PlatformColors.subtitle),
+                child: SingleChildScrollView(
+                  physics: NeverScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        child: Row(
+                          children: [
+                            Text(
+                              '선택 ',
+                              style: AppTextStyle.body16M(
+                                  color: PlatformColors.subtitle),
+                            ),
+                            Text(
+                              '${controller.participants.length}',
+                              style: AppTextStyle.body16M(
+                                  color: PlatformColors.primary),
+                            ),
+                          ],
                         ),
-                        Text(
-                          '${controller.participants.length}',
-                          style: AppTextStyle.body16M(
-                              color: PlatformColors.primary),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12.h),
-                    Container(
-                      height: 47.0.h,
-                      child: ListView.separated(
-                        separatorBuilder: (context, index) =>
-                            SizedBox(width: 16.w),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.participants.length,
-                        itemBuilder: (context, index) {
-                          return ListProfileContainer(
-                            user: controller.participants[index],
-                          );
-                        },
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 12.h),
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        child: Container(
+                          height: 47.0.h,
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                SizedBox(width: 16.w),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.participants.length,
+                            itemBuilder: (context, index) {
+                              return ListProfileContainer(
+                                user: controller.participants[index],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }),
