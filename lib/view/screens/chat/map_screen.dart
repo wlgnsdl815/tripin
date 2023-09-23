@@ -134,7 +134,7 @@ class MapScreen extends GetView<MapScreenController> {
                       ),
                       Obx(
                         () => Text(
-                          controller.selectedCity.value,
+                          _globalGetXController.selectedCity.value,
                           style: AppTextStyle.body17M(),
                         ),
                       ),
@@ -157,15 +157,15 @@ class MapScreen extends GetView<MapScreenController> {
                                   return Obx(
                                     () => GestureDetector(
                                       onTap: () async {
-                                        controller.selectedCity.value =
-                                            citiesName[index];
+                                        _globalGetXController.selectedCity
+                                            .value = citiesName[index];
                                         await _selectFriendsController
                                             .upDateCity(
-                                                _globalGetXController
-                                                    .roomId.value,
-                                                citiesName[index]); // 도시 업데이트
+                                          _globalGetXController.roomId.value,
+                                          citiesName[index],
+                                        ); // 도시 업데이트
                                         print(
-                                            '터치: ${controller.selectedCity.value}');
+                                            '터치: ${_globalGetXController.selectedCity.value}');
                                         controller.expansionTileController
                                             .collapse();
                                         controller.selectedCityLatLng.value =
@@ -180,7 +180,8 @@ class MapScreen extends GetView<MapScreenController> {
                                             .updateCamera(cameraUpdate);
                                       },
                                       child: Container(
-                                        color: controller.selectedCity.value ==
+                                        color: _globalGetXController
+                                                    .selectedCity.value ==
                                                 citiesName[index]
                                             ? PlatformColors.primary
                                             : Colors.transparent,
@@ -351,12 +352,6 @@ class MapScreen extends GetView<MapScreenController> {
               backgroundColor: Colors.white,
               heroTag: 'current_location_Button',
               onPressed: () {
-                // // 사용자 현재위치로 카메라 업데이트
-                // final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
-                //   target: controller.myPosition.value,
-                //   zoom: 15,
-                // );
-                // naverMapController.updateCamera(cameraUpdate);
                 controller.cameraScrollTo(
                   naverMapController: naverMapController,
                   target: controller.myPosition.value,

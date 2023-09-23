@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
@@ -393,7 +392,7 @@ class ChatScreen extends GetView<ChatController> {
                                   () => Text(
                                     _mapScreenController.dateRange.isEmpty
                                         ? '여행 일정과 장소를 선택해주세요'
-                                        : '일정 ${DateFormat('y.MM.dd').format(_mapScreenController.dateRange.first)} ~ ${DateFormat('MM.dd').format(_mapScreenController.dateRange.last)} l 장소 ${_mapScreenController.selectedCity}',
+                                        : '일정 ${DateFormat('y.MM.dd').format(_mapScreenController.dateRange.first)} ~ ${DateFormat('MM.dd').format(_mapScreenController.dateRange.last)} l 장소 ${_globalGetXController.selectedCity}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: AppTextStyle.body13B(

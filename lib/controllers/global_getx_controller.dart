@@ -4,6 +4,7 @@ class GlobalGetXController extends GetxService {
   RxString roomId = ''.obs;
   RxString roomTitle = ''.obs;
   RxString roomImageUrl = ''.obs;
+  RxString selectedCity = '미정'.obs;
 
   setRoomId(String id) {
     roomId.value = id;
@@ -16,5 +17,9 @@ class GlobalGetXController extends GetxService {
 
   setRoomImageUrl(String url) {
     roomImageUrl.value = url;
+  }
+
+  setSelectedCity(String city) {
+    selectedCity.value = city;
   }
 }

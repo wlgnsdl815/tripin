@@ -7,7 +7,6 @@ import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
 
 import '../../service/db_service.dart';
-import '../auth_controller.dart';
 
 class ChatListController extends GetxController {
   final roomId = ''.obs;

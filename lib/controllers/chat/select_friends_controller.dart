@@ -63,11 +63,6 @@ class SelectFriendsController extends GetxController {
     List<String> defaultRoomTitle =
         participants.map((e) => e.nickName).toList();
 
-    // // 사용자 데이터 업데이트
-    // participants.value = userData
-    //     .where((user) => participantsUidList.contains(user.uid))
-    //     .toList();
-
     roomTitle.value = defaultRoomTitle.join(', ');
 
     _globalGetXController.setRoomTitle(roomTitle.value);
