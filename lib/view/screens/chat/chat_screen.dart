@@ -257,9 +257,15 @@ class ChatScreen extends GetView<ChatController> {
                                                     onTap: message.isMap
                                                         ? () {
                                                             Get.toNamed(
-                                                              MapScreen.route,
-                                                              arguments: message
-                                                                  .position,
+                                                              AppScreens.map,
+                                                              arguments: {
+                                                                'position':
+                                                                    message
+                                                                        .position,
+                                                                'dateIndex':
+                                                                    message
+                                                                        .dateIndex,
+                                                              },
                                                             );
                                                           }
                                                         : null,
@@ -453,6 +459,7 @@ class ChatScreen extends GetView<ChatController> {
                                       _globalGetXController.roomId.value,
                                       _authController.userInfo.value!.uid,
                                       false,
+                                      null,
                                       null,
                                     );
                                   },

@@ -195,7 +195,11 @@ class MapBottomSheet extends GetView<MapScreenController> {
                               if (updatedMarker.descriptions
                                   .where((desc) => desc.trim().isNotEmpty)
                                   .isEmpty) {
-                                return Text('작성된 메모가 없습니다.');
+                                return Text(
+                                  '아직 작성된 메모가 없습니다.',
+                                  style: AppTextStyle.body13M(
+                                      color: PlatformColors.subtitle4),
+                                );
                               } else {
                                 return Container(
                                   decoration: BoxDecoration(

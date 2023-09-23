@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:tripin/const/cities.dart';
-import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
@@ -29,13 +28,14 @@ class MapScreen extends GetView<MapScreenController> {
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
     late NaverMapController naverMapController;
-    final NLatLng? positionFromMessage = Get.arguments;
+    final NLatLng? positionFromMessage = Get.arguments['position'];
+    final int? dateIndexFromArgs = Get.arguments['dateIndex'];
+    print('인덱스: $dateIndexFromArgs');
 
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
-    final ChatController _chatController = Get.find<ChatController>();
     print(
         '_globalGetXController in Map Screen roomId: ${_globalGetXController.roomId}');
 
@@ -65,7 +65,7 @@ class MapScreen extends GetView<MapScreenController> {
                 return Center(child: CircularProgressIndicator()); // 로딩 중 표시
               }
               return NaverMap(
-                key: ValueKey(DateTime.now().millisecondsSinceEpoch),
+                // key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                 onSymbolTapped: (symbolInfo) async {
                   _handleTap(symbolInfo.position, symbolInfo.caption);
                 },
@@ -94,15 +94,12 @@ class MapScreen extends GetView<MapScreenController> {
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
+                  controller.nMapController.value = NMapController;
+                  if (dateIndexFromArgs != null) {
+                    controller.onDayButtonTap(index: dateIndexFromArgs);
+                  }
                   print(naverMapController);
-                  naverMapController.addOverlayAll(_nMarkerList.toSet());
-
-                  // 정보창 표시(마커 포함)
-                  controller.showInfoWindow(_nMarkerList, context);
-                  print("네이버 맵 로딩됨!");
-                  // 경로 표시
-                  controller.addArrowheadPath(naverMapController, _nMarkerList);
-
+                  controller.showMarkers();
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
                       print('탭한 마커 id: ${tappedMarker.info.id}');
