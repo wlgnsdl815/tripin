@@ -38,6 +38,8 @@ class CustomDatePicker extends StatelessWidget {
                   _mapScreenController.getDatesBetweenAndUpdate(start, end);
                   _selectFriendsController.updateStartAndEndDate(
                       _globalGetXController.roomId.value, start, end);
+
+                  _mapScreenController.nMapController.value!.clearOverlays();
                 },
                 onCancle: () {},
                 top: 0.3,

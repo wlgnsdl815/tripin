@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:tripin/const/cities.dart';
-import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
@@ -29,13 +28,17 @@ class MapScreen extends GetView<MapScreenController> {
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
     late NaverMapController naverMapController;
-    final NLatLng? positionFromMessage = Get.arguments;
+    final NLatLng? positionFromMessage =
+        Get.arguments != null ? Get.arguments['position'] : null;
+
+    final int? dateIndexFromArgs =
+        Get.arguments != null ? Get.arguments['dateIndex'] : null;
+    print('인덱스: $dateIndexFromArgs');
 
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
-    final ChatController _chatController = Get.find<ChatController>();
     print(
         '_globalGetXController in Map Screen roomId: ${_globalGetXController.roomId}');
 
@@ -65,7 +68,6 @@ class MapScreen extends GetView<MapScreenController> {
                 return Center(child: CircularProgressIndicator()); // 로딩 중 표시
               }
               return NaverMap(
-                key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                 onSymbolTapped: (symbolInfo) async {
                   _handleTap(symbolInfo.position, symbolInfo.caption);
                 },
@@ -94,15 +96,12 @@ class MapScreen extends GetView<MapScreenController> {
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
+                  this.controller.nMapController.value = NMapController;
+                  if (dateIndexFromArgs != null) {
+                    controller.onDayButtonTap(index: dateIndexFromArgs);
+                  }
                   print(naverMapController);
-                  naverMapController.addOverlayAll(_nMarkerList.toSet());
-
-                  // 정보창 표시(마커 포함)
-                  controller.showInfoWindow(_nMarkerList, context);
-                  print("네이버 맵 로딩됨!");
-                  // 경로 표시
-                  controller.addArrowheadPath(naverMapController, _nMarkerList);
-
+                  controller.showMarkers();
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
                       print('탭한 마커 id: ${tappedMarker.info.id}');
@@ -135,7 +134,7 @@ class MapScreen extends GetView<MapScreenController> {
                       ),
                       Obx(
                         () => Text(
-                          controller.selectedCity.value,
+                          _globalGetXController.selectedCity.value,
                           style: AppTextStyle.body17M(),
                         ),
                       ),
@@ -158,15 +157,15 @@ class MapScreen extends GetView<MapScreenController> {
                                   return Obx(
                                     () => GestureDetector(
                                       onTap: () async {
-                                        controller.selectedCity.value =
-                                            citiesName[index];
+                                        _globalGetXController.selectedCity
+                                            .value = citiesName[index];
                                         await _selectFriendsController
                                             .upDateCity(
-                                                _globalGetXController
-                                                    .roomId.value,
-                                                citiesName[index]); // 도시 업데이트
+                                          _globalGetXController.roomId.value,
+                                          citiesName[index],
+                                        ); // 도시 업데이트
                                         print(
-                                            '터치: ${controller.selectedCity.value}');
+                                            '터치: ${_globalGetXController.selectedCity.value}');
                                         controller.expansionTileController
                                             .collapse();
                                         controller.selectedCityLatLng.value =
@@ -181,7 +180,8 @@ class MapScreen extends GetView<MapScreenController> {
                                             .updateCamera(cameraUpdate);
                                       },
                                       child: Container(
-                                        color: controller.selectedCity.value ==
+                                        color: _globalGetXController
+                                                    .selectedCity.value ==
                                                 citiesName[index]
                                             ? PlatformColors.primary
                                             : Colors.transparent,
@@ -352,12 +352,6 @@ class MapScreen extends GetView<MapScreenController> {
               backgroundColor: Colors.white,
               heroTag: 'current_location_Button',
               onPressed: () {
-                // // 사용자 현재위치로 카메라 업데이트
-                // final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
-                //   target: controller.myPosition.value,
-                //   zoom: 15,
-                // );
-                // naverMapController.updateCamera(cameraUpdate);
                 controller.cameraScrollTo(
                   naverMapController: naverMapController,
                   target: controller.myPosition.value,
