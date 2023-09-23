@@ -19,6 +19,7 @@ class ChatController extends GetxController {
       Get.find<SelectFriendsController>();
   RxString _senderFromChatController = ''.obs;
   RxString _senderUidFromChatController = ''.obs;
+  Rx<String> chatMessage = ''.obs;
 
   final functions = FirebaseFunctions.instance;
   // final ScrollController scrollController = ScrollController();

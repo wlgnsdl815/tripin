@@ -31,8 +31,6 @@ class ChatScreen extends GetView<ChatController> {
 
     print(
         '_globalGetXController in ChatScreen roomId: ${_globalGetXController.roomId}');
-    final ChatListController _chatListController =
-        Get.find<ChatListController>();
 
     return Scaffold(
       backgroundColor: PlatformColors.subtitle8,
@@ -443,29 +441,53 @@ class ChatScreen extends GetView<ChatController> {
                                   child: TextField(
                                     controller: controller.messageController,
                                     decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '메세지 입력...',
-                                        hintStyle: AppTextStyle.body14R(
-                                            color: PlatformColors.subtitle2)),
+                                      border: InputBorder.none,
+                                      hintText: '메세지 입력...',
+                                      hintStyle: AppTextStyle.body14R(
+                                          color: PlatformColors.subtitle2),
+                                    ),
+                                    onChanged: (value) {
+                                      controller.chatMessage.value = value;
+                                    },
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
-                                    controller.sendMessage(
-                                      _authController.userInfo.value!.uid,
-                                      controller.messageController.text,
-                                      _globalGetXController.roomId.value,
-                                      _authController.userInfo.value!.uid,
-                                      false,
-                                      null,
-                                      null,
+                                Obx(
+                                  () {
+                                    bool isButtonEnabled =
+                                        controller.chatMessage.value != '';
+
+                                    return IconButton(
+                                      onPressed: isButtonEnabled
+                                          ? () {
+                                              controller.sendMessage(
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                controller
+                                                    .messageController.text,
+                                                _globalGetXController
+                                                    .roomId.value,
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                false,
+                                                null,
+                                                null,
+                                              );
+                                              controller.messageController
+                                                  .clear();
+                                              controller.chatMessage.value = '';
+                                            }
+                                          : null,
+                                      icon: Image.asset(
+                                        'assets/icons/send_message.png',
+                                        width: 20,
+                                        height: 20,
+                                        color: isButtonEnabled
+                                            ? PlatformColors.primary
+                                            : Color(0xffBFBFBF),
+                                      ),
                                     );
                                   },
-                                  icon: Image.asset(
-                                      'assets/icons/send_message.png',
-                                      width: 20,
-                                      height: 20),
-                                ),
+                                )
                               ],
                             ),
                           ),
