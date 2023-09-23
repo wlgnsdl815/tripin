@@ -28,8 +28,11 @@ class MapScreen extends GetView<MapScreenController> {
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
     late NaverMapController naverMapController;
-    final NLatLng? positionFromMessage = Get.arguments['position'];
-    final int? dateIndexFromArgs = Get.arguments['dateIndex'];
+    final NLatLng? positionFromMessage =
+        Get.arguments != null ? Get.arguments['position'] : null;
+
+    final int? dateIndexFromArgs =
+        Get.arguments != null ? Get.arguments['dateIndex'] : null;
     print('인덱스: $dateIndexFromArgs');
 
     final SelectFriendsController _selectFriendsController =
@@ -94,7 +97,7 @@ class MapScreen extends GetView<MapScreenController> {
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
-                  controller.nMapController.value = NMapController;
+                  this.controller.nMapController.value = NMapController;
                   if (dateIndexFromArgs != null) {
                     controller.onDayButtonTap(index: dateIndexFromArgs);
                   }
