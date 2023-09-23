@@ -76,29 +76,31 @@ class MapScreen extends GetView<MapScreenController> {
                 },
                 options: NaverMapViewOptions(
                   initialCameraPosition:
-                      // 채팅방에서 넘어오면 해당 핀의 위치로
-                      positionFromMessage == null
-                          ? _nMarkerList.isEmpty // 일정이 없으면 사용자 위치
+                      // 우선순위 1: 채팅으로부터 전달받은 포지션이 있으면 해당 위치로 이동
+                      positionFromMessage != null
+                          ? NCameraPosition(
+                              target: positionFromMessage,
+                              zoom: 15,
+                            )
+                          // 우선순위 2: 마커 리스트에 마커가 있으면 마지막 마커의 위치로 이동
+                          : (_nMarkerList.isNotEmpty
                               ? NCameraPosition(
-                                  target: controller.myPosition.value,
-                                  zoom: 15,
-                                )
-                              : NCameraPosition(
-                                  // 마커가 있으면 마지막 마커
                                   target: _nMarkerList.last.position,
                                   zoom: 15,
                                 )
-                          : NCameraPosition(
-                              // 채팅으로 넘어온 핀의 위치
-                              target: positionFromMessage,
-                              zoom: 15,
-                            ),
+                              // 우선순위 3: 그 외의 경우 사용자의 현재 위치로 이동
+                              : NCameraPosition(
+                                  target: controller.myPosition.value,
+                                  zoom: 15,
+                                )),
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
                   this.controller.nMapController.value = NMapController;
                   if (dateIndexFromArgs != null) {
-                    controller.onDayButtonTap(index: dateIndexFromArgs);
+                    controller.onDayButtonTap(
+                        index: dateIndexFromArgs,
+                        position: positionFromMessage);
                   }
                   print(naverMapController);
                   controller.showMarkers();
@@ -319,16 +321,6 @@ class MapScreen extends GetView<MapScreenController> {
                   ),
                 );
                 if (result != null) {
-                  // final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
-                  //   target:
-                  //       NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
-                  //   zoom: 15,
-                  // );
-
-                  // if (naverMapController != null) {
-                  //   print('update camera');
-                  //   naverMapController.updateCamera(cameraUpdate);
-                  // }
                   controller.cameraScrollTo(
                     naverMapController: naverMapController,
                     target:

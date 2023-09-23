@@ -401,7 +401,7 @@ class MapScreenController extends GetxController {
     }
   }
 
-  onDayButtonTap({required int index}) {
+  onDayButtonTap({required int index, NLatLng? position}) {
     print("onDayButtonTap called with index: $index");
     selectedDayIndex.value = index;
 
@@ -416,9 +416,18 @@ class MapScreenController extends GetxController {
         .toList();
     print("Updated nMarkerList: ${nMarkerList.length}");
 
-    cameraScrollTo(
-        naverMapController: nMapController.value!,
-        target: nMarkerList.first.position);
+    if (nMarkerList.isNotEmpty) {
+      if (position != null) {
+        cameraScrollTo(
+          naverMapController: nMapController.value!,
+          target: position,
+        );
+        return;
+      }
+      cameraScrollTo(
+          naverMapController: nMapController.value!,
+          target: nMarkerList.first.position);
+    }
 
     // 필터링 된 마커리스트로 다시 그린다.
     showMarkers();

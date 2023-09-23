@@ -92,6 +92,7 @@ class ChatController extends GetxController {
         .doc(roomId)
         .update({
       'lastMessage': newMessage.text,
+      'updatedAt': newMessage.timestamp,
     });
 
     messageController.clear();
