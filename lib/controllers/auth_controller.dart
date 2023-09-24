@@ -24,9 +24,6 @@ class AuthController extends GetxController {
       if (user != null) {
         _user.value = user;
         await getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
-        Get.offAllNamed(AppScreens.home);
-      } else {
-        Get.offAllNamed(AppScreens.splash);
       }
     });
   }
@@ -43,6 +40,7 @@ class AuthController extends GetxController {
         res.joinedTrip = chatRoomList;
 
         log('$res', name: 'getUserInfo :: res');
+        // await userInfo(res);
         log('$chatRoomList', name: 'getUserInfo :: chatRoomList');
         if (chatRoomList.isNotEmpty) {
           print(chatRoomList[0]!.dateRange);
@@ -62,6 +60,7 @@ class AuthController extends GetxController {
     );
 
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
+    Get.offAllNamed(AppScreens.home);
   }
 
   signUp(String email, String password, String nickName) async {
@@ -125,6 +124,7 @@ class AuthController extends GetxController {
 
     await DBService().saveUserInfo(userModel);
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
+    Get.offAllNamed(AppScreens.home);
 
     // 로그인하면, UserCredential을 리턴한다
     return userCredential;
@@ -139,6 +139,7 @@ class AuthController extends GetxController {
     } else {
       await tryLoginWithKakaoAccount();
     }
+    Get.offAllNamed(AppScreens.home);
   }
 
   Future<bool> tryLoginWithKakaoTalk() async {
