@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/view/screens/home_screen.dart';
 import 'package:tripin/view/screens/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,6 +16,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> opacityAnimation;
+  AuthController controller = Get.put(AuthController());
 
   @override
   void initState() {
@@ -30,25 +34,32 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
     Future.delayed(
-        const Duration(milliseconds: 2500),
-        () => _animationController.forward().then((_) {
-              if (_animationController.status == AnimationStatus.completed) {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) =>
-                            FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    ),
-                    transitionDuration: const Duration(milliseconds: 500),
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        LoginScreen(),
-                  ),
-                );
-              }
-            }));
+      const Duration(milliseconds: 2500),
+      () => _animationController.forward().then(
+        (_) {
+          if (_animationController.status == AnimationStatus.completed) {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+                transitionDuration: const Duration(milliseconds: 500),
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  if (controller.user != null) {
+                    return HomeScreen();
+                  }
+                  return LoginScreen();
+                },
+              ),
+            );
+          }
+        },
+      ),
+    );
   }
 
   @override

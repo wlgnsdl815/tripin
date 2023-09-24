@@ -17,13 +17,10 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    FirebaseAuth.instance.authStateChanges().listen((user) {
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
         _user.value = user;
-        getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
-        Get.offAllNamed(AppScreens.home);
-      } else {
-        Get.offAllNamed(AppScreens.splash);
+        await getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
       }
     });
   }
@@ -36,7 +33,7 @@ class AuthController extends GetxController {
       UserModel? res = await DBService().getUserInfoById(uid);
       if (res != null) {
         log('$res', name: 'getUserInfo :: res');
-        userInfo(res);
+        await userInfo(res);
         print('userInfo.value: ${userInfo.value}');
       }
     } catch (error) {
@@ -51,6 +48,7 @@ class AuthController extends GetxController {
     );
 
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
+    Get.offAllNamed(AppScreens.home);
   }
 
   signUp(String email, String password, String nickName) async {
@@ -114,6 +112,7 @@ class AuthController extends GetxController {
 
     await DBService().saveUserInfo(userModel);
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
+    Get.offAllNamed(AppScreens.home);
 
     // 로그인하면, UserCredential을 리턴한다
     return userCredential;
@@ -128,6 +127,7 @@ class AuthController extends GetxController {
     } else {
       await tryLoginWithKakaoAccount();
     }
+    Get.offAllNamed(AppScreens.home);
   }
 
   Future<bool> tryLoginWithKakaoTalk() async {

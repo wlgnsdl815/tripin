@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => ProfileDetailController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
-        initialRoute: AppScreens.login,
+        initialRoute: AppScreens.splash,
       ),
     );
   }
