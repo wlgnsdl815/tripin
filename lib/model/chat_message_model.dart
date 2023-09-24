@@ -12,6 +12,7 @@ class ChatMessage {
   Map<String, bool> isRead; // 읽음 상태
   bool isMap; // 지도에서 보낸 메세지
   NLatLng? position;
+  int? dateIndex;
 
   ChatMessage({
     required this.messageId,
@@ -22,6 +23,7 @@ class ChatMessage {
     required this.isRead,
     required this.isMap,
     this.position,
+    this.dateIndex,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,6 +38,7 @@ class ChatMessage {
       'position': position != null
           ? {'latitude': position!.latitude, 'longitude': position!.longitude}
           : null,
+      'dateIndex': dateIndex,
     };
   }
 
@@ -54,6 +57,7 @@ class ChatMessage {
               map['position']['longitude'],
             )
           : null,
+      dateIndex: map['dateIndex'],
     );
   }
 }

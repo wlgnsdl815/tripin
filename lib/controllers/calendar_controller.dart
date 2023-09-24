@@ -4,12 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/model/enum_color.dart';
 import 'package:tripin/model/event_model.dart';
 import 'package:tripin/utils/colors.dart';
 
 class CalendarController extends GetxController {
   RxList<Event> events = <Event>[].obs;
   List<DateTime> selectedDates = [];
+      RxString selectedRandomColor = ''.obs;
+  Rxn<List<DateTime>> dateRange = Rxn<List<DateTime>>([]);
   // final CrCalendarController calendarController = CrCalendarController();
   Rxn startDate = Rxn();
   Rxn endDate = Rxn();
@@ -96,4 +99,8 @@ class CalendarController extends GetxController {
       print('Error fetching chat room data: $e');
     }
   }
+    void generateRandomColor() {
+      selectedRandomColor.value = CalendarColors.getRandomColor();
+    }
+
 }
