@@ -48,7 +48,10 @@ class ChatSettingController extends GetxController {
           .collection('chatRooms')
           .doc('${_globalGetXController.roomId}')
           .update(
-        {'imgUrl': downloadUrl},
+        {
+          'imgUrl': downloadUrl,
+          'updatedAt': DateTime.now().millisecondsSinceEpoch,
+        },
       );
       _globalGetXController.setRoomImageUrl(downloadUrl);
     }
@@ -61,7 +64,10 @@ class ChatSettingController extends GetxController {
         .collection('chatRooms')
         .doc('${_globalGetXController.roomId}')
         .update(
-      {'roomTitle': chatTitleEdit.text},
+      {
+        'roomTitle': chatTitleEdit.text,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      },
     );
     _globalGetXController.setRoomTitle(chatTitleEdit.text);
   }
