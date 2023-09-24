@@ -34,6 +34,7 @@ class MapScreenController extends GetxController {
   RxString description = ''.obs;
   RxString placeText = ''.obs;
   Rxn<NaverMapController> nMapController = Rxn();
+  RxString kakaoAddress = ''.obs; // 카카오에서 보내주는 주소
 
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
@@ -160,6 +161,7 @@ class MapScreenController extends GetxController {
         title: placeTextController.text == ''
             ? placeText.value
             : placeTextController.text,
+        subTitle: kakaoAddress.value,
         descriptions: [descriptionTextController.text],
         order: markerList.length + 1,
         timeStamp: timeStamps[selectedDayIndex.value],
@@ -243,7 +245,8 @@ class MapScreenController extends GetxController {
         .collection('markers')
         .doc(markerId)
         .update({
-      'descriptions': FieldValue.arrayUnion([descriptionTextController.text])
+      'descriptions': FieldValue.arrayUnion([descriptionTextController.text]),
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
 
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -257,6 +260,13 @@ class MapScreenController extends GetxController {
     // 가장 마지막에 추가된 설명을 반환
     description.value = snapshotData['descriptions'].last;
     descriptionTextController.clear();
+
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(_globalGetXController.roomId.value)
+        .update({
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
+    });
   }
 
   Future<void> deleteMarker({
@@ -283,6 +293,13 @@ class MapScreenController extends GetxController {
     for (var doc in snapshot.docs) {
       await doc.reference.update({'order': doc.data()['order'] - 1});
     }
+
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(_globalGetXController.roomId.value)
+        .update({
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
+    });
   }
 
   // 마커 변경
@@ -361,8 +378,10 @@ class MapScreenController extends GetxController {
         .doc(_globalGetXController.roomId.value)
         .update({
       'dateRange': newDateRange,
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
     print('dateRange 업데이트: $newDateRange');
+
     // 마커 초기화
     final markersCollection = FirebaseFirestore.instance
         .collection('chatRooms')

@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => ChatSettingController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
-        initialRoute: AppScreens.login,
+        initialRoute: AppScreens.splash,
       ),
     );
   }

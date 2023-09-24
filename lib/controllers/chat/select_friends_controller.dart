@@ -52,7 +52,8 @@ class SelectFriendsController extends GetxController {
 
     // 현재 사용자의 UID를 먼저 추가
     String currentUserUid = _authController.userInfo.value!.uid;
-    List<String> participantsUidList = [currentUserUid];
+    List<String> participantsUidList = [];
+    participantsUidList.add(currentUserUid);
 
     // participants에서 추가적인 UID를 가져와 목록에 추가
     participantsUidList.addAll(participants.map((element) => element.uid));
@@ -67,7 +68,6 @@ class SelectFriendsController extends GetxController {
     roomTitle.value = defaultRoomTitle.join(', ');
 
     _globalGetXController.setRoomTitle(roomTitle.value);
-    print(_globalGetXController.roomTitle.value);
 
     ChatRoom newRoom = ChatRoom(
       roomId: '',
@@ -79,6 +79,8 @@ class SelectFriendsController extends GetxController {
       roomTitle: roomTitle.value,
       imgUrl: '',
     );
+
+    _globalGetXController.setSelectedCity(newRoom.city);
 
     // 새로운 채팅방 추가
     DocumentReference docRef =
@@ -129,6 +131,7 @@ class SelectFriendsController extends GetxController {
         .doc(roomId)
         .update({
       'city': selectedCity,
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
     print('도시 업데이트: $selectedCity');
   }
@@ -141,6 +144,7 @@ class SelectFriendsController extends GetxController {
         .update({
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
 
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
