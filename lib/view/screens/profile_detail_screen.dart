@@ -26,16 +26,22 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
-        title: Text('내 프로필', style: AppTextStyle.body16B(color: Colors.white)),
+        title: Text(
+          Get.find<AuthController>().userInfo.value!.uid == userModel.uid
+            ? '내 프로필'
+            : '친구 프로필',
+          style: AppTextStyle.body16B(color: Colors.white)),
         centerTitle: true,
         actions: userModel.uid == Get.find<AuthController>().userInfo.value!.uid
-            ? [
-                TextButton(
-                    onPressed: () {},
-                    child: Text('편집',
-                        style: AppTextStyle.body14R(color: Colors.white))),
-              ]
-            : null,
+          ? [
+            TextButton(
+              onPressed: () {},
+              child: Text('편집',
+                style: AppTextStyle.body14R(color: Colors.white)
+              )
+            ),
+          ]
+          : null,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -51,7 +57,7 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
                   image: DecorationImage(
                     image: AssetImage('assets/images/profile_detail_bg.png'),
                     fit: BoxFit.fitWidth,
-                    alignment: Alignment.topCenter, // 이미지를 아래쪽 정렬로 설정
+                    alignment: Alignment.topCenter,
                   ),
                 ),
                 child: Padding(
@@ -101,55 +107,43 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Obx(() => controller.ongoingTrips.length > 0
-                      ? Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: PlatformColors.secondary,
-                                    borderRadius: BorderRadius.circular(28),
-                                  ),
-                                  child: Text('NOW',
-                                      style: AppTextStyle.body12B(
-                                          color: Colors.white)),
+                    ? Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: PlatformColors.secondary,
+                                  borderRadius: BorderRadius.circular(28),
                                 ),
-                                SizedBox(width: 6),
-                                Text('현재 진행중인 여행이 있어요',
-                                    style: AppTextStyle.body14B()),
-                              ],
-                            ),
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: List.generate(
-                                    controller.ongoingTrips.length, (index) {
-                                  ChatRoom trip =
-                                      controller.ongoingTrips[index]!;
-                                  return Container(
-                                    width: double.infinity,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('${trip.roomTitle}'),
-                                        Text(
-                                            '${DateFormat('yyyy.MM.dd').format(trip.startDate!)}'),
-                                        Text('${trip.city}'),
-                                        Text(
-                                            '${trip.participantIdList!.length}명'),
-                                      ],
-                                    ),
-                                  );
-                                }),
+                                child: Text('NOW',
+                                  style: AppTextStyle.body12B(color: Colors.white)
+                                ),
                               ),
+                              SizedBox(width: 6),
+                              Text(
+                                '현재 진행중인 여행이 있어요',
+                                style: AppTextStyle.body14B(),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(controller.ongoingTrips.length, (index) {
+                                ChatRoom trip = controller.ongoingTrips[index]!;
+                                return Padding(
+                                  padding: EdgeInsets.only(top: 10, bottom: 25),
+                                  child: ProfileTripTile(trip: trip, isOngoing: true),
+                                );
+                              }),
                             ),
-                            SizedBox(height: 17),
-                          ],
-                        )
-                      : Container()),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                  ),
                   Text(
                     '내 여행 기록',
                     style: AppTextStyle.body16B(),
@@ -158,57 +152,58 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
                   Obx(
                     () => Row(
                       children: List.generate(
-                          controller.filterOptionList.length,
-                          (index) => GestureDetector(
-                                onTap: () {
-                                  controller.filterIdx(index);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 5),
-                                      decoration: BoxDecoration(
-                                          color: controller.filterIdx == index
-                                              ? PlatformColors.subtitle2
-                                              : Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(22),
-                                          border: controller.filterIdx == index
-                                              ? null
-                                              : Border.all(
-                                                  color: PlatformColors
-                                                      .subtitle6)),
-                                      child: Text(
-                                        '${controller.filterOptionList[index]} ${controller.filterOptionList[index] == '예정' ? controller.upcomingTrips.length : controller.completedTrips.length}',
-                                        style: AppTextStyle.body14B(
-                                            color: controller.filterIdx == index
-                                                ? Colors.white
-                                                : PlatformColors.subtitle),
-                                      )),
-                                ),
-                              )),
+                        controller.filterOptionList.length,
+                        (index) => GestureDetector(
+                          onTap: () {
+                            controller.filterIdx(index);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 5),
+                              decoration: BoxDecoration(
+                                  color: controller.filterIdx == index
+                                      ? PlatformColors.subtitle2
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(22),
+                                  border: controller.filterIdx == index
+                                      ? null
+                                      : Border.all(
+                                          color: PlatformColors.subtitle6)),
+                              child: Text(
+                                '${controller.filterOptionList[index]} ${controller.filterOptionList[index] == '예정' ? controller.upcomingTrips.length : controller.completedTrips.length}',
+                                style: AppTextStyle.body14B(
+                                    color: controller.filterIdx == index
+                                        ? Colors.white
+                                        : PlatformColors.subtitle),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Obx(
-                    () => controller.isLoading.value
-                        ? SFLoadingSpinner()
-                        : ListView.separated(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: controller.filterIdx == 0
-                                ? controller.upcomingTrips.length
-                                : controller.completedTrips.length,
-                            itemBuilder: (context, index) {
-                              return ProfileTripTile(
-                                  trip: controller.filterIdx == 0
-                                      ? controller.upcomingTrips[index]
-                                      : controller.completedTrips[index]);
-                            },
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 14),
-                          ),
-                  )
+                    () => controller.isLoading.value ? Center(child: SFLoadingSpinner())
+                    : ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: controller.filterIdx == 0
+                        ? controller.upcomingTrips.length
+                        : controller.completedTrips.length,
+                      itemBuilder: (context, index) {
+                        return ProfileTripTile(
+                          trip: controller.filterIdx == 0
+                            ? controller.upcomingTrips[index]!
+                            : controller.completedTrips[index]!,
+                          isOngoing: false
+                        );
+                      },
+                      separatorBuilder: (context, index) => SizedBox(height: 15),
+                    ),
+                  ),
+                  SizedBox(height: 12),
                 ],
               ),
             ),

@@ -25,8 +25,6 @@ class AuthController extends GetxController {
         _user.value = user;
         await getUserInfo(user.uid); // 로그인이 확인되면 유저 정보 로드
         Get.offAllNamed(AppScreens.home);
-      } else {
-        Get.offAllNamed(AppScreens.splash);
       }
     });
   }

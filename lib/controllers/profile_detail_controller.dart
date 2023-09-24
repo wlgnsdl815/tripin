@@ -46,15 +46,18 @@ class ProfileDetailController extends GetxController {
     isLoading(false);
   }
 
-  // 날짜 형식 변환
-  void formatDateTime(int timestamp) {
-    DateTime tripStartDate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String formattedDateTime = DateFormat('yyyy.MM.dd').format(tripStartDate);
-  }
-
+  // 요일 가져오기
   String getDayOfWeek(DateTime date) {
     List<String> daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
     return daysOfWeek[date.weekday - 1];
+  }
+
+  // 디데이 구하기
+  int getDaysUntilTrip(DateTime startDate) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);  // 시, 분, 초 제외한 오늘 날짜
+    int untilTrip = today.difference(startDate).inDays;
+    return untilTrip;
   }
 
   @override
