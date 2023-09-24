@@ -389,7 +389,7 @@ class MapScreen extends GetView<MapScreenController> {
     try {
       KakaoGeocodingModel tapLocationFromKaKao = await KaKaoGeocodingService()
           .getGeoDataFromKakao(lat: latLng.latitude, lng: latLng.longitude);
-      controller.placeTextController.text = captionText!;
+      controller.placeTextController.text = captionText;
       print(tapLocationFromKaKao);
       if (controller.dateRange.isEmpty) {
         print(controller.dateRange);
@@ -402,9 +402,9 @@ class MapScreen extends GetView<MapScreenController> {
         controller.setPlaceText(captionText);
       } else {
         // 없으면 주소를 기본 값으로 넣어준다.
-
         controller.setPlaceText(tapLocationFromKaKao.addressName!);
       }
+      controller.kakaoAddress.value = tapLocationFromKaKao.addressName!;
 
       Get.dialog(
         Dialog(
