@@ -7,9 +7,9 @@ import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
-import 'package:tripin/view/screens/chat/chat_screen.dart';
 import 'package:tripin/view/widget/custom_appbar_icon.dart';
 import 'package:tripin/view/widget/custom_textfield_without_form.dart';
+import 'package:tripin/view/widget/list_profile_container.dart';
 
 class SelectFriendsScreen extends GetView<SelectFriendsController> {
   const SelectFriendsScreen({super.key});
@@ -19,6 +19,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
   @override
   Widget build(BuildContext context) {
     final _chatListController = Get.find<ChatListController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -60,14 +61,75 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
         elevation: 0.0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Obx(() {
+              double targetHeight =
+                  controller.participants.isNotEmpty ? 80.h : 0.0;
+              controller.containerHeight.value = targetHeight;
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                height: controller.containerHeight.value,
+                child: SingleChildScrollView(
+                  physics: NeverScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        child: Row(
+                          children: [
+                            Text(
+                              '선택 ',
+                              style: AppTextStyle.body16M(
+                                  color: PlatformColors.subtitle),
+                            ),
+                            Text(
+                              '${controller.participants.length}',
+                              style: AppTextStyle.body16M(
+                                  color: PlatformColors.primary),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        child: Container(
+                          height: 47.0.h,
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                SizedBox(width: 16.w),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: controller.participants.length,
+                            itemBuilder: (context, index) {
+                              return ListProfileContainer(
+                                user: controller.participants[index],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+            SizedBox(height: 20.h),
             CustomTextFiledWithOutForm(
-              prefixIcon: Icon(Icons.search),
+              borderSideColor: Colors.transparent,
+              controller: controller.searchFriendController,
+              prefixIcon: Icon(
+                Icons.search,
+                color: PlatformColors.primary,
+              ),
               hintText: '친구 이름 또는 이메일 검색',
+              onChanged: (value) {
+                controller.searchFriend();
+              },
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 20.h),
             Expanded(
               child: Obx(
                 () => ListView.builder(
@@ -79,21 +141,19 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                       return SizedBox();
                     }
                     return ListTile(
-                      title: Text(controller.userData[index].nickName),
-                      leading: Container(
-                        width: 47,
-                        height: 47,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(19),
-                          color: PlatformColors.primary,
-                        ),
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        controller.userData[index].nickName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      leading: ListProfileContainer(
+                          user: controller.userData[index]),
                       trailing: Obx(
                         () {
                           bool isSelected = controller.participants.any(
                               (user) =>
                                   user.uid == controller.userData[index].uid);
-
                           return IconButton(
                             onPressed: () {
                               if (isSelected) {
@@ -102,12 +162,13 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                               } else {
                                 controller.participants
                                     .add(controller.userData[index]);
-                                print(controller.participants);
                               }
                             },
                             icon: Icon(
-                              Icons.circle,
-                              color: isSelected ? Colors.blue : Colors.grey,
+                              Icons.check_circle,
+                              color: isSelected
+                                  ? PlatformColors.primary
+                                  : PlatformColors.subtitle6,
                             ),
                           );
                         },

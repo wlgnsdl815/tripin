@@ -10,6 +10,7 @@ import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
+import 'package:tripin/controllers/chat/chat_setting_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/edit_profile_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => CalendarController(), fenix: true);
           Get.lazyPut(() => HomeController(), fenix: true);
           Get.lazyPut(() => ProfileDetailController(), fenix: true);
+          Get.lazyPut(() => ChatSettingController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.splash,

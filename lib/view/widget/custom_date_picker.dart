@@ -4,6 +4,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:sfac_design_flutter/widgets/alertDialog/alert_dialog.dart';
 import 'package:sfac_design_flutter/widgets/datepicker/calendar.dart';
 import 'package:sfac_design_flutter/widgets/datepicker/date_picker.dart';
+import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
@@ -37,6 +38,8 @@ class CustomDatePicker extends StatelessWidget {
                   _mapScreenController.getDatesBetweenAndUpdate(start, end);
                   _selectFriendsController.updateStartAndEndDate(
                       _globalGetXController.roomId.value, start, end);
+
+                  _mapScreenController.nMapController.value!.clearOverlays();
                 },
                 onCancle: () {},
                 top: 0.3,

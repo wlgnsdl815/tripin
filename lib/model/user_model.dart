@@ -1,3 +1,5 @@
+import 'chat_room_model.dart';
+
 class UserModel {
   String uid; // uid
   String email; // 이메일
@@ -6,7 +8,8 @@ class UserModel {
   String message; // 상태 메세지
   bool isSelected = false;
   List following;
-  List? joinedTrip;
+  List joinedRoomIdList;
+  List<ChatRoom?>? joinedTrip;
 
   UserModel({
     required this.uid,
@@ -16,10 +19,18 @@ class UserModel {
     required this.message,
     required this.isSelected,
     required this.following,
-    this.joinedTrip,
+    required this.joinedRoomIdList,
   });
 
   Map<String, dynamic> toMap() {
+    List<String> convertedList = [];
+
+    if (joinedTrip != null && joinedTrip!.isNotEmpty) {
+      joinedTrip!.forEach((trip) {
+        convertedList.add(trip!.roomId);
+      });
+    }
+
     return <String, dynamic>{
       'uid': uid,
       'email': email,
@@ -28,7 +39,7 @@ class UserModel {
       'message': message,
       'isSelected': isSelected,
       'following': following,
-      'joinedTrip': joinedTrip ?? [],
+      'joinedTrip': convertedList,
     };
   }
 
@@ -41,7 +52,7 @@ class UserModel {
       message: map['message'] ?? '',
       isSelected: map['isSelected'] ?? false,
       following: map['following'] ?? [],
-      joinedTrip: map['joinedTrip'] ?? [],
+      joinedRoomIdList: map['joinedTrip'] ?? [],
     );
   }
 }

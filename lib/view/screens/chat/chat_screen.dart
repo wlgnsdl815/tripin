@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
+import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
@@ -25,11 +25,11 @@ class ChatScreen extends GetView<ChatController> {
     final GlobalGetXController _globalGetXController =
         Get.find<GlobalGetXController>();
     final scrollController = controller.createScrollController();
+    final MapScreenController _mapScreenController =
+        Get.find<MapScreenController>();
 
     print(
         '_globalGetXController in ChatScreen roomId: ${_globalGetXController.roomId}');
-    final ChatListController _chatListController =
-        Get.find<ChatListController>();
 
     return Scaffold(
       backgroundColor: PlatformColors.subtitle8,
@@ -194,8 +194,9 @@ class ChatScreen extends GetView<ChatController> {
                                             height: 32,
                                             clipBehavior: Clip.antiAlias,
                                             decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
                                             child: (!isMe && showUserName)
                                                 ? Image.network(
                                                     message.sender!.imgUrl
@@ -221,9 +222,10 @@ class ChatScreen extends GetView<ChatController> {
                                                       const EdgeInsets.only(
                                                           bottom: 8.0),
                                                   child: Text(
-                                                      message.sender!.nickName,
-                                                      style: AppTextStyle
-                                                          .body12R()),
+                                                    message.sender!.nickName,
+                                                    style:
+                                                        AppTextStyle.body12R(),
+                                                  ),
                                                 ),
                                               Row(
                                                 crossAxisAlignment:
@@ -239,55 +241,91 @@ class ChatScreen extends GetView<ChatController> {
                                                           horizontal: 6),
                                                       child: Text(
                                                         formattedTime,
-                                                        style: AppTextStyle.body12M(
-                                                            color:
-                                                                PlatformColors
-                                                                    .subtitle4),
+                                                        style: AppTextStyle
+                                                            .body12M(
+                                                          color: PlatformColors
+                                                              .subtitle4,
+                                                        ),
                                                       ),
                                                     ),
-                                                  Expanded(
+                                                  GestureDetector(
+                                                    onTap: message.isMap
+                                                        ? () {
+                                                            Get.toNamed(
+                                                              AppScreens.map,
+                                                              arguments: {
+                                                                'position':
+                                                                    message
+                                                                        .position,
+                                                                'dateIndex':
+                                                                    message
+                                                                        .dateIndex,
+                                                              },
+                                                            );
+                                                          }
+                                                        : null,
                                                     child: Container(
+                                                      constraints:
+                                                          BoxConstraints(
+                                                        maxWidth: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width /
+                                                            1.5,
+                                                      ),
                                                       padding:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 11,
                                                               vertical: 8),
                                                       decoration: BoxDecoration(
-                                                          borderRadius: isMe
-                                                              ? const BorderRadius
-                                                                  .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                )
-                                                              : const BorderRadius
-                                                                  .only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          10),
+                                                        borderRadius: isMe
+                                                            ? const BorderRadius
+                                                                .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        10),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        10),
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            10),
+                                                              )
+                                                            : const BorderRadius
+                                                                .only(
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                  10,
                                                                 ),
-                                                          color: isMe
-                                                              ? PlatformColors
-                                                                  .chatPrimaryLight
-                                                              : Colors.white,
-                                                          border: Border.all(
-                                                              color: PlatformColors
-                                                                  .subtitle7)),
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        10),
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            10),
+                                                              ),
+                                                        color: message.isMap
+                                                            ? PlatformColors
+                                                                .primary
+                                                            : isMe
+                                                                ? PlatformColors
+                                                                    .chatPrimaryLight
+                                                                : Colors.white,
+                                                        border: Border.all(
+                                                          color: PlatformColors
+                                                              .subtitle7,
+                                                        ),
+                                                      ),
                                                       child: Text(
                                                         message.text,
-                                                        style: AppTextStyle
-                                                            .body13M(),
+                                                        softWrap: true,
+                                                        style: AppTextStyle.body13M(
+                                                            color: message.isMap
+                                                                ? Colors.white
+                                                                : PlatformColors
+                                                                    .title),
                                                         maxLines: null,
                                                       ),
                                                     ),
@@ -350,10 +388,16 @@ class ChatScreen extends GetView<ChatController> {
                                 Image.asset('assets/icons/map.png',
                                     width: 15, height: 15),
                                 SizedBox(width: 8),
-                                Text(
-                                  '여행 일정과 장소를 선택해주세요',
-                                  style: AppTextStyle.body13B(
-                                      color: PlatformColors.primary),
+                                Obx(
+                                  () => Text(
+                                    _mapScreenController.dateRange.isEmpty
+                                        ? '여행 일정과 장소를 선택해주세요'
+                                        : '일정 ${DateFormat('y.MM.dd').format(_mapScreenController.dateRange.first)} ~ ${DateFormat('MM.dd').format(_mapScreenController.dateRange.last)} l 장소 ${_globalGetXController.selectedCity}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyle.body13B(
+                                        color: PlatformColors.primary),
+                                  ),
                                 ),
                                 Spacer(),
                                 Icon(
@@ -396,26 +440,53 @@ class ChatScreen extends GetView<ChatController> {
                                   child: TextField(
                                     controller: controller.messageController,
                                     decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: '메세지 입력...',
-                                        hintStyle: AppTextStyle.body14R(
-                                            color: PlatformColors.subtitle2)),
+                                      border: InputBorder.none,
+                                      hintText: '메세지 입력...',
+                                      hintStyle: AppTextStyle.body14R(
+                                          color: PlatformColors.subtitle2),
+                                    ),
+                                    onChanged: (value) {
+                                      controller.chatMessage.value = value;
+                                    },
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
-                                    controller.sendMessage(
-                                      _authController.userInfo.value!.uid,
-                                      controller.messageController.text,
-                                      _globalGetXController.roomId.value,
-                                      _authController.userInfo.value!.uid,
+                                Obx(
+                                  () {
+                                    bool isButtonEnabled =
+                                        controller.chatMessage.value != '';
+
+                                    return IconButton(
+                                      onPressed: isButtonEnabled
+                                          ? () {
+                                              controller.sendMessage(
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                controller
+                                                    .messageController.text,
+                                                _globalGetXController
+                                                    .roomId.value,
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                false,
+                                                null,
+                                                null,
+                                              );
+                                              controller.messageController
+                                                  .clear();
+                                              controller.chatMessage.value = '';
+                                            }
+                                          : null,
+                                      icon: Image.asset(
+                                        'assets/icons/send_message.png',
+                                        width: 20,
+                                        height: 20,
+                                        color: isButtonEnabled
+                                            ? PlatformColors.primary
+                                            : Color(0xffBFBFBF),
+                                      ),
                                     );
                                   },
-                                  icon: Image.asset(
-                                      'assets/icons/send_message.png',
-                                      width: 20,
-                                      height: 20),
-                                ),
+                                )
                               ],
                             ),
                           ),

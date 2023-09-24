@@ -2,10 +2,13 @@ import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/service/db_service.dart';
 
 import '../model/chat_room_model.dart';
 import '../model/user_model.dart';
+import 'auth_controller.dart';
+import 'chat/chat_list_controller.dart';
 
 class ProfileDetailController extends GetxController {
   UserModel user = Get.arguments[0];
@@ -21,28 +24,23 @@ class ProfileDetailController extends GetxController {
   // 참여중인 채팅방 리스트 가져오기
   Future<void> readJoinedChatRoom() async {
     isLoading(true);
-    if (user.joinedTrip != null) {
-      List<ChatRoom?> chatRoomList =
-          await Future.wait(user.joinedTrip!.map((roomId) async {
-        return await DBService().getRoomInfoById(roomId);
-      }));
-      joinedChatRoomList(chatRoomList);
+    List<ChatRoom?> chatRoomList = await Get.find<ChatListController>().readJoinedChatRoom(user.joinedRoomIdList);
+    joinedChatRoomList(chatRoomList);
 
-      // 여행 리스트 분류
-      DateTime now = DateTime.now();
-      for (var room in chatRoomList) {
-        if (room != null && room.startDate != null && room.endDate != null) {
-          if (room.endDate!.isBefore(now)) {
-            completedTrips.add(room);
-          } else if (room.startDate!.isBefore(now) &&
-              room.endDate!.isAfter(now)) {
-            ongoingTrips.add(room);
-          } else {
-            upcomingTrips.add(room);
-          }
+    // 여행 리스트 분류
+    DateTime now = DateTime.now();
+    for (var room in chatRoomList) {
+      if (room != null && room.startDate != null && room.endDate != null) {
+        if (room.endDate!.isBefore(now)) {
+          completedTrips.add(room);
+        } else if (room.startDate!.isBefore(now) &&
+            room.endDate!.isAfter(now)) {
+          ongoingTrips.add(room);
         } else {
           upcomingTrips.add(room);
         }
+      } else {
+        upcomingTrips.add(room);
       }
     }
     isLoading(false);

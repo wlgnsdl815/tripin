@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
@@ -18,6 +19,7 @@ class ChatController extends GetxController {
       Get.find<SelectFriendsController>();
   RxString _senderFromChatController = ''.obs;
   RxString _senderUidFromChatController = ''.obs;
+  Rx<String> chatMessage = ''.obs;
 
   final functions = FirebaseFunctions.instance;
   // final ScrollController scrollController = ScrollController();
@@ -40,8 +42,8 @@ class ChatController extends GetxController {
   }
 
   // 메시지 전송 메서드
-  void sendMessage(
-      String sender, String text, String roomId, String senderUid) async {
+  void sendMessage(String sender, String text, String roomId, String senderUid,
+      bool isMap, NLatLng? position, int? dateIndex) async {
     _senderFromChatController.value = sender;
     _senderUidFromChatController.value = senderUid;
     print('sendMessage 메서드 호출됨');
@@ -76,6 +78,9 @@ class ChatController extends GetxController {
       text: text,
       timestamp: dateTime.millisecondsSinceEpoch,
       isRead: initialReadUser,
+      isMap: isMap,
+      position: position,
+      dateIndex: dateIndex,
     );
 
     DatabaseReference newMessageRef = ref.push();
@@ -87,6 +92,7 @@ class ChatController extends GetxController {
         .doc(roomId)
         .update({
       'lastMessage': newMessage.text,
+      'updatedAt': newMessage.timestamp,
     });
 
     messageController.clear();

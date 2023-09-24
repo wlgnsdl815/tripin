@@ -31,3 +31,18 @@ abstract class CalendarColor {
   static const Color seaBule = Color(0xFF00A1D8);
   static const Color pink = Color(0xFFFF9292);
 }
+
+abstract class PinColor {
+  static const Map<int, Color> colors = {
+    1: Color(0xff297FFF),
+    2: Color(0xffFF5C00),
+    3: Color(0xffFF008A),
+    4: Color(0xff00BF7A),
+    5: Color(0xffFDCD24),
+    6: Color(0xffB133FF),
+    7: Color(0xff38D1F2),
+    8: Color(0xff838383),
+    9: Color(0xffD13333),
+    0: Color(0xff2300AD),
+  };
+}

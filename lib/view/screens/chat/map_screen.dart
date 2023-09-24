@@ -15,8 +15,7 @@ import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_date_picker.dart';
-import 'package:tripin/view/widget/custom_map_bottom_sheet.dart';
-import 'package:tripin/view/widget/custom_textfield_without_form.dart';
+import 'package:tripin/view/widget/map_bottom_sheet.dart';
 
 class MapScreen extends GetView<MapScreenController> {
   static const route = '/map';
@@ -29,6 +28,12 @@ class MapScreen extends GetView<MapScreenController> {
     final List<String> citiesName = cities.keys.toList();
     final List<NLatLng> citiesNLatLng = cities.values.toList();
     late NaverMapController naverMapController;
+    final NLatLng? positionFromMessage =
+        Get.arguments != null ? Get.arguments['position'] : null;
+
+    final int? dateIndexFromArgs =
+        Get.arguments != null ? Get.arguments['dateIndex'] : null;
+    print('인덱스: $dateIndexFromArgs');
 
     final SelectFriendsController _selectFriendsController =
         Get.find<SelectFriendsController>();
@@ -47,9 +52,10 @@ class MapScreen extends GetView<MapScreenController> {
         elevation: 0.0,
         title: Obx(
           () => Text(
-            '지도 페이지 - Day ${controller.selectedDayIndex.value + 1}',
+            '${_globalGetXController.roomTitle}',
           ),
         ),
+        backgroundColor: PlatformColors.primary,
       ),
       body: Stack(
         children: [
@@ -62,7 +68,6 @@ class MapScreen extends GetView<MapScreenController> {
                 return Center(child: CircularProgressIndicator()); // 로딩 중 표시
               }
               return NaverMap(
-                key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                 onSymbolTapped: (symbolInfo) async {
                   _handleTap(symbolInfo.position, symbolInfo.caption);
                 },
@@ -70,27 +75,35 @@ class MapScreen extends GetView<MapScreenController> {
                   _handleTap(latLng);
                 },
                 options: NaverMapViewOptions(
-                  initialCameraPosition: _nMarkerList.isEmpty
-                      ? NCameraPosition(
-                          target: controller.myPosition.value,
-                          zoom: 15,
-                        )
-                      : NCameraPosition(
-                          target: _nMarkerList.last.position,
-                          zoom: 15,
-                        ),
+                  initialCameraPosition:
+                      // 우선순위 1: 채팅으로부터 전달받은 포지션이 있으면 해당 위치로 이동
+                      positionFromMessage != null
+                          ? NCameraPosition(
+                              target: positionFromMessage,
+                              zoom: 15,
+                            )
+                          // 우선순위 2: 마커 리스트에 마커가 있으면 마지막 마커의 위치로 이동
+                          : (_nMarkerList.isNotEmpty
+                              ? NCameraPosition(
+                                  target: _nMarkerList.last.position,
+                                  zoom: 15,
+                                )
+                              // 우선순위 3: 그 외의 경우 사용자의 현재 위치로 이동
+                              : NCameraPosition(
+                                  target: controller.myPosition.value,
+                                  zoom: 15,
+                                )),
                 ),
                 onMapReady: (NMapController) async {
                   naverMapController = NMapController;
+                  this.controller.nMapController.value = NMapController;
+                  if (dateIndexFromArgs != null) {
+                    controller.onDayButtonTap(
+                        index: dateIndexFromArgs,
+                        position: positionFromMessage);
+                  }
                   print(naverMapController);
-                  naverMapController.addOverlayAll(_nMarkerList.toSet());
-
-                  // 정보창 표시(마커 포함)
-                  controller.showInfoWindow(_nMarkerList, context);
-                  print("네이버 맵 로딩됨!");
-                  // 경로 표시
-                  controller.addArrowheadPath(naverMapController, _nMarkerList);
-
+                  controller.showMarkers();
                   for (var marker in _nMarkerList) {
                     marker.setOnTapListener((NMarker tappedMarker) {
                       print('탭한 마커 id: ${tappedMarker.info.id}');
@@ -111,10 +124,23 @@ class MapScreen extends GetView<MapScreenController> {
                 child: ExpansionTile(
                   controller: controller.expansionTileController,
                   backgroundColor: Colors.white,
-                  title: Obx(
-                    () => Text(
-                      controller.selectedCity.value,
-                    ),
+                  title: Row(
+                    children: [
+                      Image.asset(
+                        'assets/icons/location2.png',
+                        width: 14.w,
+                        height: 16.h,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Obx(
+                        () => Text(
+                          _globalGetXController.selectedCity.value,
+                          style: AppTextStyle.body17M(),
+                        ),
+                      ),
+                    ],
                   ),
                   children: [
                     Container(
@@ -122,7 +148,8 @@ class MapScreen extends GetView<MapScreenController> {
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Table(
-                          border: TableBorder.all(),
+                          border:
+                              TableBorder.all(color: PlatformColors.subtitle7),
                           children: List.generate(
                             6,
                             (row) {
@@ -132,15 +159,15 @@ class MapScreen extends GetView<MapScreenController> {
                                   return Obx(
                                     () => GestureDetector(
                                       onTap: () async {
-                                        controller.selectedCity.value =
-                                            citiesName[index];
+                                        _globalGetXController.selectedCity
+                                            .value = citiesName[index];
                                         await _selectFriendsController
                                             .upDateCity(
-                                                _globalGetXController
-                                                    .roomId.value,
-                                                citiesName[index]); // 도시 업데이트
+                                          _globalGetXController.roomId.value,
+                                          citiesName[index],
+                                        ); // 도시 업데이트
                                         print(
-                                            '터치: ${controller.selectedCity.value}');
+                                            '터치: ${_globalGetXController.selectedCity.value}');
                                         controller.expansionTileController
                                             .collapse();
                                         controller.selectedCityLatLng.value =
@@ -155,14 +182,26 @@ class MapScreen extends GetView<MapScreenController> {
                                             .updateCamera(cameraUpdate);
                                       },
                                       child: Container(
-                                        color: controller.selectedCity.value ==
+                                        color: _globalGetXController
+                                                    .selectedCity.value ==
                                                 citiesName[index]
-                                            ? Colors.amber
+                                            ? PlatformColors.primary
                                             : Colors.transparent,
                                         padding: EdgeInsets.all(8.0),
                                         child: Center(
-                                          child: Text(
-                                            citiesName[index],
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0,
+                                            ),
+                                            child: Text(
+                                              citiesName[index],
+                                              style: AppTextStyle.body13M(
+                                                  color: controller.selectedCity
+                                                              .value ==
+                                                          citiesName[index]
+                                                      ? Colors.white
+                                                      : PlatformColors.title),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -252,44 +291,68 @@ class MapScreen extends GetView<MapScreenController> {
             alignment: Alignment.bottomRight,
             // 오른쪽 버튼
             child: FloatingActionButton(
+              backgroundColor: PlatformColors.primary,
               heroTag: 'rightButton',
               onPressed: () async {
                 _showBottomSheet(_nMarkerList, 'right');
                 await controller.onDayButtonTap(
                     index: controller.selectedDayIndex.value); // 선택된 날짜의 마커만 표시
               },
+              child: Image.asset(
+                'assets/icons/list.png',
+                width: 21.w,
+                height: 13.h,
+              ),
             ),
           ),
           Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30.0),
-              // 왼쪽 버튼
-              child: FloatingActionButton(
-                heroTag: 'leftButton',
-                onPressed: () async {
-                  Kpostal? result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => KpostalView(
-                        kakaoKey: Env.kakaoJSKey,
-                      ),
+            alignment:
+                Alignment.bottomRight + Alignment(0.w, -0.2.h), // 이 부분을 수정
+            child: FloatingActionButton(
+              heroTag: 'searchButton',
+              backgroundColor: Colors.white,
+              onPressed: () async {
+                Kpostal? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => KpostalView(
+                      kakaoKey: Env.kakaoJSKey,
                     ),
+                  ),
+                );
+                if (result != null) {
+                  controller.cameraScrollTo(
+                    naverMapController: naverMapController,
+                    target:
+                        NLatLng(result.kakaoLatitude!, result.kakaoLongitude!),
                   );
-                  if (result != null) {
-                    final cameraUpdate = NCameraUpdate.scrollAndZoomTo(
-                      target: NLatLng(
-                          result.kakaoLatitude!, result.kakaoLongitude!),
-                      zoom: 16,
-                    );
-                    if (naverMapController != null) {
-                      print('update camera');
-                      naverMapController!.updateCamera(cameraUpdate);
-                    } // _showBottomSheet(_nMarkerList, 'left');
-                  } else {
-                    print('장소 검색을 안하고 뒤로가기 함');
-                  }
-                },
+                } else {
+                  print('장소 검색을 안하고 뒤로가기 함');
+                }
+              },
+              child: Image.asset(
+                'assets/icons/search.png',
+                width: 21.w,
+                height: 21.h,
+              ),
+            ),
+          ),
+          Align(
+            alignment:
+                Alignment.bottomLeft + Alignment(0.2.w, -0.2.h), // 이 부분을 수정
+            child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              heroTag: 'current_location_Button',
+              onPressed: () {
+                controller.cameraScrollTo(
+                  naverMapController: naverMapController,
+                  target: controller.myPosition.value,
+                );
+              },
+              child: Image.asset(
+                'assets/icons/current_location.png',
+                width: 25.w,
+                height: 25.h,
               ),
             ),
           ),
@@ -312,7 +375,7 @@ class MapScreen extends GetView<MapScreenController> {
               },
             ),
           ),
-          CustomMapBottomSheet(),
+          MapBottomSheet(),
         ],
       ),
       isDismissible: true,

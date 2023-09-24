@@ -10,12 +10,15 @@ import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
 import 'package:tripin/utils/app_screens.dart';
 
+import '../model/chat_room_model.dart';
+import 'chat/chat_list_controller.dart';
+
 class AuthController extends GetxController {
   final Rxn<User> _user = Rxn<User>(); // FirebasAuth에 등록된 유저 정보
   Rxn<UserModel> userInfo = Rxn(); // Firebase Store에 등록된 로그인한 유저 정보
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       if (user != null) {
@@ -32,8 +35,17 @@ class AuthController extends GetxController {
     try {
       UserModel? res = await DBService().getUserInfoById(uid);
       if (res != null) {
+        List<ChatRoom?> chatRoomList = await Get.find<ChatListController>()
+            .readJoinedChatRoom(res.joinedRoomIdList);
+        res.joinedTrip = chatRoomList;
+
         log('$res', name: 'getUserInfo :: res');
         await userInfo(res);
+        log('$chatRoomList', name: 'getUserInfo :: chatRoomList');
+        if (chatRoomList.isNotEmpty) {
+          print(chatRoomList[0]!.dateRange);
+        }
+        userInfo(res);
         print('userInfo.value: ${userInfo.value}');
       }
     } catch (error) {
@@ -64,7 +76,7 @@ class AuthController extends GetxController {
       isSelected: false,
       message: '',
       following: [],
-      joinedTrip: [],
+      joinedRoomIdList: [],
     );
 
     await DBService().saveUserInfo(userModel);
@@ -107,7 +119,7 @@ class AuthController extends GetxController {
       isSelected: false,
       message: '',
       following: userInfo.value!.following,
-      joinedTrip: userInfo.value!.joinedTrip,
+      joinedRoomIdList: userInfo.value!.joinedRoomIdList,
     );
 
     await DBService().saveUserInfo(userModel);

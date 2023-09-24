@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter_naver_map/flutter_naver_map.dart';
+
 import 'user_model.dart';
 
 class ChatMessage {
@@ -7,6 +10,9 @@ class ChatMessage {
   String text; // 메시지 내용
   int timestamp; // 메시지 전송 시간 (타임스탬프)
   Map<String, bool> isRead; // 읽음 상태
+  bool isMap; // 지도에서 보낸 메세지
+  NLatLng? position;
+  int? dateIndex;
 
   ChatMessage({
     required this.messageId,
@@ -15,15 +21,24 @@ class ChatMessage {
     required this.text,
     required this.timestamp,
     required this.isRead,
+    required this.isMap,
+    this.position,
+    this.dateIndex,
   });
 
   Map<String, dynamic> toMap() {
+    print('toMap 호출됨 포지션: $position');
     return {
       'messageId': messageId,
       'sender': senderUid,
       'text': text,
       'timestamp': timestamp,
       'isRead': isRead,
+      'isMap': isMap,
+      'position': position != null
+          ? {'latitude': position!.latitude, 'longitude': position!.longitude}
+          : null,
+      'dateIndex': dateIndex,
     };
   }
 
@@ -33,8 +48,16 @@ class ChatMessage {
       sender: sender,
       text: map['text'] as String,
       timestamp: map['timestamp'] as int,
+      isMap: map['isMap'] as bool,
       isRead:
           map['isRead'] != null ? Map<String, bool>.from(map['isRead']) : {},
+      position: map['position'] != null
+          ? NLatLng(
+              map['position']['latitude'],
+              map['position']['longitude'],
+            )
+          : null,
+      dateIndex: map['dateIndex'],
     );
   }
 }
