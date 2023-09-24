@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
+import 'package:tripin/controllers/chat/chat_list_controller.dart';
+import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 
@@ -11,6 +13,8 @@ class EventDetailPage extends GetView<CalendarController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.readCity();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -30,6 +34,16 @@ class EventDetailPage extends GetView<CalendarController> {
               height: MediaQuery.of(context).size.height / 18,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18), color: Colors.amber),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.location_on_outlined, color: PlatformColors.subtitle2,),
+                  Obx(() => Text('${controller.selectedCity}',)),
+                  Text(Get.find<CalendarController>().dateRange.toString()),
+                ],
+              ),
             ),
             Divider(
               thickness: 1,

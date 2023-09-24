@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:tripin/model/chat_room_model.dart';
 
 import 'enum_color.dart';
@@ -11,6 +12,7 @@ class Event {
   final List<Map> checkList;
   final Color color;
   final ChatRoom room;
+  
 
   Event({
     required this.title,
@@ -23,8 +25,8 @@ class Event {
     return <String, dynamic>{
       'title': title,
       'checkList': checkList,
-      'color': color,
-      'room': room.roomId,
+      'color': color.value,
+      'room': room.toMap(),
     };
   }
 

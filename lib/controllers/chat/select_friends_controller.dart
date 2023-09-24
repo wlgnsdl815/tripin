@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/enum_color.dart';

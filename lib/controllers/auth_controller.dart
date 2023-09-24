@@ -44,6 +44,9 @@ class AuthController extends GetxController {
 
         log('$res', name: 'getUserInfo :: res');
         log('$chatRoomList', name: 'getUserInfo :: chatRoomList');
+        if (chatRoomList.isNotEmpty) {
+          print(chatRoomList[0]!.dateRange);
+        }
         userInfo(res);
         print('userInfo.value: ${userInfo.value}');
       }

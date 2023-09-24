@@ -5,6 +5,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/marker_model.dart';
@@ -62,7 +63,8 @@ class MapScreenController extends GetxController {
           .doc(_globalGetXController.roomId.value)
           .snapshots()
           .listen((snapshot) {
-        print('dateRange: $dateRange');
+
+      print('dateRange: $dateRange');
         if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
           List<int> timestamps = List<int>.from(snapshot.data()!['dateRange']);
           dateRange.value = timestamps
@@ -379,9 +381,11 @@ class MapScreenController extends GetxController {
         .collection('chatRooms')
         .doc(_globalGetXController.roomId.value)
         .get();
+    print('날짜가 업데이트 되나? ${Get.find<CalendarController>().allEvent}');
 
     var data = snapshot.data() as Map<String, dynamic>;
     List<dynamic> dateRange = data['dateRange'];
+    Get.find<CalendarController>().allEvent;
     // DateTime dateRangeFromFirebase =
     //     DateTime.fromMillisecondsSinceEpoch(data['dateRange']);
     // DateTime convertedEndDate =
