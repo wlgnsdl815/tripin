@@ -51,8 +51,9 @@ class ChatListScreen extends GetView<ChatListController> {
                 if (controller.chatList[index].imgUrl != null) {
                   _globalGetXController
                       .setRoomImageUrl(controller.chatList[index].imgUrl!);
-                  print(controller.chatList[index].imgUrl);
                 }
+                _globalGetXController
+                    .setSelectedCity(controller.chatList[index].city);
 
                 Get.toNamed(AppScreens.chat);
               },
