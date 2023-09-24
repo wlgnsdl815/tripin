@@ -40,7 +40,7 @@ class AuthController extends GetxController {
         res.joinedTrip = chatRoomList;
 
         log('$res', name: 'getUserInfo :: res');
-        await userInfo(res);
+        // await userInfo(res);
         log('$chatRoomList', name: 'getUserInfo :: chatRoomList');
         if (chatRoomList.isNotEmpty) {
           print(chatRoomList[0]!.dateRange);
