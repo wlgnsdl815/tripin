@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/service/kakao_service.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
@@ -82,13 +83,19 @@ class AuthController extends GetxController {
     await DBService().saveUserInfo(userModel);
 
     await getUserInfo(userModel.uid);
+    Get.offAllNamed(AppScreens.home);
   }
 
   logOut() async {
+    final HomeController _homeController = Get.find<HomeController>();
     _user.value = null;
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
-    await kakao.UserApi.instance.logout();
+
+    // await kakao.UserApi.instance.logout();
+
+    Get.offAllNamed(AppScreens.login);
+    _homeController.curPage.value = 0;
     userInfo(null);
   }
 
@@ -118,8 +125,8 @@ class AuthController extends GetxController {
       imgUrl: user.photoURL ?? '',
       isSelected: false,
       message: '',
-      following: userInfo.value!.following,
-      joinedRoomIdList: userInfo.value!.joinedRoomIdList,
+      following: userInfo.value?.following ?? [],
+      joinedRoomIdList: userInfo.value?.joinedRoomIdList ?? [],
     );
 
     await DBService().saveUserInfo(userModel);
@@ -131,15 +138,18 @@ class AuthController extends GetxController {
   }
 
   loginWithKakao() async {
+    bool success = false;
     if (await kakao.isKakaoTalkInstalled()) {
-      bool success = await tryLoginWithKakaoTalk();
-      if (!success) {
-        await tryLoginWithKakaoAccount();
-      }
-    } else {
-      await tryLoginWithKakaoAccount();
+      success = await tryLoginWithKakaoTalk();
     }
-    Get.offAllNamed(AppScreens.home);
+
+    if (!success) {
+      success = await tryLoginWithKakaoAccount();
+    }
+
+    if (success) {
+      Get.offAllNamed(AppScreens.home);
+    }
   }
 
   Future<bool> tryLoginWithKakaoTalk() async {
@@ -197,6 +207,7 @@ class AuthController extends GetxController {
       print("커스텀 토큰으로 파베에 등록에러: $error");
     }
 
+    print('파베에 사용자 정보 저장시작');
     // Firestore에 사용자 정보 저장
     await FirebaseFirestore.instance
         .collection('users')
@@ -208,9 +219,10 @@ class AuthController extends GetxController {
       'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
       'isSelected': false,
       'message': '',
-      'following': userInfo.value!.following,
-      'joinedTrip': userInfo.value!.joinedTrip,
+      'following': userInfo.value?.following ?? [],
+      'joinedTrip': userInfo.value?.joinedTrip ?? [],
     });
+    print('파베에 사용자 정보 저장끝');
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
   }
 

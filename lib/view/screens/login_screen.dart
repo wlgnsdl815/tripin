@@ -80,7 +80,7 @@ class LoginScreen extends GetView<LoginController> {
                           hintText: '비밀번호를 입력하세요',
                           hintStyle: TextStyle(color: PlatformColors.subtitle4),
                           controller: controller.pwEditingController,
-                          isValid: controller.pw.length > 8,
+                          isValid: controller.pw.length >= 8,
                           validText: '비밀번호',
                           invalidText: '비밀번호는 8자 이상을 입력해주세요.',
                           onChanged: (v) => controller.pw = v,
