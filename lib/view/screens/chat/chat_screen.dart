@@ -88,7 +88,6 @@ class ChatScreen extends GetView<ChatController> {
               );
             }
           });
-          print('스냅샷 데이터: ${snapshot.data}');
           controller.messageList.value = snapshot.data!;
           return Column(
             children: [
