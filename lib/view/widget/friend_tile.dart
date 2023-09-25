@@ -17,7 +17,7 @@ class FriendTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FriendController controller = Get.find<FriendController>();
-    return Dismissible(
+    return Get.find<AuthController>().userInfo.value!.uid != friend.uid ? Dismissible(
       key: Key(friend.uid),
       background: Container(
         color: Colors.red, // 스와이프할 때 배경색 설정
@@ -79,89 +79,93 @@ class FriendTile extends StatelessWidget {
               );
             });
       },
-      child: GestureDetector(
-        onTap: () {
-          Get.to(
+      child: friendTile(),
+    ): friendTile();
+  }
+
+  Widget friendTile() {
+    return GestureDetector(
+      onTap: () {
+        Get.to(
             ProfileDetailScreen(userModel: friend),
             arguments: [friend]);
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 15,
-                  child: AspectRatio(
-                    aspectRatio: 1 / 1,
-                    child: Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.transparent,
-                        ),
-                        child: friend.imgUrl.isNotEmpty
-                            ? Container(
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Image.network(
-                                  friend.imgUrl,
-                                  fit: BoxFit.fill,
-                                ))
-                            : Container(
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Image(
-                                  image: AssetImage(
-                                    'assets/icons/chat_default.png',
-                                  ),
-                                  fit: BoxFit.fill,
-                                ))),
-                  ),
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: Get.height / 15,
+                child: AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.transparent,
+                      ),
+                      child: friend.imgUrl.isNotEmpty
+                          ? Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Image.network(
+                            friend.imgUrl,
+                            fit: BoxFit.fill,
+                          ))
+                          : Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Image(
+                            image: AssetImage(
+                              'assets/icons/chat_default.png',
+                            ),
+                            fit: BoxFit.fill,
+                          ))),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    friend.nickName,
-                    style: AppTextStyle.body16R(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  friend.nickName,
+                  style: AppTextStyle.body16R(
                       color: friend.uid == Get.find<AuthController>().userInfo.value!.uid
-                        ? Colors.white : PlatformColors.title
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Visibility(
-              visible: friend.message.isNotEmpty,
-              child: Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width / 3,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(80),
-                    bottom: Radius.circular(80),
-                  ),
-                  border: Border.all(
-                    color: PlatformColors.primary,
-                  ),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      friend.message,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                          ? Colors.white : PlatformColors.title
                   ),
                 ),
               ),
-            ), //   Container(),
-          ],
-        ),
+            ],
+          ),
+          Visibility(
+            visible: friend.message.isNotEmpty,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: Get.width / 3,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(80),
+                  bottom: Radius.circular(80),
+                ),
+                border: Border.all(
+                  color: PlatformColors.primary,
+                ),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    friend.message,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ),
+          ), //   Container(),
+        ],
       ),
     );
   }

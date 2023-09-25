@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,7 @@ import 'package:tripin/model/user_model.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/profile_trip_tile.dart';
 
+import '../../controllers/edit_profile_controller.dart';
 import '../../model/chat_room_model.dart';
 import '../../utils/colors.dart';
 
@@ -19,9 +22,14 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
 
   @override
   Widget build(BuildContext context) {
+    EditProfileController editProfileController = Get.find<EditProfileController>();
+    editProfileController.nickNameController.text = userModel.nickName;
+    editProfileController.messageController.text = userModel.message;
     return WillPopScope(
       onWillPop: () async {
         controller.filterIdx(0);
+        editProfileController.selectedImage(null);
+        controller.dispose();
         return true;
       },
       child: Scaffold(
@@ -40,9 +48,17 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
           actions: userModel.uid == Get.find<AuthController>().userInfo.value!.uid
             ? [
               TextButton(
-                onPressed: () {},
-                child: Text('편집',
-                  style: AppTextStyle.body14R(color: Colors.white)
+                onPressed: () async {
+                  if (controller.isEditing.value) {
+                    await editProfileController.editProfile();
+                    await editProfileController.selectedImage(null);
+                  }
+                  controller.isEditing.toggle();
+                },
+                child: Obx(
+                  () => Text(controller.isEditing.value ? '완료' : '편집',
+                    style: AppTextStyle.body14R(color: Colors.white)
+                  ),
                 )
               ),
             ]
@@ -70,13 +86,35 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
                     child: Column(
                       children: [
                         Container(
+                          width: 84,
+                          height: 84,
                           clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
+
                           ),
-                          child: userModel.imgUrl == ''
-                            ? Image.asset('assets/icons/chat_default.png', width: 84)
-                            : Image.network('${userModel.imgUrl}', width: 84),
+                          child: Obx(
+                            () => Stack(
+                              children: [
+                                userModel.imgUrl == ''
+                                  ? Image.asset('assets/icons/chat_default.png', width: 84)
+                                  : Image.network('${userModel.imgUrl}', width: 84, fit: BoxFit.cover),
+                                controller.isEditing.value ? GestureDetector(
+                                  onTap: () {
+                                    editProfileController.selectProfileImage();
+                                  },
+                                  child: Container(
+                                    width: 84,
+                                    height: 84,
+                                    color: editProfileController.selectedImage.value == null ? Colors.black.withOpacity(0.2) : null,
+                                    child: editProfileController.selectedImage.value == null
+                                      ? Center(child: Image.asset('assets/icons/camera.png', width: 28))
+                                      : Image.file(File(editProfileController.selectedImage.value!.path), fit: BoxFit.cover,),
+                                  ),
+                                ): Container(width: 84, height: 84)
+                              ],
+                            ),
+                          ),
                         ),
                         SizedBox(height: 16),
                         Text(
@@ -92,13 +130,18 @@ class ProfileDetailScreen extends GetView<ProfileDetailController> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
-                            child: Text(
-                              userModel.message == ''
+                            child: Obx(
+                              () => !controller.isEditing.value ? Text(
+                                userModel.message == ''
                                   ? '상태메세지 없음'
                                   : '${userModel.message}',
-                              style: AppTextStyle.body14M(
-                                  color: Colors.white.withOpacity(
-                                      userModel.message == '' ? 0.5 : 1)),
+                                textAlign: TextAlign.center,
+                                style: AppTextStyle.body14M(
+                                    color: Colors.white.withOpacity(
+                                        userModel.message == '' ? 0.5 : 1)),
+                              ): TextField(
+                                controller: editProfileController.messageController,
+                              ),
                             ),
                           ),
                         ),

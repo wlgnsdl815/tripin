@@ -69,7 +69,7 @@ class FriendScreen extends GetView<FriendController> {
             bottom: 0,
             child: Container(
               color: PlatformColors.subtitle8,
-              height: MediaQuery.of(context).size.height - 347.675,
+              height: MediaQuery.of(context).size.height - 300,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

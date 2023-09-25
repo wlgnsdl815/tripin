@@ -1,13 +1,9 @@
 import 'dart:developer';
 
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:tripin/controllers/home_controller.dart';
-import 'package:tripin/service/db_service.dart';
 
 import '../model/chat_room_model.dart';
 import '../model/user_model.dart';
-import 'auth_controller.dart';
 import 'chat/chat_list_controller.dart';
 
 class ProfileDetailController extends GetxController {
@@ -17,6 +13,7 @@ class ProfileDetailController extends GetxController {
   RxList<ChatRoom?> upcomingTrips = <ChatRoom?>[].obs; // 예정된 여행 리스트
   RxList<ChatRoom?> completedTrips = <ChatRoom?>[].obs; // 완료된 여행 리스트
   RxBool isLoading = false.obs; // 로딩중 상태
+  RxBool isEditing = false.obs; // 수정중 상태
 
   RxInt filterIdx = 0.obs; // 필터링 선택값
   List<String> filterOptionList = ['예정', '종료']; // 필터링 옵션 리스트

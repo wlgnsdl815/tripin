@@ -37,12 +37,18 @@ class EditProfileController extends GetxController {
       userInfo.value!.imgUrl = downloadUrl;
     }
 
-    userInfo.value!.nickName = nickNameController.text;
-    userInfo.value!.message = messageController.text;
+    if (nickNameController.text != '') userInfo.value!.nickName = nickNameController.text;
+    if (messageController != '') userInfo.value!.message = messageController.text;
     await DBService().saveUserInfo(userInfo.value!);
 
     await Get.find<AuthController>().getUserInfo(userInfo.value!.uid);
+    resetInput();
+  }
 
-    Get.offAll(() => HomeScreen());
+  // 입력값 초기화
+  void resetInput() {
+    selectedImage(null);
+    nickNameController.clear();
+    messageController.clear();
   }
 }
