@@ -64,8 +64,7 @@ class MapScreenController extends GetxController {
           .doc(_globalGetXController.roomId.value)
           .snapshots()
           .listen((snapshot) {
-
-      print('dateRange: $dateRange');
+        print('dateRange: $dateRange');
         if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
           List<int> timestamps = List<int>.from(snapshot.data()!['dateRange']);
           dateRange.value = timestamps
@@ -300,6 +299,9 @@ class MapScreenController extends GetxController {
         .update({
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
+    Get.snackbar('알림', '마커가 삭제되었습니다.');
+    nMapController.value!.clearOverlays();
+    showMarkers();
   }
 
   // 마커 변경

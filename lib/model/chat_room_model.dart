@@ -45,7 +45,7 @@ class ChatRoom {
 
   factory ChatRoom.fromMap(Map<String, dynamic> map,
       {List<UserModel>? participants}) {
-      List? intDateRange = map['dateRange'];
+    List? intDateRange = map['dateRange'];
     DateTime? startDate;
     DateTime? endDate;
     List<DateTime> dateRange = [];
@@ -59,11 +59,10 @@ class ChatRoom {
     }
 
     if (intDateRange != null) {
-      intDateRange.forEach((element) { 
+      intDateRange.forEach((element) {
         dateRange.add(DateTime.fromMillisecondsSinceEpoch(element));
       });
     }
-
 
     return ChatRoom(
       roomId: map['roomId'] as String,

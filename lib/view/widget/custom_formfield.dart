@@ -21,6 +21,8 @@ class CustomFormField extends StatefulWidget {
     this.borderRadius,
     this.maxLines,
     this.maxLength,
+    this.borderColor,
+    this.borderSide,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -38,7 +40,8 @@ class CustomFormField extends StatefulWidget {
   final BorderRadius? borderRadius;
   final int? maxLines;
   final int? maxLength;
-
+  final Color? borderColor;
+  final BorderSide? borderSide;
   @override
   State<CustomFormField> createState() => _CustomFormFieldState();
 }
@@ -55,7 +58,10 @@ class _CustomFormFieldState extends State<CustomFormField> {
             filled: widget.filled ?? false,
             fillColor: widget.fillColor ?? PlatformColors.subtitle8,
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1, color: PlatformColors.subtitle5),
+              borderSide: widget.borderSide ??
+                  BorderSide(
+                      width: 1,
+                      color: widget.borderColor ?? PlatformColors.subtitle5),
               borderRadius: BorderRadius.circular(8),
             ),
             focusedBorder: OutlineInputBorder(
