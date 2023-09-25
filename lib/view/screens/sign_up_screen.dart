@@ -21,7 +21,7 @@ class SignUpScreen extends GetView<LoginController> {
               TextFormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
-                  if (!controller.isValidEmail(value)) {
+                  if (!controller.validateEmail(value!)) {
                     return '이메일 형식을 확인해주세요';
                   }
                   return null;

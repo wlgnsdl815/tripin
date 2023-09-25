@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/utils/colors.dart';
@@ -14,6 +15,8 @@ class MapBottomSheet extends GetView<MapScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalGetXController _globalGetXController =
+        Get.find<GlobalGetXController>();
     return DraggableScrollableSheet(
       initialChildSize: 0.6, // 초기 크기를 60%로 설정
       maxChildSize: 0.9, // 최대 크기를 90%로 설정
@@ -125,7 +128,13 @@ class MapBottomSheet extends GetView<MapScreenController> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            controller.deleteMarker(
+                              markerId: marker.id,
+                              order: marker.order,
+                              roomId: _globalGetXController.roomId.value,
+                            );
+                          },
                           child: Text(
                             '장소삭제',
                             style: AppTextStyle.body14M(
@@ -196,12 +205,12 @@ class MapBottomSheet extends GetView<MapScreenController> {
                                               style: AppTextStyle.body14M(),
                                             ),
                                             SizedBox(height: 5.h),
-                                            Text(
-                                              updatedMarker.userNickName,
-                                              style: AppTextStyle.body13M(
-                                                  color:
-                                                      PlatformColors.subtitle2),
-                                            ),
+                                            // Text(
+                                            //   updatedMarker.userNickName,
+                                            //   style: AppTextStyle.body13M(
+                                            //       color:
+                                            //           PlatformColors.subtitle2),
+                                            // ),
                                           ],
                                         ),
                                       ),

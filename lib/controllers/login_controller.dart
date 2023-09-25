@@ -16,6 +16,12 @@ class LoginController extends GetxController {
   final RxString _email = ''.obs;
   final RxString _pw = ''.obs;
   final RxBool isButtonActivated = false.obs;
+  final RxBool isNicknameValid = false.obs;
+  final RxBool isEmailValid = false.obs;
+  final RxBool isPasswordValid = false.obs;
+  final RxBool isPasswordConfirmValid = false.obs;
+  final RxBool obscurePw1 = true.obs;
+  final RxBool obscurePw2 = true.obs;
 
   final AuthController _authController = AuthController();
   String get email => _email.value;
@@ -23,10 +29,32 @@ class LoginController extends GetxController {
   set email(String value) => _email(value);
   set pw(String value) => _pw(value);
 
-  bool isValidEmail(String? email) {
-    final RegExp regex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-    return regex.hasMatch(email!);
+  RxBool get allValidationsPassed => (isNicknameValid.value &&
+          isEmailValid.value &&
+          isPasswordValid.value &&
+          isPasswordConfirmValid.value)
+      .obs;
+
+  // bool isValidEmail(String? email) {
+  //   final RegExp regex =
+  //       RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+  //   return regex.hasMatch(email!);
+  // }
+
+  bool validateNickname(String value) {
+    final pattern = RegExp(r'^[a-zA-Z0-9\uAC00-\uD7A3]+$'); // 영문, 숫자, 한글만 허용
+    return pattern.hasMatch(value);
+  }
+
+  bool validateEmail(String value) {
+    final pattern =
+        RegExp(r'^[a-zA-Z0-9.a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    return pattern.hasMatch(value);
+  }
+
+  bool validatePassword(String value) {
+    final pattern = RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$');
+    return pattern.hasMatch(value);
   }
 
   loginWithEmail() {
@@ -51,45 +79,48 @@ class LoginController extends GetxController {
   }
 
   // 비밀번호 찾기
-Future<void> passwordFind() async {
-  try {
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: pwFindEmailController.text);
+  Future<void> passwordFind() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: pwFindEmailController.text);
 
-    showDialog(
-      context: Get.context!,
-      builder: (context) {
-        return Theme(
-          data: ThemeData.dark(),
-          child: CupertinoAlertDialog(
-            content: Text(
-              '메일이 전송되었습니다.\n메일함을 확인해주세요.',
-              style: TextStyle(color: PlatformColors.subtitle5),
-            ),
-            title: Text('메일 전송 완료'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  // 페이지로 이동
-                  Get.back(); Get.back();
-                },
-                child: Text('확인'),
+      showDialog(
+        context: Get.context!,
+        builder: (context) {
+          return Theme(
+            data: ThemeData.dark(),
+            child: CupertinoAlertDialog(
+              content: Text(
+                '메일이 전송되었습니다.\n메일함을 확인해주세요.',
+                style: TextStyle(color: PlatformColors.subtitle5),
               ),
-            ],
-          ),
-        );
-      },
-    );
-    pwFindEmailController.clear();
-    isButtonActivated.value = false;
-  } catch (e) {
-    print('Firebase Authentication 오류: $e');
-    if (e is FirebaseAuthException) {
-      if (e.code == 'user-not-found') {
-        Get.snackbar('오류', '이메일을 찾을 수 없습니다.');
+              title: Text('메일 전송 완료'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    // 페이지로 이동
+                    Get.back();
+                    Get.back();
+                  },
+                  child: Text('확인'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+      pwFindEmailController.clear();
+      isButtonActivated.value = false;
+    } catch (e) {
+      print('Firebase Authentication 오류: $e');
+      if (e is FirebaseAuthException) {
+        if (e.code == 'user-not-found') {
+          Get.snackbar('오류', '이메일을 찾을 수 없습니다.');
+        }
       }
     }
   }
-}
+
   activeButton() {
     if (pwFindEmailController.text.isNotEmpty) {
       isButtonActivated.value = true;
