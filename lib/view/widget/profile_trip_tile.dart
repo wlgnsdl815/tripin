@@ -43,13 +43,13 @@ class ProfileTripTile extends StatelessWidget {
             children: [
               untilTrip != null ? Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                margin: EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
                   color: PlatformColors.chatPrimaryLight,
                   borderRadius: BorderRadius.circular(28),
                 ),
                 child: Text('D$untilTrip', style: AppTextStyle.body13B(color: PlatformColors.primaryLight),)
               ): Container(),
-              SizedBox(width: 8),
               Text('${trip.roomTitle}', style: AppTextStyle.body17B(),),
             ],
           ),
@@ -59,11 +59,11 @@ class ProfileTripTile extends StatelessWidget {
             children: [
               Image.asset('assets/icons/profile_trip_date.png', width: 14, color: isOngoing ? PlatformColors.title : PlatformColors.subtitle),
               SizedBox(width: 8),
-              Text(
+              trip.startDate != null ? Text(
                 '${DateFormat('yyyy.MM.dd').format(trip.startDate!)} ${controller.getDayOfWeek(trip.startDate!)} '
                     '- ${DateFormat('yyyy.MM.dd').format(trip.endDate!)} ${controller.getDayOfWeek(trip.endDate!)}',
                 style: AppTextStyle.body14M(color: isOngoing ? PlatformColors.title : PlatformColors.subtitle),
-              ),
+              ): Text('미정', style: AppTextStyle.body14M(color: isOngoing ? PlatformColors.title : PlatformColors.subtitle),),
             ],
           ),
           SizedBox(height: 6),

@@ -1,18 +1,9 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:get/get.dart';
-import 'package:sfac_design_flutter/sfac_design_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
-import 'package:tripin/controllers/chat/select_friends_controller.dart';
-import 'package:tripin/controllers/map/map_screen_controller.dart';
-import 'package:tripin/controllers/profile_detail_controller.dart';
 import 'package:tripin/model/enum_color.dart';
-import 'package:tripin/model/user_model.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/page/event_detail_page.dart';

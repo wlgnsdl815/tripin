@@ -43,6 +43,7 @@ class ProfileDetailController extends GetxController {
         upcomingTrips.add(room);
       }
     }
+    sortTripListByStartDate(upcomingTrips);
     isLoading(false);
   }
 
@@ -58,6 +59,23 @@ class ProfileDetailController extends GetxController {
     DateTime today = DateTime(now.year, now.month, now.day);  // 시, 분, 초 제외한 오늘 날짜
     int untilTrip = today.difference(startDate).inDays;
     return untilTrip;
+  }
+
+  // 시작 날짜를 기준으로 오름차순 정렬
+  void sortTripListByStartDate(List tripList) {
+    if (tripList.isNotEmpty) {
+      tripList.sort((a, b) {
+        if (a!.startDate == null && b!.startDate == null) {
+          return 0;
+        } else if (a.startDate == null) {
+          return 1; // a가 null이면 b를 뒤로 배치
+        } else if (b!.startDate == null) {
+          return -1; // b가 null이면 a를 뒤로 배치
+        } else {
+          return a.startDate!.compareTo(b.startDate!);
+        }
+      });
+    }
   }
 
   @override
