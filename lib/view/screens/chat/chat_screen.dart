@@ -417,16 +417,43 @@ class ChatScreen extends GetView<ChatController> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: TextField(
-                                  controller: controller.messageController,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: '메세지 입력...',
-                                    hintStyle: AppTextStyle.body14R(
-                                        color: PlatformColors.subtitle2),
-                                  ),
-                                  onChanged: (value) {
-                                    controller.chatMessage.value = value;
+                                child: Obx(
+                                  () {
+                                    bool isButtonEnabled =
+                                        controller.chatMessage.value != '';
+                                    return TextField(
+                                      onSubmitted: isButtonEnabled
+                                          ? (text) {
+                                              controller.sendMessage(
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                controller
+                                                    .messageController.text,
+                                                _globalGetXController
+                                                    .roomId.value,
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                false,
+                                                null,
+                                                null,
+                                              );
+
+                                              controller.messageController
+                                                  .clear();
+                                              controller.chatMessage.value = '';
+                                            }
+                                          : null,
+                                      controller: controller.messageController,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '메세지 입력...',
+                                        hintStyle: AppTextStyle.body14R(
+                                            color: PlatformColors.subtitle2),
+                                      ),
+                                      onChanged: (value) {
+                                        controller.chatMessage.value = value;
+                                      },
+                                    );
                                   },
                                 ),
                               ),
