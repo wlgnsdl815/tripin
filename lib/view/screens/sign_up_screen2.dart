@@ -87,7 +87,24 @@ class SignUpScreen2 extends GetView<LoginController> {
                 SizedBox(height: 7.h),
                 Obx(
                   () => CustomFormField(
-                    icon: Image.asset('assets/icons/lock.png'),
+                    icon: Padding(
+                      padding: EdgeInsets.only(right: 10.w),
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.obscurePw1.value =
+                              !controller.obscurePw1.value;
+                        },
+                        child: Image.asset(
+                          'assets/icons/lock.png',
+                          width: 13.w,
+                          height: 16.w,
+                          color: controller.obscurePw1.value
+                              ? Color(0xff777777)
+                              : PlatformColors.primary,
+                        ),
+                      ),
+                    ),
+                    obscureText: controller.obscurePw1.value,
                     borderSide: BorderSide.none,
                     controller: controller.pwEditingController,
                     hintText: '비밀번호를 입력하세요',
@@ -112,6 +129,24 @@ class SignUpScreen2 extends GetView<LoginController> {
                 SizedBox(height: 7.h),
                 Obx(
                   () => CustomFormField(
+                    icon: Padding(
+                      padding: EdgeInsets.only(right: 10.w),
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.obscurePw2.value =
+                              !controller.obscurePw2.value;
+                        },
+                        child: Image.asset(
+                          'assets/icons/lock.png',
+                          width: 13.w,
+                          height: 16.w,
+                          color: controller.obscurePw2.value
+                              ? Color(0xff777777)
+                              : PlatformColors.primary,
+                        ),
+                      ),
+                    ),
+                    obscureText: controller.obscurePw2.value,
                     borderSide: BorderSide.none,
                     controller: controller.pw2EditingController,
                     hintText: '비밀번호를 한번 더 입력하세요',

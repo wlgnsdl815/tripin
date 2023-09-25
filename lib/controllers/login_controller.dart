@@ -20,6 +20,8 @@ class LoginController extends GetxController {
   final RxBool isEmailValid = false.obs;
   final RxBool isPasswordValid = false.obs;
   final RxBool isPasswordConfirmValid = false.obs;
+  final RxBool obscurePw1 = true.obs;
+  final RxBool obscurePw2 = true.obs;
 
   final AuthController _authController = AuthController();
   String get email => _email.value;
