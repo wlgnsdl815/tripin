@@ -115,7 +115,7 @@ class FriendController extends GetxController {
   RxList<UserModel> friends = RxList<UserModel>([]);
   final EditProfileController editProfileController =
       Get.find<EditProfileController>();
-        final image = ''.obs;
+  final image = ''.obs;
   final nickName = ''.obs;
   final message = ''.obs;
   // Rx<SearchState> searchState = Rx<SearchState>(SearchState.Idle);
@@ -219,14 +219,16 @@ class FriendController extends GetxController {
 
   void getFollowing() async {
     await authController.getUserInfo(FirebaseAuth.instance.currentUser!.uid);
-    var uidList = authController.userInfo.value!.following;
-    List<UserModel> following = [];
-    for (var uid in uidList) {
-      var userInfo = await DBService().getUserInfoById(uid);
-      following.add(userInfo);
+    if (authController.userInfo.value != null) {
+      var uidList = authController.userInfo.value!.following;
+      List<UserModel> following = [];
+      for (var uid in uidList) {
+        var userInfo = await DBService().getUserInfoById(uid);
+        following.add(userInfo);
+      }
+      followingList(following);
+      print('$followingList');
     }
-    followingList(following);
-    print('$followingList');
   }
 
   void showUserList(String userEmail) async {
