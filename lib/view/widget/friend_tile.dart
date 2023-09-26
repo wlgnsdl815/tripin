@@ -136,25 +136,28 @@ class FriendTile extends StatelessWidget {
             ),
             Visibility(
               visible: friend.message.isNotEmpty,
-              child: Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width / 3,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(80),
-                    bottom: Radius.circular(80),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 24),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width / 3,
                   ),
-                  border: Border.all(
-                    color: PlatformColors.primary,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(80),
+                      bottom: Radius.circular(80),
+                    ),
+                    border: Border.all(
+                      color: PlatformColors.primary,
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      friend.message,
-                      overflow: TextOverflow.ellipsis,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        friend.message,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
