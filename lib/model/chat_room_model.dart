@@ -62,6 +62,7 @@ class ChatRoom {
       intDateRange.forEach((element) {
         dateRange.add(DateTime.fromMillisecondsSinceEpoch(element));
       });
+      print('데이트레인지 : $dateRange');
     }
 
     return ChatRoom(
@@ -78,4 +79,6 @@ class ChatRoom {
       imgUrl: map['imgUrl'] ?? '',
     );
   }
+
+  void forEach(Null Function() param0) {}
 }

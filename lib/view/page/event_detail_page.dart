@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
@@ -13,7 +14,10 @@ class EventDetailPage extends GetView<CalendarController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.readCity();
+    var city = Get.arguments['city'];
+    List<DateTime> dateRange = Get.arguments['dateRange'];
+    DateTime startDate = dateRange.first;
+    DateTime endDate = dateRange.last;
 
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +28,9 @@ class EventDetailPage extends GetView<CalendarController> {
           '이벤트 세부사항',
           style: AppTextStyle.header18(),
         ),
-        actions: [TextButton(onPressed: () {}, child: Text('편집'))],
+        actions: [TextButton(onPressed: () {
+          
+        }, child: Text('편집'))],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -39,9 +45,25 @@ class EventDetailPage extends GetView<CalendarController> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Icon(Icons.location_on_outlined, color: PlatformColors.subtitle2,),
-                  Obx(() => Text('${controller.selectedCity}',)),
-                  Text(Get.find<CalendarController>().dateRange.toString()),
+                  Image.asset(
+                    'assets/icons/location2.png',
+                    height: 13.h,
+                    width: 10.w,
+                  ),
+                  SizedBox(width: 3.w),
+                  Text(
+                    city,
+                    style: AppTextStyle.body11M(
+                      color: PlatformColors.subtitle2,
+                    ),
+                  ),
+                  // Obx(() => Text(city)),
+                  Text(
+                    ' • ${DateFormat('y.MM.dd').format(startDate)} - ${DateFormat('MM.dd').format(endDate)}',
+                    style: AppTextStyle.body11M(
+                      color: PlatformColors.subtitle2,
+                    ),
+                  ),
                 ],
               ),
             ),
