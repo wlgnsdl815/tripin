@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/utils/colors.dart';
-import 'package:tripin/view/screens/my_page_screen.dart';
 
 class LoginController extends GetxController {
   final TextEditingController emailEditingController = TextEditingController();
@@ -35,24 +34,24 @@ class LoginController extends GetxController {
           isPasswordConfirmValid.value)
       .obs;
 
-  // bool isValidEmail(String? email) {
-  //   final RegExp regex =
-  //       RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-  //   return regex.hasMatch(email!);
-  // }
-
   bool validateNickname(String value) {
+    if (value.trim().isEmpty) return false; // 공백 체크 로직
+
     final pattern = RegExp(r'^[a-zA-Z0-9\uAC00-\uD7A3]+$'); // 영문, 숫자, 한글만 허용
     return pattern.hasMatch(value);
   }
 
   bool validateEmail(String value) {
+    if (value.trim().isEmpty) return false; // 공백 체크 로직
+
     final pattern =
         RegExp(r'^[a-zA-Z0-9.a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
     return pattern.hasMatch(value);
   }
 
   bool validatePassword(String value) {
+    if (value.trim().isEmpty) return false; // 공백 체크 로직
+
     final pattern = RegExp(r'^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$');
     return pattern.hasMatch(value);
   }
@@ -73,6 +72,10 @@ class LoginController extends GetxController {
         pwEditingController.text,
         nickNameController.text,
       );
+      emailEditingController.clear();
+      pwEditingController.clear();
+      pw2EditingController.clear();
+      nickNameController.clear();
       return;
     }
     print('회원가입 실패. 두 개의 비밀번호 다름');

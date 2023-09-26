@@ -67,7 +67,7 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
           children: [
             Obx(() {
               double targetHeight =
-                  controller.participants.isNotEmpty ? 80.h : 0.0;
+                  controller.participants.isNotEmpty ? 100.h : 0.0;
               controller.containerHeight.value = targetHeight;
               return AnimatedContainer(
                 duration: Duration(milliseconds: 200),
@@ -97,15 +97,36 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                       AnimatedContainer(
                         duration: Duration(milliseconds: 200),
                         child: Container(
-                          height: 47.0.h,
+                          height: 70.0.h,
                           child: ListView.separated(
                             separatorBuilder: (context, index) =>
-                                SizedBox(width: 16.w),
+                                SizedBox(width: 26.w),
                             scrollDirection: Axis.horizontal,
                             itemCount: controller.participants.length,
                             itemBuilder: (context, index) {
-                              return ListProfileContainer(
-                                user: controller.participants[index],
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  ListProfileContainer(
+                                    user: controller.participants[index],
+                                    nickName:
+                                        controller.participants[index].nickName,
+                                  ),
+                                  Positioned(
+                                    top: -3.h,
+                                    right: -3.w,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        controller.participants.removeAt(index);
+                                      },
+                                      child: Image.asset(
+                                        'assets/icons/circle_cancle.png',
+                                        width: 16.w,
+                                        height: 16.w,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               );
                             },
                           ),
@@ -144,11 +165,13 @@ class SelectFriendsScreen extends GetView<SelectFriendsController> {
                       contentPadding: EdgeInsets.zero,
                       title: Text(
                         controller.userData[index].nickName,
+                        style: AppTextStyle.body18M(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       leading: ListProfileContainer(
-                          user: controller.userData[index]),
+                        user: controller.userData[index],
+                      ),
                       trailing: Obx(
                         () {
                           bool isSelected = controller.participants.any(

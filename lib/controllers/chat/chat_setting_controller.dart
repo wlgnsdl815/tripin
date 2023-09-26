@@ -81,13 +81,6 @@ class ChatSettingController extends GetxController {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     DocumentReference userDoc = users.doc(userInfo.value!.uid);
 
-    DocumentSnapshot snapshot = await roomDoc.get();
-
-    if (!snapshot.exists) {
-      print('해당 채팅방 문서가 존재하지 않습니다.');
-      return;
-    }
-
     // 참가자 리스트에서 현재 사용자를 제거
     await roomDoc.update({
       'participants': FieldValue.arrayRemove([userInfo.value!.uid])
@@ -96,7 +89,9 @@ class ChatSettingController extends GetxController {
       'joinedTrip': FieldValue.arrayRemove([_globalGetXController.roomId.value])
     });
 
-    List updatedParticipants = snapshot.get('participants') ?? [];
+    // 최신 상태의 문서 스냅샷을 가져옴
+    DocumentSnapshot updatedSnapshot = await roomDoc.get();
+    List updatedParticipants = updatedSnapshot.get('participants') ?? [];
 
     // 참가자 리스트가 비어 있다면 방 삭제
     if (updatedParticipants.isEmpty) {

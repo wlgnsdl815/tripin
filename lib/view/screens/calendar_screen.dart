@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -26,6 +25,7 @@ class CalendarScreen extends GetView<CalendarController> {
 //     print(controller.startDate.value);
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(onPressed: () {}, icon: Icon(Icons.list)),
             IconButton(onPressed: () {}, icon: Icon(Icons.search))
@@ -77,7 +77,6 @@ class CalendarScreen extends GetView<CalendarController> {
               ),
             ),
           ),
-        )
-        );
+        ));
   }
 }

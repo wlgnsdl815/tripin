@@ -237,20 +237,6 @@ class MapScreenController extends GetxController {
     addArrowheadPath(nMapController.value!, nMarkerList);
   }
 
-  // 마커 타이틀(장소) 업데이트
-  upDateMarkerTitle(String markerId) async {
-    await FirebaseFirestore.instance
-        .collection('chatRooms')
-        .doc(_globalGetXController.roomId.value)
-        .collection('markers')
-        .doc(markerId)
-        .update({
-      'title': placeTextController.text,
-      'updatedAt': DateTime.now().millisecondsSinceEpoch,
-    });
-    placeTextController.clear();
-  }
-
   upDateAndGetDescription(String markerId) async {
     await FirebaseFirestore.instance
         .collection('chatRooms')

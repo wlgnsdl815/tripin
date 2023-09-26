@@ -46,7 +46,9 @@ class ChatScreen extends GetView<ChatController> {
             Get.back();
           },
         ),
-        title: Obx(() => Text(_globalGetXController.roomTitle.value)),
+        title: Obx(
+          () => Text(_globalGetXController.roomTitle.value),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: PlatformColors.title,
@@ -82,7 +84,7 @@ class ChatScreen extends GetView<ChatController> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (scrollController.hasClients) {
               scrollController.animateTo(
-                scrollController.position.maxScrollExtent + 100,
+                scrollController.position.maxScrollExtent,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.ease,
               );
