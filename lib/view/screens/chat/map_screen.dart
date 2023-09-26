@@ -108,8 +108,6 @@ class MapScreen extends GetView<MapScreenController> {
                     marker.setOnTapListener((NMarker tappedMarker) {
                       print('탭한 마커 id: ${tappedMarker.info.id}');
                       _showBottomSheet(_nMarkerList, 'right');
-                      tappedMarker
-                          .setIconTintColor(Color(0xFF4D80EE).withOpacity(0.2));
                     });
                   }
                 },
@@ -248,9 +246,10 @@ class MapScreen extends GetView<MapScreenController> {
                             index == controller.selectedDayIndex.value;
                         return Padding(
                           padding: EdgeInsets.only(
-                              right: (index < controller.dateRange.length - 1)
-                                  ? 6
-                                  : 0),
+                            right:
+                                (index < controller.dateRange.length) ? 15 : 0,
+                            left: index == 0 ? 15 : 0,
+                          ),
                           child: CustomButton(
                             onTap: () {
                               controller.onDayButtonTap(index: index);

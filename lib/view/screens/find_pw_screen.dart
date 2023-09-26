@@ -17,7 +17,6 @@ class FindPwScreen extends GetView<LoginController> {
       backgroundColor: PlatformColors.subtitle7,
       appBar: AppBar(
         backgroundColor: PlatformColors.subtitle8,
-        elevation: 0,
         foregroundColor: Colors.black,
         title: Text('비밀번호 변경', style: AppTextStyle.header18()),
         centerTitle: true,
@@ -55,7 +54,7 @@ class FindPwScreen extends GetView<LoginController> {
                   ),
                   controller: controller.pwFindEmailController,
                   onChanged: (_) {
-                    controller.activeButton(); 
+                    controller.activeButton();
                   },
                 ),
               ],

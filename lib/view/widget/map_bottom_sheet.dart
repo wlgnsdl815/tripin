@@ -77,6 +77,7 @@ class MapBottomSheet extends GetView<MapScreenController> {
                 );
               }
               MarkerModel marker = controller.currentDayMarkers[index - 1];
+
               print(controller.currentDayMarkers);
 
               print(marker.userNickName);
@@ -134,6 +135,7 @@ class MapBottomSheet extends GetView<MapScreenController> {
                               order: marker.order,
                               roomId: _globalGetXController.roomId.value,
                             );
+                            Get.back();
                           },
                           child: Text(
                             '장소삭제',
@@ -205,12 +207,6 @@ class MapBottomSheet extends GetView<MapScreenController> {
                                               style: AppTextStyle.body14M(),
                                             ),
                                             SizedBox(height: 5.h),
-                                            // Text(
-                                            //   updatedMarker.userNickName,
-                                            //   style: AppTextStyle.body13M(
-                                            //       color:
-                                            //           PlatformColors.subtitle2),
-                                            // ),
                                           ],
                                         ),
                                       ),
@@ -223,115 +219,7 @@ class MapBottomSheet extends GetView<MapScreenController> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            Get.dialog(
-                              Dialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            'assets/pins/Vector.png',
-                                            width: 11.w,
-                                            height: 11.h,
-                                            color: PinColor
-                                                .colors[marker.order % 10]!,
-                                          ),
-                                          SizedBox(width: 2.w),
-                                          Text(
-                                            '${marker.order}',
-                                            style: AppTextStyle.body15M(
-                                              color: PinColor
-                                                  .colors[marker.order % 10]!,
-                                            ),
-                                          ),
-                                          SizedBox(width: 5.w),
-                                          Text(
-                                            '메모',
-                                            style: AppTextStyle.body15M(),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 19),
-                                      Text(
-                                        marker.title,
-                                        style: AppTextStyle.body16M(),
-                                      ),
-                                      Divider(
-                                        thickness: 1,
-                                        color: PlatformColors.subtitle7,
-                                      ),
-                                      Text(
-                                        marker.subTitle,
-                                        style: AppTextStyle.body11M(
-                                          color: Color(0xff585858),
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      TextField(
-                                        maxLines: 5,
-                                        controller: controller
-                                            .descriptionTextController,
-                                        decoration: InputDecoration(
-                                          fillColor: PlatformColors.subtitle8,
-                                          filled: true,
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: PlatformColors.primary,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              width: 1,
-                                              color: PlatformColors.subtitle7,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          hintText: '메모를 추가할 수 있어요!',
-                                          hintStyle: TextStyle(
-                                              color: PlatformColors.subtitle4),
-                                          suffixIconConstraints:
-                                              BoxConstraints(maxHeight: 30),
-                                        ),
-                                      ),
-                                      SizedBox(height: 13),
-                                      Center(
-                                        child: CustomButton(
-                                          onTap: () {
-                                            controller.upDateAndGetDescription(
-                                                marker.id);
-                                            Get.back();
-                                          },
-                                          text: '등록',
-                                          textPadding: EdgeInsets.symmetric(
-                                            horizontal: 48,
-                                          ),
-                                          textStyle: AppTextStyle.body12M(
-                                            color: Colors.white,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                            showEditDialog(marker);
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -360,6 +248,107 @@ class MapBottomSheet extends GetView<MapScreenController> {
           ),
         );
       },
+    );
+  }
+
+  void showEditDialog(MarkerModel marker) {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/pins/Vector.png',
+                    width: 11.w,
+                    height: 11.h,
+                    color: PinColor.colors[marker.order % 10]!,
+                  ),
+                  SizedBox(width: 2.w),
+                  Text(
+                    '${marker.order}',
+                    style: AppTextStyle.body15M(
+                      color: PinColor.colors[marker.order % 10]!,
+                    ),
+                  ),
+                  SizedBox(width: 5.w),
+                  Text(
+                    '메모',
+                    style: AppTextStyle.body15M(),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              SizedBox(height: 19),
+              Text(
+                marker.title,
+                style: AppTextStyle.body16M(),
+              ),
+              Divider(
+                thickness: 1,
+                color: PlatformColors.subtitle7,
+              ),
+              Text(
+                marker.subTitle,
+                style: AppTextStyle.body11M(
+                  color: Color(0xff585858),
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                maxLines: 5,
+                controller: controller.descriptionTextController,
+                decoration: InputDecoration(
+                  fillColor: PlatformColors.subtitle8,
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: PlatformColors.primary,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: PlatformColors.subtitle7,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  hintText: '메모를 추가할 수 있어요!',
+                  hintStyle: TextStyle(color: PlatformColors.subtitle4),
+                  suffixIconConstraints: BoxConstraints(maxHeight: 30),
+                ),
+              ),
+              SizedBox(height: 13),
+              Center(
+                child: CustomButton(
+                  onTap: () {
+                    controller.upDateAndGetDescription(marker.id);
+                    Get.back();
+                  },
+                  text: '등록',
+                  textPadding: EdgeInsets.symmetric(
+                    horizontal: 48,
+                  ),
+                  textStyle: AppTextStyle.body12M(
+                    color: Colors.white,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

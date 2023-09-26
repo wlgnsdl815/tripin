@@ -23,6 +23,7 @@ class ChatListScreen extends GetView<ChatListController> {
     print('리스트를 보여줄 때 현재 유저: $currentUserUid');
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           '나의 여행 방',
           style: AppTextStyle.header20(),

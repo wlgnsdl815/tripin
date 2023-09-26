@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/utils/text_styles.dart';
-import 'package:tripin/view/screens/friend_screen.dart';
 
 class FindFriendPage extends GetView<FriendController> {
   const FindFriendPage({super.key});

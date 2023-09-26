@@ -46,7 +46,9 @@ class ChatScreen extends GetView<ChatController> {
             Get.back();
           },
         ),
-        title: Obx(() => Text(_globalGetXController.roomTitle.value)),
+        title: Obx(
+          () => Text(_globalGetXController.roomTitle.value),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: PlatformColors.title,
@@ -82,13 +84,12 @@ class ChatScreen extends GetView<ChatController> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (scrollController.hasClients) {
               scrollController.animateTo(
-                scrollController.position.maxScrollExtent + 100,
+                scrollController.position.maxScrollExtent,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.ease,
               );
             }
           });
-          print('스냅샷 데이터: ${snapshot.data}');
           controller.messageList.value = snapshot.data!;
           return Column(
             children: [
@@ -417,16 +418,43 @@ class ChatScreen extends GetView<ChatController> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: TextField(
-                                  controller: controller.messageController,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: '메세지 입력...',
-                                    hintStyle: AppTextStyle.body14R(
-                                        color: PlatformColors.subtitle2),
-                                  ),
-                                  onChanged: (value) {
-                                    controller.chatMessage.value = value;
+                                child: Obx(
+                                  () {
+                                    bool isButtonEnabled =
+                                        controller.chatMessage.value != '';
+                                    return TextField(
+                                      onSubmitted: isButtonEnabled
+                                          ? (text) {
+                                              controller.sendMessage(
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                controller
+                                                    .messageController.text,
+                                                _globalGetXController
+                                                    .roomId.value,
+                                                _authController
+                                                    .userInfo.value!.uid,
+                                                false,
+                                                null,
+                                                null,
+                                              );
+
+                                              controller.messageController
+                                                  .clear();
+                                              controller.chatMessage.value = '';
+                                            }
+                                          : null,
+                                      controller: controller.messageController,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: '메세지 입력...',
+                                        hintStyle: AppTextStyle.body14R(
+                                            color: PlatformColors.subtitle2),
+                                      ),
+                                      onChanged: (value) {
+                                        controller.chatMessage.value = value;
+                                      },
+                                    );
                                   },
                                 ),
                               ),

@@ -85,23 +85,23 @@ class _CustomFormFieldState extends State<CustomFormField> {
           onChanged: widget.onChanged,
         ),
         Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(top: 4, bottom: 8),
-          child: Text(
-            widget.controller.text.isEmpty
-                ? widget.validText!
-                : widget.isValid == true
-                    ? widget.validText!
-                    : widget.invalidText!,
-            style: TextStyle(
-              color: widget.controller.text.isEmpty
-                  ? PlatformColors.primary
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(top: 4, bottom: 8),
+            child: Text(
+              widget.controller.text.isEmpty
+                  ? ''
+                  // widget.invalidText!
                   : widget.isValid == true
-                      ? PlatformColors.primary
-                      : PlatformColors.negative,
-            ),
-          ),
-        ),
+                      ? widget.validText!
+                      : widget.invalidText!,
+              style: TextStyle(
+                color: widget.controller.text.isEmpty
+                    ? PlatformColors.negative
+                    : widget.isValid == true
+                        ? PlatformColors.primary
+                        : PlatformColors.negative,
+              ),
+            )),
       ],
     );
   }

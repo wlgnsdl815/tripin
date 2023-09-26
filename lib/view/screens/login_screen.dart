@@ -7,7 +7,6 @@ import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/sign_up_screen.dart';
-import 'package:tripin/view/screens/sign_up_screen2.dart';
 import 'package:tripin/view/widget/custom_button.dart';
 import 'package:tripin/view/widget/custom_formfield.dart';
 
@@ -55,7 +54,7 @@ class LoginScreen extends GetView<LoginController> {
                     () => Column(
                       children: [
                         CustomFormField(
-                          hintText: '이메일을 입력하세요',
+                          hintText: 'tripin@email.com',
                           hintStyle: TextStyle(color: PlatformColors.subtitle4),
                           isValid: controller.validateEmail(controller.email),
                           validText: '이메일 주소',
@@ -123,7 +122,7 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Get.to(() => SignUpScreen2());
+                            Get.to(() => SignUpScreen());
                           },
                           child: Text(
                             '회원가입',

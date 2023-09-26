@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/friend_controller.dart';
@@ -21,6 +22,7 @@ class FriendScreen extends GetView<FriendController> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(
@@ -59,7 +61,8 @@ class FriendScreen extends GetView<FriendController> {
                 Obx(
                   () => Padding(
                     padding: const EdgeInsets.all(18),
-                    child: FriendTile(friend: Get.find<AuthController>().userInfo.value!),
+                    child: FriendTile(
+                        friend: Get.find<AuthController>().userInfo.value!),
                   ),
                 )
               ],
@@ -69,7 +72,7 @@ class FriendScreen extends GetView<FriendController> {
             bottom: 0,
             child: Container(
               color: PlatformColors.subtitle8,
-              height: MediaQuery.of(context).size.height - 300,
+              height: MediaQuery.of(context).size.height - 320.h,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -133,7 +136,8 @@ class FriendScreen extends GetView<FriendController> {
                               final friend = controller.followingList[index];
                               return FriendTile(friend: friend);
                             },
-                            separatorBuilder: (context, index) => SizedBox(height: 18),
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 18),
                           ),
                         ),
                       ),

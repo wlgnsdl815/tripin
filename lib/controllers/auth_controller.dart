@@ -207,21 +207,29 @@ class AuthController extends GetxController {
     }
 
     print('파베에 사용자 정보 저장시작');
-    // Firestore에 사용자 정보 저장
-    await FirebaseFirestore.instance
+    // 1. Firestore에서 해당 사용자의 정보를 가져옴
+    DocumentReference userDocRef = FirebaseFirestore.instance
         .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .set({
-      'uid': FirebaseAuth.instance.currentUser!.uid,
-      'email': kakaoUser.kakaoAccount?.email,
-      'nickName': kakaoUser.kakaoAccount?.profile?.nickname,
-      'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
-      'isSelected': false,
-      'message': '',
-      'following': userInfo.value?.following ?? [],
-      'joinedTrip': userInfo.value?.joinedTrip ?? [],
-    });
-    print('파베에 사용자 정보 저장끝');
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    DocumentSnapshot userSnapshot = await userDocRef.get();
+
+    // 2. 사용자 정보가 Firestore에 없는 경우만 저장
+    if (!userSnapshot.exists) {
+      await userDocRef.set({
+        'uid': FirebaseAuth.instance.currentUser!.uid,
+        'email': kakaoUser.kakaoAccount?.email,
+        'nickName': kakaoUser.kakaoAccount?.profile?.nickname,
+        'imgUrl': kakaoUser.kakaoAccount?.profile?.profileImageUrl ?? '',
+        'isSelected': false,
+        'message': '',
+        'following': userInfo.value?.following ?? [],
+        'joinedTrip': userInfo.value?.joinedTrip ?? [],
+      });
+      print('파베에 사용자 정보 저장완료');
+    } else {
+      print('이미 사용자 정보가 파베에 존재합니다.');
+    }
+
     await getUserInfo(FirebaseAuth.instance.currentUser!.uid);
   }
 
