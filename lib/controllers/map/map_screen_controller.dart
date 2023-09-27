@@ -5,9 +5,11 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
+import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/marker_model.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
@@ -35,6 +37,8 @@ class MapScreenController extends GetxController {
   RxString placeText = ''.obs;
   Rxn<NaverMapController> nMapController = Rxn();
   RxString kakaoAddress = ''.obs; // 카카오에서 보내주는 주소
+  
+  UserModel userModel = Get.find<AuthController>().userInfo.value!;
 
   final GlobalGetXController _globalGetXController =
       Get.find<GlobalGetXController>();
@@ -73,6 +77,9 @@ class MapScreenController extends GetxController {
               .toList();
           timeStamps.value = List<int>.from(snapshot.data()!['dateRange']);
         }
+
+        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere((element) => element!.roomId == _globalGetXController.roomId.value);
+        updateChatRoom!.dateRange = this.dateRange;
       });
 
       // Firestore 스냅샷 구독 (markers)

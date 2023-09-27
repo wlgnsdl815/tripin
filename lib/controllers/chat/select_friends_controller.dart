@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +97,8 @@ class SelectFriendsController extends GetxController {
 
     await DBService().saveJoinedRoomId(newRoom.roomId, participantsUidList);
 
+    userInfo.value!.joinedTrip!.add(newRoom);
+
     String randomColor = CalendarColors.getRandomColor();
     rangeHighlightColor.value = randomColor;
 
@@ -146,6 +150,9 @@ class SelectFriendsController extends GetxController {
       'endDate': endDate.millisecondsSinceEpoch,
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
+
+    log('${userInfo.value!.joinedTrip!.length}', name: 'readAllEvent호출 전 joinedTrip');
+    Get.find<CalendarController>().readAllEvent(userInfo.value!.joinedTrip);
 
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }

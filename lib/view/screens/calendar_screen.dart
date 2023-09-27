@@ -33,6 +33,7 @@ class CalendarScreen extends GetView<CalendarController> {
         body: SafeArea(
           child: Obx(
             () => TableCalendar(
+              
               locale: 'ko_KR',
               firstDay: DateTime.utc(2022, 01, 01),
               lastDay: DateTime.now().add(Duration(days: 365 * 2)),
@@ -59,32 +60,6 @@ class CalendarScreen extends GetView<CalendarController> {
               //     Get.to(() => EventDetailPage());
               //   }
               // },
-              onDaySelected: (selectedDay, focusedDay) {
-                List<dynamic> eventsForDay = [];
-
-                controller.convertedMap.forEach((date, event) {
-                  if (date.year == selectedDay.year &&
-                      date.month == selectedDay.month &&
-                      date.day == selectedDay.day) {
-                    eventsForDay.add(event);
-                  }
-                });
-
-                // eventsForDay에 대한 동작 수행
-                for (var event in eventsForDay) {
-                  if (event is ChatRoom) {
-                    // ChatRoom에서 city 정보 추출
-                    String city = event.city;
-                    List<DateTime> dateRange = event.dateRange;
-
-                    // city 정보를 사용하여 필요한 작업 수행
-                    print('Selected city: $city');
-                    print('Selected date: $dateRange');
-                    Get.toNamed(EventDetailPage.route,
-                        arguments: {'city': city, 'dateRange': dateRange});
-                  }
-                }
-              },
               eventLoader: (day) {
                 // day에 해당하는 이벤트 목록 가져오기
                 List<dynamic> eventsForDay = [];
@@ -99,6 +74,29 @@ class CalendarScreen extends GetView<CalendarController> {
 
                 return eventsForDay;
               },
+              onDaySelected: (selectedDay, focusedDay) {
+                List<dynamic> eventsForDay = [];
+
+                controller.convertedMap.forEach((date, event) {
+                  if (date.year == selectedDay.year &&
+                      date.month == selectedDay.month &&
+                      date.day == selectedDay.day) {
+                    eventsForDay.add(event);
+                  }
+                });
+
+                for (var event in eventsForDay) {
+                  if (event is ChatRoom) {
+                    String city = event.city;
+                    List<DateTime> dateRange = event.dateRange;
+
+                    print('Selected city: $city');
+                    print('Selected date: $dateRange');
+                    Get.toNamed(EventDetailPage.route,
+                        arguments: {'city': city, 'dateRange': dateRange});
+                  }
+                }
+              },
               // eventLoader: (day) {
               //   return controller.getEventsForDay(day);
               //   // // 특정 날짜에 채팅 이벤트가 있는지 확인
@@ -110,6 +108,7 @@ class CalendarScreen extends GetView<CalendarController> {
               //   // // 이벤트가 있는 경우 해당 날짜 반환, 없는 경우 빈 리스트 반환
               //   // return hasChatEvent ? [day] : [];
               // },
+              
               headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleTextStyle: AppTextStyle.body18M(),

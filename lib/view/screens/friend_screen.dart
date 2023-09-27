@@ -59,7 +59,8 @@ class FriendScreen extends GetView<FriendController> {
                 Obx(
                   () => Padding(
                     padding: const EdgeInsets.all(18),
-                    child: FriendTile(friend: Get.find<AuthController>().userInfo.value!),
+                    child: FriendTile(
+                        friend: Get.find<AuthController>().userInfo.value!),
                   ),
                 )
               ],
@@ -133,7 +134,8 @@ class FriendScreen extends GetView<FriendController> {
                               final friend = controller.followingList[index];
                               return FriendTile(friend: friend);
                             },
-                            separatorBuilder: (context, index) => SizedBox(height: 18),
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 18),
                           ),
                         ),
                       ),
