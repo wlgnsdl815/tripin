@@ -1,7 +1,7 @@
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +9,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
+import 'package:tripin/model/check_list.dart';
 import 'package:tripin/model/enum_color.dart';
 import 'package:tripin/model/event_model.dart';
 import 'package:tripin/model/user_model.dart';
@@ -16,103 +17,154 @@ import 'package:tripin/utils/colors.dart';
 
 class CalendarController extends GetxController {
   UserModel userModel = Get.find<AuthController>().userInfo.value!;
-  // RxList<Event> events = <Event>[].obs;
   List<DateTime> selectedDates = [];
   RxString selectedRandomColor = ''.obs;
   Rxn<List<DateTime>> dateRange = Rxn<List<DateTime>>([]);
-  // final CrCalendarController calendarController = CrCalendarController();
   Rxn startDate = Rxn();
   Rxn endDate = Rxn();
   RxList<DateTime> allEvent = <DateTime>[].obs;
   RxString selectedCity = ''.obs;
   RxMap<DateTime, dynamic> convertedMap = <DateTime, dynamic>{}.obs;
+  RxMap<String, dynamic> checkLists = <String, dynamic>{}.obs;
+  TextEditingController checklistController = TextEditingController();
+  RxBool isEditing = false.obs;
+  String selectedItem = ''; // 선택한 항목을 저장하는 변수
 
-  void readEvent() async {
-    var db = FirebaseFirestore.instance;
-    QuerySnapshot res = await db
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('calendar')
-        .get();
+  // void readEvent() async {
+  //   var db = FirebaseFirestore.instance;
+  //   QuerySnapshot res = await db
+  //       .collection('users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .collection('calendar')
+  //       .get();
 
-    res.docs.forEach((DocumentSnapshot doc) {
-      if (doc.exists) {
-        final color = doc.get('color') as String;
-        // 이제 color 변수를 사용하여 원하는 작업을 수행할 수 있습니다.
-        print('Color from Firestore: $color');
-      }
-    });
+  //   res.docs.forEach((DocumentSnapshot doc) {
+  //     if (doc.exists) {
+  //       final color = doc.get('color') as String;
+  //       print('Color from Firestore: $color');
+  //     }
+  //   });
 
-    List snapshotData =
-        res.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  //   List snapshotData =
+  //       res.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
 
-    snapshotData.map((e) {
-      // 원하는 작업 수행
-    });
-  }
+  //   snapshotData.map((e) {
+  //     // 원하는 작업 수행
+  //   });
+  // }
 
-  void readAllEvent() {
-    if (userModel.joinedTrip != null && userModel.joinedTrip!.isNotEmpty) {
-      userModel.joinedTrip!.forEach((trip) {
+  void readAllEvent(List? joinedTrip) {
+    log('${userModel.joinedTrip!.length}', name: 'readAllEvent호출시 joinedTrip');
+
+    if (joinedTrip != null && joinedTrip.isNotEmpty) {
+      joinedTrip.forEach((trip) {
         trip!.dateRange.forEach((element) {
           convertedMap[element] = trip;
         });
       });
     }
     print('맵 :$convertedMap');
+    log('${convertedMap.length}', name: 'convertedMap');
   }
 
   final events = LinkedHashMap(
-  equals: isSameDay,
-);
+    equals: isSameDay,
+  );
 
-Map<DateTime, dynamic> getEventsForDay(DateTime day) {
+  Map<DateTime, dynamic> getEventsForDay(DateTime day) {
     return events[day] ?? {};
-
   }
-// LinkedHashMap<DateTime, List<ChatRoom>> convertedLinkedMap = LinkedHashMap(
-//   equals: isSameDay,
-// );
-
-// convertedMap.forEach((date, trip) {
-//   if (convertedLinkedMap.containsKey(date)) {
-//     // 이미 같은 날짜의 이벤트가 있는 경우 리스트에 추가
-//     convertedLinkedMap[date]!.add(trip);
-//   } else {
-//     // 같은 날짜의 이벤트가 없는 경우 새로운 리스트 생성
-//     convertedLinkedMap[date] = [trip];
-//   }
-// });
-
-// void readCity(){
-//   if (userModel.joinedTrip != null) {
-//     // 여러 개의 여행이 있는 경우에 대한 처리
-//     List<String> cities = [];
-//     userModel.joinedTrip!.forEach((element) {
-//       if (element != null && !cities.contains(element.city)) {
-//         cities.add(element.city);
-//       }
-//     });
-//     print('찍힌 도시 ${selectedCity.value}');
-//     }}
-
-  //   void _setTexts(int year, int month) {
-  //       // final _appbarTitleNotifier = ValueNotifier<String>('');
-  // // final _monthNameNotifier = ValueNotifier<String>('');
-  //   final date = DateTime(year, month);
-  //   // _appbarTitleNotifier.value = date.format(kAppBarDateFormat);
-  //   _monthNameNotifier.value = date.month.toString();
-  // }
 
   void generateRandomColor() {
     selectedRandomColor.value = CalendarColors.getRandomColor();
   }
 
+  void toggleCheck() {
+    userModel.joinedTrip!.forEach((chatRoom) {
+      chatRoom!.checkList = chatRoom.checkList ?? [];
+    });
+    print('체크리스트 :$checkLists');
+  }
+
+void showAddChecklistDialog(BuildContext context) {
+  TextEditingController checklistController = TextEditingController();
+
+  Get.defaultDialog(
+    title: selectedItem.isNotEmpty ? '체크리스트 편집' : '체크리스트 항목 추가',
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Column(
+          children: checkLists.keys.map((item) {
+            return Row(
+              children: [
+                Radio<String>(
+                  value: item,
+                  groupValue: selectedItem,
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      // Radio 버튼을 선택할 때 selectedItem 업데이트
+                      selectedItem = value;
+                      checklistController.text = value;
+                      Get.back(); // 다이얼로그 닫기
+                      showAddChecklistDialog(context); // 새 다이얼로그 열기
+                    }
+                  },
+                ),
+                Expanded(
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+        TextField(
+          controller: checklistController,
+          decoration: InputDecoration(
+            labelText: selectedItem.isNotEmpty ? '항목 이름 수정' : '새 항목 이름',
+          ),
+        ),
+        SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () async {
+            String checkListName = checklistController.text.trim();
+
+            if (selectedItem.isNotEmpty) {
+              // 기존 항목을 수정하는 경우
+              if (checkListName.isNotEmpty) {
+                checkLists[checkListName] = checkLists[selectedItem];
+                checkLists.remove(selectedItem);
+                selectedItem = ''; // 수정 완료 후 selectedItem 초기화
+              }
+            } else {
+              // 새 항목을 추가하는 경우
+              if (checkListName.isNotEmpty) {
+                checkLists[checkListName] = false;
+              }
+            }
+
+            Get.back(); // 다이얼로그 닫기
+          },
+          child: Text(selectedItem.isNotEmpty ? '수정' : '추가'),
+        ),
+      ],
+    ),
+  );
+}
+
+
   @override
   void onInit() {
     super.onInit();
-    readAllEvent();
-     events.addAll(convertedMap);
-    // readCity();
+    readAllEvent(userModel.joinedTrip);
+    events.addAll(convertedMap);
+    generateRandomColor();
   }
 }

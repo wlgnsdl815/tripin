@@ -241,6 +241,10 @@ class FriendController extends GetxController {
       Get.toNamed(FriendScreen.route, arguments: {'friend': friendUser});
     } else {}
   }
+   void reset() {
+    followingList.clear(); // 친구 목록 초기화
+    // 다른 상태 초기화 작업을 추가할 수 있습니다.
+  }
 
   @override
   void onInit() {

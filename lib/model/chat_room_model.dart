@@ -1,5 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+
 import 'package:tripin/model/user_model.dart';
+
+import 'enum_color.dart';
 
 class ChatRoom {
   String roomId; // 방 고유 ID
@@ -13,6 +17,7 @@ class ChatRoom {
   List<DateTime> dateRange;
   String roomTitle;
   String? imgUrl;
+  List<String>? checkList;
 
   ChatRoom({
     required this.roomId,
@@ -26,6 +31,7 @@ class ChatRoom {
     required this.dateRange,
     required this.roomTitle,
     this.imgUrl,
+    this.checkList,
   });
 
   Map<String, dynamic> toMap() {
@@ -40,6 +46,7 @@ class ChatRoom {
       'dateRange': dateRange,
       'roomTitle': roomTitle,
       'imgUrl': imgUrl,
+      'checkList': checkList,
     };
   }
 
@@ -50,6 +57,13 @@ class ChatRoom {
     DateTime? endDate;
     List<DateTime> dateRange = [];
 
+    if (intDateRange != null) {
+      intDateRange.forEach((element) {
+        dateRange.add(DateTime.fromMillisecondsSinceEpoch(element));
+      });
+      print('데이트레인지1 : $dateRange');
+    }
+
     if (map['startDate'] != null) {
       startDate = DateTime.fromMillisecondsSinceEpoch(map['startDate']);
     }
@@ -58,12 +72,6 @@ class ChatRoom {
       endDate = DateTime.fromMillisecondsSinceEpoch(map['endDate']);
     }
 
-    if (intDateRange != null) {
-      intDateRange.forEach((element) {
-        dateRange.add(DateTime.fromMillisecondsSinceEpoch(element));
-      });
-      print('데이트레인지 : $dateRange');
-    }
 
     return ChatRoom(
       roomId: map['roomId'] as String,
@@ -77,6 +85,7 @@ class ChatRoom {
       dateRange: dateRange,
       roomTitle: map['roomTitle'] ?? '',
       imgUrl: map['imgUrl'] ?? '',
+      checkList: map['checkList'] ?? [],
     );
   }
 
