@@ -68,6 +68,10 @@ class MapScreenController extends GetxController {
           .doc(_globalGetXController.roomId.value)
           .snapshots()
           .listen((snapshot) {
+
+      print('dateRange: $dateRange');
+
+        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere((element) => element!.roomId == _globalGetXController.roomId.value);
         print('dateRange: $dateRange');
         if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
           List<int> timestamps = List<int>.from(snapshot.data()!['dateRange']);
@@ -75,10 +79,11 @@ class MapScreenController extends GetxController {
               .map((e) => DateTime.fromMillisecondsSinceEpoch(e))
               .toList();
           timeStamps.value = List<int>.from(snapshot.data()!['dateRange']);
+          updateChatRoom!.dateRange = this.dateRange;
         }
-
-        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere((element) => element!.roomId == _globalGetXController.roomId.value);
-        updateChatRoom!.dateRange = this.dateRange;
+        if (snapshot.data() != null && snapshot.data()!['city'] != null) {
+          updateChatRoom!.city = snapshot.data()!['city'];
+        }
       });
 
       // Firestore 스냅샷 구독 (markers)
@@ -306,9 +311,6 @@ class MapScreenController extends GetxController {
         .update({
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
-    Get.snackbar('알림', '마커가 삭제되었습니다.');
-    nMapController.value!.clearOverlays();
-    showMarkers();
   }
 
   // 마커 변경
