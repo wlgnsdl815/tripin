@@ -70,16 +70,19 @@ class MapScreenController extends GetxController {
           .listen((snapshot) {
 
       print('dateRange: $dateRange');
+
+        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere((element) => element!.roomId == _globalGetXController.roomId.value);
         if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
           List<int> timestamps = List<int>.from(snapshot.data()!['dateRange']);
           dateRange.value = timestamps
               .map((e) => DateTime.fromMillisecondsSinceEpoch(e))
               .toList();
           timeStamps.value = List<int>.from(snapshot.data()!['dateRange']);
+          updateChatRoom!.dateRange = this.dateRange;
         }
-
-        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere((element) => element!.roomId == _globalGetXController.roomId.value);
-        updateChatRoom!.dateRange = this.dateRange;
+        if (snapshot.data() != null && snapshot.data()!['city'] != null) {
+          updateChatRoom!.city = snapshot.data()!['city'];
+        }
       });
 
       // Firestore 스냅샷 구독 (markers)
