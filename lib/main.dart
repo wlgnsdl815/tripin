@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
+import 'package:tripin/controllers/calendar_controller_jihoon.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/chat/chat_setting_controller.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => HomeController(), fenix: true);
           Get.lazyPut(() => ProfileDetailController(), fenix: true);
           Get.lazyPut(() => ChatSettingController(), fenix: true);
+          Get.lazyPut(() => CalendarControllerJihoon(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.splash,
