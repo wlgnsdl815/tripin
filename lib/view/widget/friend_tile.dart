@@ -154,7 +154,7 @@ class FriendTile extends StatelessWidget {
                       bottom: Radius.circular(80),
                     ),
                     border: Border.all(
-                      color: PlatformColors.primary,
+                      color: Get.find<AuthController>().userInfo.value!.uid != friend.uid ? PlatformColors.primary : Colors.white,
                     ),
                   ),
                   child: Center(
@@ -163,6 +163,7 @@ class FriendTile extends StatelessWidget {
                       child: Text(
                         friend.message,
                         overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.body12R(color: Get.find<AuthController>().userInfo.value!.uid != friend.uid ? PlatformColors.subtitle : Colors.white),
                       ),
                     ),
                   ),
