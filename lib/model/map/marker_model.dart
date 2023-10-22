@@ -5,7 +5,7 @@ class MarkerModel {
   final NLatLng position; // 마커의 위치
   final String title; // 마커의 타이틀
   final String subTitle; // 마커의 서브타이틀
-  final List<String> descriptions; // 마커에 대한 추가 설명
+
   final int order; // 마커 순서
   final int timeStamp; // 날짜 timeStamp
   final int dateIndex;
@@ -16,7 +16,6 @@ class MarkerModel {
     required this.position,
     required this.title,
     required this.subTitle,
-    required this.descriptions,
     required this.order,
     required this.timeStamp,
     required this.dateIndex,
@@ -26,30 +25,25 @@ class MarkerModel {
   // Firestore 문서를 모델 객체로 변환
   factory MarkerModel.fromMap(Map<String, dynamic> map) {
     return MarkerModel(
-      id: map['id'],
+      id: map['id'] as String,
       position: NLatLng(map['latitude'], map['longitude']),
-      title: map['title'],
-      subTitle: map['subTitle'] ?? '',
-      descriptions: List<String>.from(map['descriptions'] ?? []),
-      order: map['order'] ?? 0,
-      timeStamp: map['timeStamp'] ?? 0,
-      dateIndex: map['dateIndex'] ?? 0,
-      userNickName: map['userNickName'] ?? '',
+      title: map['title'] as String,
+      subTitle: map['subTitle'] as String,
+      order: map['order'] as int,
+      timeStamp: map['timeStamp'] as int,
+      dateIndex: map['dateIndex'] as int,
+      userNickName: map['userNickName'] as String,
     );
   }
 
   // 모델 객체를 Firestore 문서로 변환
   Map<String, dynamic> toMap() {
-    if (descriptions.length == 1 && descriptions[0] == '') {
-      descriptions.clear();
-    }
-    return {
+    return <String, dynamic>{
       'id': id,
       'latitude': position.latitude,
       'longitude': position.longitude,
       'title': title,
       'subTitle': subTitle,
-      'descriptions': descriptions,
       'order': order,
       'timeStamp': timeStamp,
       'dateIndex': dateIndex,
