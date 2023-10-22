@@ -187,14 +187,15 @@ class ChatScreen extends GetView<ChatController> {
                                                 BorderRadius.circular(12),
                                           ),
                                           child: (!isMe && showUserName)
-                                              ? Image.network(
-                                                  message.sender!.imgUrl
-                                                              .isEmpty ??
-                                                          true
-                                                      ? 'http://picsum.photos/100/100'
-                                                      : message.sender!.imgUrl,
-                                                  fit: BoxFit.cover,
-                                                )
+                                              ? message.sender!.imgUrl.isEmpty
+                                                  ? Image.asset(
+                                                      'assets/icons/chat_default.png',
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.network(
+                                                      message.sender!.imgUrl,
+                                                      fit: BoxFit.cover,
+                                                    )
                                               : Container(),
                                         ),
                                       ),
