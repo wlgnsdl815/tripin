@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:tripin/model/kakao_geocoding_model.dart';
+import 'package:tripin/model/map/kakao_geocoding_model.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 
 class KaKaoGeocodingService {

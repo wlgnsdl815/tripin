@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
-import 'package:tripin/model/marker_model.dart';
+import 'package:tripin/model/map/description_model.dart';
+import 'package:tripin/model/map/marker_model.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/widget/custom_button.dart';
@@ -171,11 +172,17 @@ class MapBottomSheet extends GetView<MapScreenController> {
                               (m) => m.id == marker.id,
                               orElse: () => marker,
                             );
+                            List<Description> filteredMemos = controller
+                                .memoList
+                                .where(
+                                    (memo) => memo.markerId == updatedMarker.id)
+                                .toList();
+
+                            filteredMemos.sort(
+                                (a, b) => a.timestamp.compareTo(b.timestamp));
 
                             // 메모가 있는 경우와 없는 경우를 분리
-                            if (updatedMarker.descriptions
-                                .where((desc) => desc.trim().isNotEmpty)
-                                .isEmpty) {
+                            if (filteredMemos.isEmpty) {
                               return Text(
                                 '아직 작성된 메모가 없습니다.',
                                 style: AppTextStyle.body13M(
@@ -188,8 +195,15 @@ class MapBottomSheet extends GetView<MapScreenController> {
                                       SizedBox(height: 11.h),
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: updatedMarker.descriptions.length,
+                                  itemCount: filteredMemos.length,
                                   itemBuilder: (context, index) {
+                                    print('1: ${filteredMemos.length}');
+
+                                    controller
+                                        .convertUidToUserModel(filteredMemos);
+                                    print(
+                                        '2: ${controller.filteredUserModelList.length}');
+
                                     return Container(
                                       decoration: BoxDecoration(
                                         color: PlatformColors.subtitle8,
@@ -202,11 +216,26 @@ class MapBottomSheet extends GetView<MapScreenController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              updatedMarker.descriptions[index],
-                                              style: AppTextStyle.body14M(),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  filteredMemos[index].memo,
+                                                  style: AppTextStyle.body14M(),
+                                                ),
+                                                Spacer(),
+                                                GestureDetector(
+                                                  onTap: () {},
+                                                  child: Icon(
+                                                    Icons.more_vert,
+                                                    size: 12.h,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             SizedBox(height: 5.h),
+                                            Text(
+                                              filteredMemos[index].uid,
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -331,8 +360,8 @@ class MapBottomSheet extends GetView<MapScreenController> {
               SizedBox(height: 13),
               Center(
                 child: CustomButton(
-                  onTap: () {
-                    controller.upDateAndGetDescription(marker.id);
+                  onTap: () async {
+                    await controller.upDateAndGetDescription(marker.id);
                     Get.back();
                   },
                   text: '등록',

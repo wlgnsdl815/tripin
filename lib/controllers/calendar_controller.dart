@@ -86,79 +86,78 @@ class CalendarController extends GetxController {
     print('체크리스트 :$checkLists');
   }
 
-void showAddChecklistDialog(BuildContext context) {
-  TextEditingController checklistController = TextEditingController();
+  void showAddChecklistDialog(BuildContext context) {
+    TextEditingController checklistController = TextEditingController();
 
-  Get.defaultDialog(
-    title: selectedItem.isNotEmpty ? '체크리스트 편집' : '체크리스트 항목 추가',
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Column(
-          children: checkLists.keys.map((item) {
-            return Row(
-              children: [
-                Radio<String>(
-                  value: item,
-                  groupValue: selectedItem,
-                  onChanged: (String? value) {
-                    if (value != null) {
-                      // Radio 버튼을 선택할 때 selectedItem 업데이트
-                      selectedItem = value;
-                      checklistController.text = value;
-                      Get.back(); // 다이얼로그 닫기
-                      showAddChecklistDialog(context); // 새 다이얼로그 열기
-                    }
-                  },
-                ),
-                Expanded(
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+    Get.defaultDialog(
+      title: selectedItem.isNotEmpty ? '체크리스트 편집' : '체크리스트 항목 추가',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            children: checkLists.keys.map((item) {
+              return Row(
+                children: [
+                  Radio<String>(
+                    value: item,
+                    groupValue: selectedItem,
+                    onChanged: (String? value) {
+                      if (value != null) {
+                        // Radio 버튼을 선택할 때 selectedItem 업데이트
+                        selectedItem = value;
+                        checklistController.text = value;
+                        Get.back(); // 다이얼로그 닫기
+                        showAddChecklistDialog(context); // 새 다이얼로그 열기
+                      }
+                    },
                   ),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
-        TextField(
-          controller: checklistController,
-          decoration: InputDecoration(
-            labelText: selectedItem.isNotEmpty ? '항목 이름 수정' : '새 항목 이름',
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
-        ),
-        SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () async {
-            String checkListName = checklistController.text.trim();
+          TextField(
+            controller: checklistController,
+            decoration: InputDecoration(
+              labelText: selectedItem.isNotEmpty ? '항목 이름 수정' : '새 항목 이름',
+            ),
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () async {
+              String checkListName = checklistController.text.trim();
 
-            if (selectedItem.isNotEmpty) {
-              // 기존 항목을 수정하는 경우
-              if (checkListName.isNotEmpty) {
-                checkLists[checkListName] = checkLists[selectedItem];
-                checkLists.remove(selectedItem);
-                selectedItem = ''; // 수정 완료 후 selectedItem 초기화
+              if (selectedItem.isNotEmpty) {
+                // 기존 항목을 수정하는 경우
+                if (checkListName.isNotEmpty) {
+                  checkLists[checkListName] = checkLists[selectedItem];
+                  checkLists.remove(selectedItem);
+                  selectedItem = ''; // 수정 완료 후 selectedItem 초기화
+                }
+              } else {
+                // 새 항목을 추가하는 경우
+                if (checkListName.isNotEmpty) {
+                  checkLists[checkListName] = false;
+                }
               }
-            } else {
-              // 새 항목을 추가하는 경우
-              if (checkListName.isNotEmpty) {
-                checkLists[checkListName] = false;
-              }
-            }
 
-            Get.back(); // 다이얼로그 닫기
-          },
-          child: Text(selectedItem.isNotEmpty ? '수정' : '추가'),
-        ),
-      ],
-    ),
-  );
-}
-
+              Get.back(); // 다이얼로그 닫기
+            },
+            child: Text(selectedItem.isNotEmpty ? '수정' : '추가'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void onInit() {

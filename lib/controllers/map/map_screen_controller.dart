@@ -10,7 +10,8 @@ import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
-import 'package:tripin/model/marker_model.dart';
+import 'package:tripin/model/map/description_model.dart';
+import 'package:tripin/model/map/marker_model.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
 import 'package:tripin/utils/colors.dart';
@@ -37,7 +38,10 @@ class MapScreenController extends GetxController {
   RxString placeText = ''.obs;
   Rxn<NaverMapController> nMapController = Rxn();
   RxString kakaoAddress = ''.obs; // 카카오에서 보내주는 주소
-  
+  RxList<Description> memoList = <Description>[].obs;
+  RxList<UserModel> filteredUserModelList =
+      <UserModel>[].obs; // uid를 userModel로 변한하기 위함
+
   UserModel userModel = Get.find<AuthController>().userInfo.value!;
 
   final GlobalGetXController _globalGetXController =
@@ -68,10 +72,10 @@ class MapScreenController extends GetxController {
           .doc(_globalGetXController.roomId.value)
           .snapshots()
           .listen((snapshot) {
+        print('dateRange: $dateRange');
 
-      print('dateRange: $dateRange');
-
-        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere((element) => element!.roomId == _globalGetXController.roomId.value);
+        ChatRoom? updateChatRoom = userModel.joinedTrip!.firstWhere(
+            (element) => element!.roomId == _globalGetXController.roomId.value);
         print('dateRange: $dateRange');
         if (snapshot.data() != null && snapshot.data()!['dateRange'] != null) {
           List<int> timestamps = List<int>.from(snapshot.data()!['dateRange']);
@@ -93,7 +97,27 @@ class MapScreenController extends GetxController {
           .collection('markers')
           .snapshots()
           .listen(updateMarkersFromSnapshot);
+
+      // 메모 스냅샷 구독
+      // 메모 스냅샷 구독
+      FirebaseFirestore.instance
+          .collectionGroup('memos')
+          .where('roomId', isEqualTo: _globalGetXController.roomId.value)
+          .snapshots()
+          .listen(updateMemosFromSnapshot);
     }
+  }
+
+  void updateMemosFromSnapshot(QuerySnapshot snapshot) {
+    List<Description> memos = [];
+
+    snapshot.docs.forEach((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      Description memo = Description.fromMap(data);
+      memos.add(memo);
+    });
+
+    memoList.value = memos; // 저장된 메모를 상태에 업데이트
   }
 
   void updateMarkersFromSnapshot(QuerySnapshot snapshot) {
@@ -173,7 +197,6 @@ class MapScreenController extends GetxController {
             ? placeText.value
             : placeTextController.text,
         subTitle: kakaoAddress.value,
-        descriptions: [descriptionTextController.text],
         order: markerList.length + 1,
         timeStamp: timeStamps[selectedDayIndex.value],
         dateIndex: selectedDayIndex.value,
@@ -181,6 +204,7 @@ class MapScreenController extends GetxController {
       );
 
       await ref.set(newMarker.toMap());
+      await addMemo(newMarker.id);
       if (descriptionTextController.text == '') {
         _chatController.sendMessage(
           _chatController.senderFromChatController,
@@ -249,6 +273,27 @@ class MapScreenController extends GetxController {
     addArrowheadPath(nMapController.value!, nMarkerList);
   }
 
+  addMemo(String markerId) async {
+    print(descriptionTextController.text);
+    final DocumentReference ref = FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(_globalGetXController.roomId.value)
+        .collection('markers')
+        .doc(markerId)
+        .collection('memos')
+        .doc();
+
+    Description newMemo = Description(
+      memo: descriptionTextController.text,
+      uid: userModel.uid,
+      timestamp: Timestamp.now(),
+      markerId: markerId,
+      roomId: _globalGetXController.roomId.value,
+    );
+
+    await ref.set(newMemo.toMap());
+  }
+
   upDateAndGetDescription(String markerId) async {
     await FirebaseFirestore.instance
         .collection('chatRooms')
@@ -270,7 +315,7 @@ class MapScreenController extends GetxController {
     var snapshotData = snapshot.data() as Map<String, dynamic>;
     // 가장 마지막에 추가된 설명을 반환
     description.value = snapshotData['descriptions'].last;
-    descriptionTextController.clear();
+    await addMemo(markerId);
 
     await FirebaseFirestore.instance
         .collection('chatRooms')
@@ -278,6 +323,8 @@ class MapScreenController extends GetxController {
         .update({
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
+
+    descriptionTextController.clear();
   }
 
   Future<void> deleteMarker({
@@ -312,6 +359,8 @@ class MapScreenController extends GetxController {
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
   }
+
+  deleteMemo() {}
 
   // 마커 변경
   Future<void> updateIcon(NMarker nMarker, BuildContext context) async {
@@ -484,5 +533,16 @@ class MapScreenController extends GetxController {
       zoom: 15,
     );
     naverMapController.updateCamera(cameraUpdate);
+  }
+
+  convertUidToUserModel(List list) async {
+    var futures = list.map((item) async {
+      return DBService().getUserInfoById(item.uid);
+    }).toList();
+    print('list :${list.length}');
+    print('futures :${futures.length}');
+
+    var results = await Future.wait(futures);
+    filteredUserModelList.assignAll(results.whereType<UserModel>());
   }
 }

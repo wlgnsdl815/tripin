@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:tripin/model/marker_model.dart';
+import 'package:tripin/model/map/marker_model.dart';
 
 class PlanModel {
   final List<int> dateTimestamps; // 날짜들의 타임스탬프
