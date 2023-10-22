@@ -99,7 +99,6 @@ class MapScreenController extends GetxController {
           .listen(updateMarkersFromSnapshot);
 
       // 메모 스냅샷 구독
-      // 메모 스냅샷 구독
       FirebaseFirestore.instance
           .collectionGroup('memos')
           .where('roomId', isEqualTo: _globalGetXController.roomId.value)
@@ -535,7 +534,7 @@ class MapScreenController extends GetxController {
     naverMapController.updateCamera(cameraUpdate);
   }
 
-  convertUidToUserModel(List list) async {
+  Future<List> convertUidToUserModel(List list) async {
     var futures = list.map((item) async {
       return DBService().getUserInfoById(item.uid);
     }).toList();
@@ -544,5 +543,6 @@ class MapScreenController extends GetxController {
 
     var results = await Future.wait(futures);
     filteredUserModelList.assignAll(results.whereType<UserModel>());
+    return results;
   }
 }

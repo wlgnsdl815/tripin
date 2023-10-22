@@ -233,9 +233,19 @@ class MapBottomSheet extends GetView<MapScreenController> {
                                               ],
                                             ),
                                             SizedBox(height: 5.h),
-                                            Text(
-                                              filteredMemos[index].uid,
-                                            ),
+                                            FutureBuilder(
+                                                future: controller
+                                                    .convertUidToUserModel(
+                                                        filteredMemos),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    return Text(
+                                                      snapshot.data![index]
+                                                          .nickName,
+                                                    );
+                                                  }
+                                                  return SizedBox.shrink();
+                                                }),
                                           ],
                                         ),
                                       ),
