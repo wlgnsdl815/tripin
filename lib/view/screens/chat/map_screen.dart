@@ -8,7 +8,7 @@ import 'package:tripin/const/cities.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
-import 'package:tripin/model/kakao_geocoding_model.dart';
+import 'package:tripin/model/map/kakao_geocoding_model.dart';
 import 'package:tripin/service/kakao_geocoding_service.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/colors.dart';
