@@ -6,6 +6,7 @@ import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/find_pw_screen.dart';
+import 'package:tripin/view/screens/terms_of_service_screen.dart';
 import 'package:tripin/view/widget/app_my_list.dart';
 
 class MyPageScreen extends StatelessWidget {
@@ -56,7 +57,19 @@ class MyPageScreen extends StatelessWidget {
               ),
             ),
           ),
-          MyList(onPressed: () {}, text: '이용약관'),
+          MyList(
+              onPressed: () {
+                Get.to(() => TermsOfServiceScreen());
+              },
+              text: '이용약관'),
+          Divider(
+            indent: 12.w,
+            endIndent: 12.w,
+            height: 1,
+            thickness: 1,
+            color: Color(0xffD9D9D9),
+          ),
+          MyList(onPressed: () {}, text: '개인정보 처리방침'),
           Divider(
             indent: 12.w,
             endIndent: 12.w,

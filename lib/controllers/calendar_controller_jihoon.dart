@@ -31,6 +31,7 @@ class CalendarControllerJihoon extends GetxController {
     );
     crCalendarController =
         CrCalendarController(onSwipe: _onCalendarPageChanged, events: eventList
+
             // [
             // CalendarEventModel(
             //   name: '✈️ 부산 여행',

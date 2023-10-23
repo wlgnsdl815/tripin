@@ -19,6 +19,7 @@ import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/controllers/login_controller.dart';
 import 'package:tripin/controllers/map/map_screen_controller.dart';
 import 'package:tripin/controllers/profile_detail_controller.dart';
+import 'package:tripin/controllers/terms_of_service_controller.dart';
 import 'package:tripin/firebase_options.dart';
 import 'package:tripin/utils/api_keys_env.dart';
 import 'package:tripin/utils/app_routes.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
           Get.lazyPut(() => ProfileDetailController(), fenix: true);
           Get.lazyPut(() => ChatSettingController(), fenix: true);
           Get.lazyPut(() => CalendarControllerJihoon(), fenix: true);
+          Get.lazyPut(() => TermsOfServiceController(), fenix: true);
         }),
         getPages: AppRoutes.routes,
         initialRoute: AppScreens.splash,
