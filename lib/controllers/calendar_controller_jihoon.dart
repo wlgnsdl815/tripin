@@ -1,91 +1,81 @@
 import 'package:cr_calendar/cr_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/chat/chat_controller.dart';
+import 'package:tripin/controllers/chat/select_friends_controller.dart';
+import 'package:tripin/model/chat_room_model.dart';
+import 'package:tripin/model/user_model.dart';
 import 'package:tripin/utils/calendar/colors.dart';
 import 'package:tripin/view/widget/calendar/day_event_bottom_sheet.dart';
 
 class CalendarControllerJihoon extends GetxController {
   CrCalendarController crCalendarController = CrCalendarController();
-  List<CalendarEventModel> eventList = [];
+
+  UserModel userModel = Get.find<AuthController>().userInfo.value!;
+  List<CalendarEventModel> event = [];
+  RxString currentYearMonth = ''.obs;
+  RxMap<DateTime, dynamic> convertedMap = <DateTime, dynamic>{}.obs;
+  var controllers = Get.find<SelectFriendsController>();
 
   @override
   void onInit() {
+    chatRoomInfo(userModel.joinedTrip);
     createExampleEvents();
-    print(crCalendarController.events);
     super.onInit();
   }
 
-  void _onCalendarPageChanged(int year, int month) {}
-  void createExampleEvents() {
-    eventList.add(
-      CalendarEventModel(
-        name: '✈️ 부산 여행',
-        begin: DateTime.now().add(
-          Duration(days: 18),
-        ),
-        end: DateTime.now().add(
-          Duration(days: 20),
-        ),
-        eventColor: eventColors[0],
-      ),
-    );
-    crCalendarController =
-        CrCalendarController(onSwipe: _onCalendarPageChanged, events: eventList
+  chatRoomInfo(List<ChatRoom?>? joinedTrip) {
+    if (joinedTrip != null) {
+      joinedTrip.forEach((element) {
+        if (element != null) {
+          event.add(CalendarEventModel(
+            name: element.roomTitle,
+            begin: element.startDate ?? DateTime(0),
+            end: element.endDate ?? DateTime(0),
+            eventColor: eventColors[0],
+          ));
+        }
+      });
+    }
+  }
 
-            // [
-            // CalendarEventModel(
-            //   name: '✈️ 부산 여행',
-            //   begin: DateTime.now().add(
-            //     Duration(days: 18),
-            //   ),
-            //   end: DateTime.now().add(
-            //     Duration(days: 20),
-            //   ),
-            //   eventColor: eventColors[0],
-            // ),
-            // CalendarEventModel(
-            //   name: '부산 여행',
-            //   begin: DateTime.now().add(
-            //     Duration(days: 6),
-            //   ),
-            //   end: DateTime.now().add(
-            //     Duration(days: 8),
-            //   ),
-            //   eventColor: eventColors[1],
-            // ),
-            // CalendarEventModel(
-            //   name: '여행여행',
-            //   begin: DateTime.now().add(
-            //     Duration(days: 7),
-            //   ),
-            //   end: DateTime.now().add(
-            //     Duration(days: 10),
-            //   ),
-            //   eventColor: eventColors[3],
-            // ),
-            // CalendarEventModel(
-            //   name: '오늘 부터',
-            //   begin: DateTime.now(),
-            //   end: DateTime.now().add(
-            //     Duration(days: 1),
-            //   ),
-            //   eventColor: eventColors[3],
-            // ),
-            // ],
-            );
+  AddEvent() {}
+
+  void onCalendarPageChanged(int year, int month) {
+    updateCurrentYearMonth(DateTime(year, month));
+  }
+
+  void updateCurrentYearMonth(DateTime date) {
+    final year = date.year;
+    final month = date.month;
+    currentYearMonth.value = '$year년 $month월';
+  }
+
+  void createExampleEvents() {
+    crCalendarController = CrCalendarController(
+      onSwipe: (year, month) {
+        onCalendarPageChanged(year, month);
+      },
+      events: event,
+    );
   }
 
   void showDayEventsInModalSheet(
-      List<CalendarEventModel> events, DateTime day) {
+    List<CalendarEventModel> events,
+    DateTime day,
+  ) {
     showModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-        isScrollControlled: true,
-        context: Get.context!,
-        builder: (context) => DayEventsBottomSheet(
-              events: events,
-              day: day,
-              screenHeight: MediaQuery.of(context).size.height,
-            ));
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+      ),
+      isScrollControlled: true,
+      context: Get.context!,
+      builder: (context) => DayEventsBottomSheet(
+        events: event,
+        day: day,
+        screenHeight: MediaQuery.of(context).size.height,
+      ),
+    );
   }
 }

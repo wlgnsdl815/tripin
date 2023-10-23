@@ -1,7 +1,9 @@
 import 'package:cr_calendar/cr_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/calendar_controller_jihoon.dart';
+import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/utils/calendar/colors.dart';
 import 'package:tripin/view/widget/calendar/day_item_widget.dart';
 import 'package:tripin/view/widget/calendar/event_widget.dart';
@@ -24,7 +26,8 @@ class CalendarScreen2 extends GetView<CalendarControllerJihoon> {
             children: [
               Row(
                 children: [
-                  Text('해당 년 월 표시'),
+                  Obx(() => Text(controller.currentYearMonth.value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
+                  // Text('해당 년 월 표시'),
                   Spacer(),
                   IconButton(
                     onPressed: () {
@@ -53,6 +56,7 @@ class CalendarScreen2 extends GetView<CalendarControllerJihoon> {
                   eventsTopPadding: 47.0,
                   backgroundColor: Colors.white,
                   controller: controller.crCalendarController,
+                  // controller: controller.addChatRoomToCalendar(ChatRoom),
                   initialDate: DateTime.now(),
                   weekDaysBuilder: (day) => WeekDaysWidget(day: day),
                   dayItemBuilder: (builderArgument) =>
@@ -65,32 +69,7 @@ class CalendarScreen2 extends GetView<CalendarControllerJihoon> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // controller.eventList.add(
-          //   CalendarEventModel(
-          //     name: '오늘 부터',
-          //     begin: DateTime.now(),
-          //     end: DateTime.now().add(
-          //       Duration(days: 1),
-          //     ),
-          //     eventColor: eventColors[3],
-          //   ),
-          // );
-          controller.crCalendarController.addEvent(
-            CalendarEventModel(
-              name: '오늘 부터',
-              begin: DateTime.now(),
-              end: DateTime.now().add(
-                Duration(days: 1),
-              ),
-              eventColor: eventColors[3],
-            ),
-          );
-          print(controller.eventList);
-          print(controller.crCalendarController.events);
-        },
-      ),
     );
   }
 }
+
