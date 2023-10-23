@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cr_calendar/cr_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -141,11 +142,13 @@ class SelectFriendsController extends GetxController {
     print('도시 업데이트: $selectedCity');
   }
 
+void updateEventName(String newName) {
+  roomTitle.value = newName;
+}
+
   Future<void> updateStartAndEndDate(
       String roomId, DateTime startDate, DateTime endDate) async {
-    CalendarControllerJihoon calendarController =
-        Get.find<CalendarControllerJihoon>();
-
+    CalendarControllerJihoon crCalendarController = Get.find<CalendarControllerJihoon>();
     await FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(roomId)
@@ -157,8 +160,12 @@ class SelectFriendsController extends GetxController {
 
     log('${userInfo.value!.joinedTrip!.length}',
         name: 'readAllEvent호출 전 joinedTrip');
-    Get.find<CalendarController>().readAllEvent(userInfo.value!.joinedTrip);
-
+    // Get.find<CalendarController>().readAllEvent(userInfo.value!.joinedTrip);
+    // Get.find<CalendarControllerJihoon>()
+    //     .chatRoomInfo(userInfo.value!.joinedTrip);
+        // crCalendarController.crCalendarController.events?.clear();
+        // updateEventName(roomTitle.value);
+        crCalendarController.crCalendarController.addEvent(CalendarEventModel(name: roomTitle.value, begin: startDate, end: endDate));
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }
 
@@ -186,3 +193,4 @@ class SelectFriendsController extends GetxController {
     getUsers();
   }
 }
+

@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/chat/chat_setting_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
+import 'package:tripin/utils/app_screens.dart';
+import 'package:tripin/controllers/home_controller.dart';
 import 'package:tripin/utils/app_routes.dart';
 import 'package:tripin/utils/app_screens.dart';
 import 'package:tripin/utils/colors.dart';
@@ -24,7 +26,6 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         foregroundColor: PlatformColors.title,
         leading: CustomAppBarIcon(
           image: Image.asset(
@@ -158,3 +159,4 @@ class ChatSettingScreen extends GetView<ChatSettingController> {
     );
   }
 }
+
