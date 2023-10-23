@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
+import 'package:tripin/controllers/calendar_controller_jihoon.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/enum_color.dart';
@@ -142,6 +143,9 @@ class SelectFriendsController extends GetxController {
 
   Future<void> updateStartAndEndDate(
       String roomId, DateTime startDate, DateTime endDate) async {
+    CalendarControllerJihoon calendarController =
+        Get.find<CalendarControllerJihoon>();
+
     await FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(roomId)
@@ -151,7 +155,8 @@ class SelectFriendsController extends GetxController {
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
     });
 
-    log('${userInfo.value!.joinedTrip!.length}', name: 'readAllEvent호출 전 joinedTrip');
+    log('${userInfo.value!.joinedTrip!.length}',
+        name: 'readAllEvent호출 전 joinedTrip');
     Get.find<CalendarController>().readAllEvent(userInfo.value!.joinedTrip);
 
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');

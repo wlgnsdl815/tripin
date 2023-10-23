@@ -2,6 +2,7 @@ import 'package:cr_calendar/cr_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/calendar_controller_jihoon.dart';
+import 'package:tripin/utils/calendar/colors.dart';
 import 'package:tripin/view/widget/calendar/day_item_widget.dart';
 import 'package:tripin/view/widget/calendar/event_widget.dart';
 import 'package:tripin/view/widget/calendar/week_days_widget.dart';
@@ -63,6 +64,32 @@ class CalendarScreen2 extends GetView<CalendarControllerJihoon> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // controller.eventList.add(
+          //   CalendarEventModel(
+          //     name: '오늘 부터',
+          //     begin: DateTime.now(),
+          //     end: DateTime.now().add(
+          //       Duration(days: 1),
+          //     ),
+          //     eventColor: eventColors[3],
+          //   ),
+          // );
+          controller.crCalendarController.addEvent(
+            CalendarEventModel(
+              name: '오늘 부터',
+              begin: DateTime.now(),
+              end: DateTime.now().add(
+                Duration(days: 1),
+              ),
+              eventColor: eventColors[3],
+            ),
+          );
+          print(controller.eventList);
+          print(controller.crCalendarController.events);
+        },
       ),
     );
   }

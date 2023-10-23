@@ -89,8 +89,8 @@ class ChatScreen extends GetView<ChatController> {
                 curve: Curves.ease,
               );
             }
+            controller.messageList.value = snapshot.data!;
           });
-          controller.messageList.value = snapshot.data!;
           return Column(
             children: [
               Expanded(
@@ -405,10 +405,6 @@ class ChatScreen extends GetView<ChatController> {
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12.0),
-                        child: Icon(Icons.add),
-                      ),
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 12),
