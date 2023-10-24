@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,16 +10,6 @@ class TermsOfServiceScreen extends GetView<TermsOfServiceController> {
 
   @override
   Widget build(BuildContext context) {
-    Future<String> loadAsset(int index) async {
-      String filePath;
-      if (index == 0) {
-        filePath = 'assets/docs/terms_of_service.md';
-      } else {
-        filePath = 'assets/docs/location_based_service_term.md';
-      }
-      return await rootBundle.loadString(filePath);
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -39,21 +28,87 @@ class TermsOfServiceScreen extends GetView<TermsOfServiceController> {
           ),
         ),
       ),
-      body: PageView.builder(
-        controller: controller.pageController,
-        itemCount: 2,
-        itemBuilder: (context, index) {
-          return FutureBuilder<String>(
-            future: loadAsset(index),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return Markdown(data: snapshot.data!);
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          );
-        },
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        controller.pageController.animateToPage(
+                          0,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                        controller.currentPage.value = 0;
+                      },
+                      child: Text('서비스 이용약관'),
+                    ),
+                  ),
+                  Obx(
+                    () => Container(
+                      height: 2,
+                      width: MediaQuery.of(context).size.width / 2,
+                      color: controller.currentPage.value == 0
+                          ? PlatformColors.title
+                          : Color(0xffE8E8E8),
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        controller.pageController.animateToPage(
+                          1,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                        controller.currentPage.value = 1;
+                      },
+                      child: Text('위치기반 서비스 이용약관'),
+                    ),
+                  ),
+                  Obx(
+                    () => Container(
+                      height: 2,
+                      width: MediaQuery.of(context).size.width / 2,
+                      color: controller.currentPage.value == 1
+                          ? PlatformColors.title
+                          : Color(0xffE8E8E8),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Expanded(
+            child: PageView.builder(
+              controller: controller.pageController,
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return FutureBuilder<String>(
+                  future: controller.loadTermsAsset(index),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Markdown(data: snapshot.data!);
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

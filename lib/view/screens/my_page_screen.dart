@@ -6,6 +6,7 @@ import 'package:tripin/controllers/friend_controller.dart';
 import 'package:tripin/utils/colors.dart';
 import 'package:tripin/utils/text_styles.dart';
 import 'package:tripin/view/screens/find_pw_screen.dart';
+import 'package:tripin/view/screens/privacy_policy.dart';
 import 'package:tripin/view/screens/terms_of_service_screen.dart';
 import 'package:tripin/view/widget/app_my_list.dart';
 
@@ -69,7 +70,11 @@ class MyPageScreen extends StatelessWidget {
             thickness: 1,
             color: Color(0xffD9D9D9),
           ),
-          MyList(onPressed: () {}, text: '개인정보 처리방침'),
+          MyList(
+              onPressed: () {
+                Get.to(() => PrivacyPolicyScreen());
+              },
+              text: '개인정보 처리방침'),
           Divider(
             indent: 12.w,
             endIndent: 12.w,
