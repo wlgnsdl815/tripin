@@ -56,6 +56,9 @@ class ChatListScreen extends GetView<ChatListController> {
                 _globalGetXController
                     .setSelectedCity(controller.chatList[index].city);
 
+                    _globalGetXController.setStartDate(controller.chatList[index].startDate ?? DateTime.now());
+                    _globalGetXController.setEndDate(controller.chatList[index].endDate?? DateTime.now());
+
                 Get.toNamed(AppScreens.chat);
               },
               child: Padding(

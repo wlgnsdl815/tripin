@@ -2,7 +2,6 @@ import 'package:cr_calendar/cr_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
-import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
@@ -17,12 +16,18 @@ class CalendarControllerJihoon extends GetxController {
   RxString currentYearMonth = ''.obs;
   RxMap<DateTime, dynamic> convertedMap = <DateTime, dynamic>{}.obs;
   var controllers = Get.find<SelectFriendsController>();
+  String? roomId;
 
   @override
   void onInit() {
     chatRoomInfo(userModel.joinedTrip);
-    createExampleEvents();
+    final now = DateTime.now();
+    onCalendarPageChanged(now.year, now.month);
+    createEvents();
     super.onInit();
+    crCalendarController.addListener(() {
+          print('이베트 추가또는 삭제 ${crCalendarController.events!.length}');
+        },);
   }
 
   chatRoomInfo(List<ChatRoom?>? joinedTrip) {
@@ -37,10 +42,9 @@ class CalendarControllerJihoon extends GetxController {
           ));
         }
       });
+      event;
     }
   }
-
-  AddEvent() {}
 
   void onCalendarPageChanged(int year, int month) {
     updateCurrentYearMonth(DateTime(year, month));
@@ -52,7 +56,7 @@ class CalendarControllerJihoon extends GetxController {
     currentYearMonth.value = '$year년 $month월';
   }
 
-  void createExampleEvents() {
+  void createEvents() {
     crCalendarController = CrCalendarController(
       onSwipe: (year, month) {
         onCalendarPageChanged(year, month);
@@ -60,6 +64,52 @@ class CalendarControllerJihoon extends GetxController {
       events: event,
     );
   }
+
+
+// void removeEventFromCalendar(String roomTitle) {
+//   print('이벤트 제거 이전: $event');
+//     event.removeWhere((eventModel) => eventModel.name == roomTitle);
+//     print('이벤트 제거 이후: $event');
+// }
+
+// void removeEventFromCalendar(List<ChatRoom?>? joinedTrip) {
+//   print('이벤트 제거 이전: $event');
+//   if (joinedTrip != null) {
+//     joinedTrip.forEach((element) {
+//       event.removeWhere((eventModel) => eventModel.begin == element!.startDate && eventModel.end == element.endDate);
+//     });
+//   }
+//   print('이벤트 제거 이후: $event');
+
+//     print('이벤트 제거 이후: $event');
+//     crCalendarController = CrCalendarController(
+//       onSwipe: (year, month) {
+//         onCalendarPageChanged(year, month);
+//       },
+//       events: event,
+//     );
+//   }
+
+// void removeEventFromCalendar(List<ChatRoom?>? joinedTrip) {
+//   // print('roomId: $roomId');
+//   print('이벤트 제거 이전: $event');
+//   event.removeWhere((eventModel) => joinedTrip.name == roomId);
+//   print('이벤트 제거 이후: $event');
+//   crCalendarController = CrCalendarController(
+//     onSwipe: (year, month) {
+//       onCalendarPageChanged(year, month);
+//     },
+//     events: event,
+//   );
+// }
+
+//   void removeEvent(CalendarEventModel event) {
+//   // 이벤트를 events 리스트에서 제거
+//   event.(event);
+
+//   // crCalendarController를 업데이트하여 변경된 이벤트를 반영
+//   crCalendarController.addEvent(event);
+// }
 
   void showDayEventsInModalSheet(
     List<CalendarEventModel> events,
@@ -79,4 +129,3 @@ class CalendarControllerJihoon extends GetxController {
     );
   }
 }
-

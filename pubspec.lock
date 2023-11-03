@@ -228,10 +228,9 @@ packages:
   cr_calendar:
     dependency: "direct main"
     description:
-      name: cr_calendar
-      sha256: "165319b8852d7eaf40a01dc1a2fbf75c809c8877fa6a9f0ccc1fa2a7972f0b1b"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../packages/cr_calendar-main"
+      relative: true
+    source: path
     version: "1.2.1"
   cross_file:
     dependency: transitive

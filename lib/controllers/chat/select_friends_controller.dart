@@ -8,11 +8,13 @@ import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
 import 'package:tripin/controllers/calendar_controller.dart';
 import 'package:tripin/controllers/calendar_controller_jihoon.dart';
+import 'package:tripin/controllers/chat/chat_setting_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/enum_color.dart';
 import 'package:tripin/model/user_model.dart';
 import 'package:tripin/service/db_service.dart';
+import 'package:tripin/utils/calendar/colors.dart';
 
 class SelectFriendsController extends GetxController {
   RxList<UserModel> userData = <UserModel>[].obs; // 필터링 된 현재 유저의 친구목록
@@ -86,6 +88,17 @@ class SelectFriendsController extends GetxController {
 
     _globalGetXController.setSelectedCity(newRoom.city);
 
+    // CalendarControllerJihoon calendarController =
+    //     Get.find<CalendarControllerJihoon>();
+    // CalendarEventModel event = CalendarEventModel(
+    //   name: roomTitle.value,
+    //   begin: DateTime.now(), // 이벤트의 시작 날짜
+    //   end: DateTime.now().add(Duration(days: 1)), // 이벤트의 종료 날짜
+    //   eventColor: eventColors[0], // 이벤트 색상
+    // );
+    // calendarController.crCalendarController..addEvent(event);
+    // print(event);
+
     // 새로운 채팅방 추가
     DocumentReference docRef =
         await firestoreInstance.collection("chatRooms").add(newRoom.toMap());
@@ -143,12 +156,23 @@ class SelectFriendsController extends GetxController {
   }
 
 void updateEventName(String newName) {
-  roomTitle.value = newName;
-}
+    roomTitle.value = newName;
+    // CalendarControllerJihoon crCalendarController =
+    //     Get.find<CalendarControllerJihoon>();
 
+    // // 이벤트를 업데이트
+    // crCalendarController.event.forEach((event) {
+    //   if (event.name == roomTitle.value) {
+    //     event.name = newName;
+    //   }
+    // });
+}
+ //날짜 최초 생성할 때!
   Future<void> updateStartAndEndDate(
       String roomId, DateTime startDate, DateTime endDate) async {
-    CalendarControllerJihoon crCalendarController = Get.find<CalendarControllerJihoon>();
+        final emptyList = [];
+    CalendarControllerJihoon crCalendarController =
+        Get.find<CalendarControllerJihoon>();
     await FirebaseFirestore.instance
         .collection('chatRooms')
         .doc(roomId)
@@ -156,18 +180,75 @@ void updateEventName(String newName) {
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
       'updatedAt': DateTime.now().millisecondsSinceEpoch,
-    });
+    }); 
 
     log('${userInfo.value!.joinedTrip!.length}',
         name: 'readAllEvent호출 전 joinedTrip');
     // Get.find<CalendarController>().readAllEvent(userInfo.value!.joinedTrip);
     // Get.find<CalendarControllerJihoon>()
     //     .chatRoomInfo(userInfo.value!.joinedTrip);
-        // crCalendarController.crCalendarController.events?.clear();
-        // updateEventName(roomTitle.value);
-        crCalendarController.crCalendarController.addEvent(CalendarEventModel(name: roomTitle.value, begin: startDate, end: endDate));
+    // crCalendarController.crCalendarController.events?.clear();
+    // updateEventName(roomTitle.value);
+    // crCalendarController.crCalendarController.redrawCalendar();
+    crCalendarController.crCalendarController.addEvent(CalendarEventModel(
+        name: roomTitle.value, begin: startDate, end: endDate));
+        
+        
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }
+
+ //날짜 업데이트 할 때!
+  Future<void> reUpdateStartAndEndDate(
+      String roomId, DateTime startDate, DateTime endDate) async {
+        final emptyList = [];
+    CalendarControllerJihoon crCalendarController =
+        Get.find<CalendarControllerJihoon>();
+    await FirebaseFirestore.instance
+        .collection('chatRooms')
+        .doc(roomId)
+        .update({
+      'startDate': startDate.millisecondsSinceEpoch,
+      'endDate': endDate.millisecondsSinceEpoch,
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
+    }); 
+
+    log('${userInfo.value!.joinedTrip!.length}',
+        name: 'readAllEvent호출 전 joinedTrip');
+    // Get.find<CalendarController>().readAllEvent(userInfo.value!.joinedTrip);
+    // Get.find<CalendarControllerJihoon>()
+    //     .chatRoomInfo(userInfo.value!.joinedTrip);
+    // crCalendarController.crCalendarController.events?.clear();
+    // updateEventName(roomTitle.value);
+    crCalendarController.crCalendarController.redrawCalendar();
+    // crCalendarController.crCalendarController.addEvent(CalendarEventModel(
+    //     name: roomTitle.value, begin: startDate, end: endDate));
+        
+        
+    print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
+  }
+
+
+  // Future<void> removeEvent(
+  //     String roomId, DateTime startDate, DateTime endDate) async {
+  //   // Firestore에서 해당 채팅방의 시작 및 종료 날짜를 업데이트하여 삭제
+  //   await FirebaseFirestore.instance
+  //       .collection('chatRooms')
+  //       .doc(roomId)
+  //       .update({
+  //     'startDate': FieldValue.arrayRemove([startDate.millisecondsSinceEpoch]),
+  //     'endDate': FieldValue.arrayRemove([endDate.millisecondsSinceEpoch]),
+  //   });
+  //   CalendarControllerJihoon crCalendarController =
+  //       Get.find<CalendarControllerJihoon>();
+  //   crCalendarController.crCalendarController.events?.removeWhere((event) {
+  //     return event.name == roomTitle.value &&
+  //         event.begin == startDate &&
+  //         event.end == endDate;
+  //   });
+
+  //   // 이벤트 이름 업데이트
+  //   updateEventName(roomTitle.value);
+  // }
 
   void searchFriend() {
     // searchFriendController에서 검색어 가져오기
@@ -193,4 +274,3 @@ void updateEventName(String newName) {
     getUsers();
   }
 }
-

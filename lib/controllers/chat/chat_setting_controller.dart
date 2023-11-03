@@ -1,13 +1,16 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tripin/controllers/auth_controller.dart';
-import 'package:tripin/controllers/chat/chat_list_controller.dart';
+import 'package:tripin/controllers/calendar_controller_jihoon.dart';
+
 import 'package:tripin/controllers/global_getx_controller.dart';
+
 import 'package:tripin/model/user_model.dart';
 
 class ChatSettingController extends GetxController {
@@ -16,7 +19,8 @@ class ChatSettingController extends GetxController {
       Get.find<GlobalGetXController>();
   final TextEditingController chatTitleEdit = TextEditingController();
   RxList<String> participantsUid = <String>[].obs;
-  final ChatListController _chatListController = Get.find<ChatListController>();
+  CalendarControllerJihoon crCalendarController =
+      Get.find<CalendarControllerJihoon>();
 
   RxString roomTitle = ''.obs;
   RxBool isInputValid = true.obs;
@@ -70,6 +74,11 @@ class ChatSettingController extends GetxController {
       },
     );
     _globalGetXController.setRoomTitle(chatTitleEdit.text);
+    
+    // SelectFriendsController controllers = Get.find<SelectFriendsController>();
+    // controllers.updateEventName(chatTitleEdit.text);
+    //  CalendarControllerJihoon crCalendarController =
+    // Get.find<CalendarControllerJihoon>();
   }
 
   // 채팅방 나가기 (참가자 목록, User - joinedTrip에서 해당 유저지우기)
@@ -80,6 +89,26 @@ class ChatSettingController extends GetxController {
         chatRooms.doc(_globalGetXController.roomId.value);
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     DocumentReference userDoc = users.doc(userInfo.value!.uid);
+
+    //    removeChatRoomFromEvents(_globalGetXController.roomId.value);
+    // print('이벤트에서 채팅방 삭제됨');
+    CalendarControllerJihoon crCalendarController =
+        Get.find<CalendarControllerJihoon>();
+    print(crCalendarController.crCalendarController.events!.length);
+    // crCalendarController.crCalendarController.events!.remove(eventToDelete);
+    crCalendarController.crCalendarController.redrawCalendar();
+    print(crCalendarController.crCalendarController.events!.length);
+    print('지워졌나요? : ${crCalendarController.event}');
+    //   crCalendarController.crCalendarController.clearSelected();
+    print(crCalendarController.crCalendarController.events!.last.begin);
+    print(_globalGetXController.startDate);
+
+    print(
+        '이게 될까? : ${crCalendarController.crCalendarController.events!.length}');
+    // crCalendarController.crCalendarController.events!.remove(_globalGetXController.startDate == crCalendarController.crCalendarController.events!.map((e) => e.begin).toList());
+    // crCalendarController.crCalendarController.events!.removeWhere(
+    //     (element) => element.begin == _globalGetXController.startDate);
+    // crCalendarController.crCalendarController.dispose();
 
     // 참가자 리스트에서 현재 사용자를 제거
     await roomDoc.update({
@@ -98,5 +127,8 @@ class ChatSettingController extends GetxController {
       await roomDoc.delete();
       print('방이 삭제되었습니다.');
     }
+
+// roomId를 전달하여 해당 채팅방의 이벤트를 제거
+    print('3333 : ${crCalendarController.crCalendarController.events!.length}');
   }
 }
