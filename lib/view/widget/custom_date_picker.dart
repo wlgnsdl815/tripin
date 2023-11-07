@@ -35,7 +35,7 @@ class CustomDatePicker extends StatelessWidget {
                 content: '일정를 변경하면 핀과 메모가 사라져요!',
                 onAccept: () {
                   _mapScreenController.getDatesBetweenAndUpdate(start, end);
-                  _selectFriendsController.updateStartAndEndDate(
+                  _selectFriendsController.reUpdateStartAndEndDate(
                       _globalGetXController.roomId.value, start, end);
 
                   _mapScreenController.nMapController.value!.clearOverlays();

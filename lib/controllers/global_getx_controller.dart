@@ -5,6 +5,9 @@ class GlobalGetXController extends GetxService {
   RxString roomTitle = ''.obs;
   RxString roomImageUrl = ''.obs;
   RxString selectedCity = '미정'.obs;
+  Rxn<DateTime> startDate = Rxn();
+  Rxn<DateTime> endDate = Rxn();
+
 
   setRoomId(String id) {
     roomId.value = id;
@@ -21,5 +24,13 @@ class GlobalGetXController extends GetxService {
 
   setSelectedCity(String city) {
     selectedCity.value = city;
+  }
+
+  setStartDate(DateTime dateTime) {
+    startDate.value = dateTime;
+  }
+
+  setEndDate(DateTime dateTime) {
+    endDate.value = dateTime;
   }
 }

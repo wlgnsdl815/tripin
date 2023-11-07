@@ -1,6 +1,7 @@
 import 'package:cr_calendar/cr_calendar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tripin/utils/calendar/const.dart';
 import 'package:tripin/utils/calendar/extensions.dart';
 
@@ -19,15 +20,19 @@ class DayEventsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
+ final filteredEvents = events.where((event) {
+      return event.begin.isBefore(day) &&
+          (event.end.isAfter(day.add(Duration(days: -1))));
+    }).toList();
+        return DraggableScrollableSheet(
         maxChildSize: 0.9,
         expand: false,
         builder: (context, controller) {
-          return events.isEmpty
+          return filteredEvents.isEmpty
               ? const Center(child: Text('No events for this day'))
               : ListView.builder(
                   controller: controller,
-                  itemCount: events.length + 1,
+                  itemCount: filteredEvents.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Padding(
@@ -36,10 +41,10 @@ class DayEventsBottomSheet extends StatelessWidget {
                           top: 16,
                           bottom: 16,
                         ),
-                        child: Text(day.format('dd/MM/yy')),
+                        child: Text(day.format('yy/MM/dd')),
                       );
                     } else {
-                      final event = events[index - 1];
+                      final event = filteredEvents[index - 1];
                       return Container(
                           height: 100,
                           child: Padding(
@@ -72,8 +77,7 @@ class DayEventsBottomSheet extends StatelessWidget {
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
-                                                '${event.begin.format(kDateRangeFormat)} - '
-                                                '${event.end.format(kDateRangeFormat)}',
+                                                '${event.begin.format('yyyy-MM-dd')} - ${event.end.format('yyyy-MM-dd')}',
                                                 style: const TextStyle(
                                                     fontSize: 14),
                                               )
