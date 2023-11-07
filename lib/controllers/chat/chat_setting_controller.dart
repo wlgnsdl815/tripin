@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tripin/controllers/auth_controller.dart';
+import 'package:tripin/controllers/calendar_controller_jihoon.dart';
 import 'package:tripin/controllers/chat/chat_list_controller.dart';
 import 'package:tripin/controllers/global_getx_controller.dart';
 import 'package:tripin/model/user_model.dart';
@@ -70,6 +72,8 @@ class ChatSettingController extends GetxController {
       },
     );
     _globalGetXController.setRoomTitle(chatTitleEdit.text);
+
+    Get.find<CalendarControllerJihoon>().readAllEvent(userInfo.value!.joinedTrip);
   }
 
   // 채팅방 나가기 (참가자 목록, User - joinedTrip에서 해당 유저지우기)
@@ -92,6 +96,10 @@ class ChatSettingController extends GetxController {
     // 최신 상태의 문서 스냅샷을 가져옴
     DocumentSnapshot updatedSnapshot = await roomDoc.get();
     List updatedParticipants = updatedSnapshot.get('participants') ?? [];
+
+    userInfo.value!.joinedTrip!.removeWhere((element) => element!.roomId == _globalGetXController.roomId.value);
+
+    Get.find<CalendarControllerJihoon>().readAllEvent(userInfo.value!.joinedTrip);
 
     // 참가자 리스트가 비어 있다면 방 삭제
     if (updatedParticipants.isEmpty) {

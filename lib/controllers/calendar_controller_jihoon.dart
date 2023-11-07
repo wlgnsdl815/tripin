@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:cr_calendar/cr_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tripin/controllers/auth_controller.dart';
-import 'package:tripin/controllers/chat/chat_controller.dart';
 import 'package:tripin/controllers/chat/select_friends_controller.dart';
 import 'package:tripin/model/chat_room_model.dart';
 import 'package:tripin/model/user_model.dart';
@@ -11,7 +12,6 @@ import 'package:tripin/view/widget/calendar/day_event_bottom_sheet.dart';
 
 class CalendarControllerJihoon extends GetxController {
   CrCalendarController crCalendarController = CrCalendarController();
-
   UserModel userModel = Get.find<AuthController>().userInfo.value!;
   List<CalendarEventModel> event = [];
   RxString currentYearMonth = ''.obs;
@@ -20,12 +20,14 @@ class CalendarControllerJihoon extends GetxController {
 
   @override
   void onInit() {
-    chatRoomInfo(userModel.joinedTrip);
-    createExampleEvents();
+    readAllEvent(userModel.joinedTrip);
     super.onInit();
   }
 
-  chatRoomInfo(List<ChatRoom?>? joinedTrip) {
+  // joinedTrip 요소들 CalendarEventModel로 변환 후 event 리스트에 추가
+  readAllEvent(List<ChatRoom?>? joinedTrip) {
+    event = [];
+
     if (joinedTrip != null) {
       joinedTrip.forEach((element) {
         if (element != null) {
@@ -38,9 +40,16 @@ class CalendarControllerJihoon extends GetxController {
         }
       });
     }
-  }
 
-  AddEvent() {}
+    log('${event.length}', name: 'readAllEvent :: event');
+
+    crCalendarController = CrCalendarController(
+      onSwipe: (year, month) {
+        onCalendarPageChanged(year, month);
+      },
+      events: event,
+    );
+  }
 
   void onCalendarPageChanged(int year, int month) {
     updateCurrentYearMonth(DateTime(year, month));

@@ -165,7 +165,15 @@ void updateEventName(String newName) {
     //     .chatRoomInfo(userInfo.value!.joinedTrip);
         // crCalendarController.crCalendarController.events?.clear();
         // updateEventName(roomTitle.value);
-        crCalendarController.crCalendarController.addEvent(CalendarEventModel(name: roomTitle.value, begin: startDate, end: endDate));
+
+    var updateTrip = userInfo.value!.joinedTrip!.firstWhere((element) => element!.roomId == roomId);
+
+    updateTrip!.startDate = startDate;
+    updateTrip.endDate = endDate;
+
+    crCalendarController.crCalendarController.addEvent(CalendarEventModel(name: roomTitle.value, begin: startDate, end: endDate));
+
+    Get.find<CalendarControllerJihoon>().readAllEvent(userInfo.value!.joinedTrip);
     print('시작 날짜와 종료 날짜 업데이트: $startDate, $endDate');
   }
 
