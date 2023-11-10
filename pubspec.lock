@@ -228,9 +228,10 @@ packages:
   cr_calendar:
     dependency: "direct main"
     description:
-      path: "../packages/cr_calendar-main"
-      relative: true
-    source: path
+      name: cr_calendar
+      sha256: "165319b8852d7eaf40a01dc1a2fbf75c809c8877fa6a9f0ccc1fa2a7972f0b1b"
+      url: "https://pub.dev"
+    source: hosted
     version: "1.2.1"
   cross_file:
     dependency: transitive
@@ -489,10 +490,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_markdown
-      sha256: "8afc9a6aa6d8e8063523192ba837149dbf3d377a37c0b0fc579149a1fbd4a619"
+      sha256: "35108526a233cc0755664d445f8a6b4b61e6f8fe993b3658b80b4a26827fc196"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.18"
+    version: "0.6.18+2"
   flutter_naver_map:
     dependency: "direct main"
     description:

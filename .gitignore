@@ -58,3 +58,6 @@ location_based_service_term.md
 privacy_policy.md
 
 terms_of_service.md
+
+android/app/key.properties
+android/app/tripin.jks

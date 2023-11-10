@@ -31,6 +31,12 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('app/key.properties')
+if (keystorePropertiesFile.exists()) {
+       keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace "com.example.tripin"
     compileSdkVersion flutter.compileSdkVersion
@@ -67,6 +73,15 @@ android {
             NAVER_MAP_CLIENT_ID: properties.getProperty('naver.map.clientId')
         ]
     }
+
+    signingConfigs {
+       release {
+           keyAlias keystoreProperties['keyAlias']
+           keyPassword keystoreProperties['keyPassword']
+           storeFile file(keystoreProperties['storeFile'])
+           storePassword keystoreProperties['storePassword']
+       }
+   }
 
     buildTypes {
         release {
